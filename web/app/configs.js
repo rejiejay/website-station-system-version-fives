@@ -6,13 +6,17 @@ const configs = [{
     entry: './views',
     output: './build'
 }, {
-    route: '/windows/index.html',
-    entry: './views/windows',
-    output: './build/windows'
+    route: '/record/index.html',
+    entry: './views/record',
+    output: './build/record'
 }, {
-    route: '/redirect/index.html',
-    entry: './views/redirect',
-    output: './build/redirect'
+    route: '/require/index.html',
+    entry: './views/require',
+    output: './build/require'
+}, {
+    route: '/task/index.html',
+    entry: './views/task',
+    output: './build/task'
 }]
 
 export default configs

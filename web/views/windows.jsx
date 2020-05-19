@@ -28,13 +28,19 @@ export default class WindowsComponent extends React.Component {
                 </div>
 
                 <div className="flex-start-center">
-                    <div className="windows-header-item">
+                    <div className="windows-header-item"
+                        onClick={() => window.location.href = './record/index.html'}
+                    >
                         <span>记录系统</span>
                     </div>
-                    <div className="windows-header-item">
+                    <div className="windows-header-item"
+                        onClick={() => window.location.href = './task/index.html'}
+                    >
                         <span>任辅跟启效应系统</span>
                     </div>
-                    <div className="windows-header-item">
+                    <div className="windows-header-item"
+                        onClick={() => window.location.href = './require/index.html'}
+                    >
                         <span>需求辅助分析</span>
                     </div>
 
