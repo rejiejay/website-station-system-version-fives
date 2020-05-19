@@ -1,7 +1,7 @@
 import { Entity, Column, PrimaryGeneratedColumn } from 'typeorm';
 
 @Entity()
-export class TaskAssisUser {
+export class WebsiteStationUser {
     @PrimaryGeneratedColumn()
     id: number;
 

@@ -41,7 +41,7 @@ Ctrl + P -> node_modules\._express@4.17.1@express\lib\response.js:771
 
 # localStorage
 
-localStorage['rejiejay-require-assist-token']  
-localStorage['rejiejay-require-assist-password']  
+localStorage['website-station-system-token']  
+localStorage['website-station-system-password']  
 
 sessionStorage['require-assist-detail-id']  

@@ -16,15 +16,15 @@ const showLogInput = (resolve, reject) => {
         }).then(res => {
             const token = res.data
 
-            localStorage.setItem('rejiejay-require-assist-token', token)
-            localStorage.setItem('rejiejay-require-assist-password', password)
+            localStorage.setItem('website-station-system-token', token)
+            localStorage.setItem('website-station-system-password', password)
             inputPopUpDestroy()
             toast.show('登录成功！')
             resolve()
         }, error => reject(error))
     }
 
-    const defaultValue = localStorage.getItem('rejiejay-require-assist-password')
+    const defaultValue = localStorage.getItem('website-station-system-password')
 
     inputPopUp({
         title: '请输入登录密码?',
@@ -35,8 +35,8 @@ const showLogInput = (resolve, reject) => {
 }
 
 const init = () => new Promise((resolve, reject) => {
-    let token = localStorage.getItem('rejiejay-require-assist-token')
-    let password = localStorage.getItem('rejiejay-require-assist-password')
+    let token = localStorage.getItem('website-station-system-token')
+    let password = localStorage.getItem('website-station-system-password')
 
     if (!token || !password) return showLogInput(resolve, reject)
 
@@ -48,7 +48,7 @@ const init = () => new Promise((resolve, reject) => {
         hiddenError: true
     }).then(
         ({ data }) => {
-            localStorage.setItem('rejiejay-require-assist-token', data)
+            localStorage.setItem('website-station-system-token', data)
             resolve()
         },
         error => showLogInput(resolve, reject)

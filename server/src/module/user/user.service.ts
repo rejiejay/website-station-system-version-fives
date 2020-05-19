@@ -7,17 +7,17 @@ import { createRandomStr } from 'src/utils/string-handle';
 import { AuthHandle } from 'src/auth/auth.handle';
 import { ResultCode } from 'src/config/result-code';
 
-import { TaskAssisUser } from './entity/user.entity';
+import { WebsiteStationUser } from './entity/user.entity';
 
 @Injectable()
 export class UserService {
     constructor(
-        @InjectRepository(TaskAssisUser)
-        private readonly userRepository: Repository<TaskAssisUser>,
+        @InjectRepository(WebsiteStationUser)
+        private readonly userRepository: Repository<WebsiteStationUser>,
     ) { }
 
     // 刷新 token 和 expired
-    async refresh(user: TaskAssisUser): Promise<Consequencer> {
+    async refresh(user: WebsiteStationUser): Promise<Consequencer> {
         const newToken = createRandomStr({ length: 16 })
         const oneHour = 1000 * 60 * 60
         const expiredTime = new Date().getTime() + oneHour

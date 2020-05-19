@@ -25,7 +25,7 @@ export class AuthGuard implements CanActivate {
 
         if (path === '/user/login' || path === '/user/verify') return true
 
-        const token = headers['task-assist-token']
+        const token = headers['website-station-system-token']
         if (!token) {
             console.log('未授权（请求不存在凭证(token)）, 拒绝本次访问; 同时指示UI执行授权流程\n')
             return response.status(HttpStatus.OK).json(consequencer.error(ResultCode.ACCESS_DENIED_UI.description, ResultCode.ACCESS_DENIED_UI.value));

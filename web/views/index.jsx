@@ -1,29 +1,6 @@
-import fetch from './../components/async-fetch/fetch.js';
-import login from './../components/login.js';
-import toast from './../components/toast.js'
-import deviceDiffer from './../utils/device-differ.js'
+import deviceDiffer from './../utils/device-differ.js';
 
-import CONST from './const.js';
+import WindowsComponent from './windows.jsx';
+import MobileComponent from './mobile.jsx';
 
-class MainComponent extends React.Component {
-    constructor(props) {
-        super(props)
-
-        this.state = {
-        }
-    }
-
-    async componentDidMount() {
-        await login()
-    }
-
-    render() {
-
-        return (
-            <div>
-            </div>
-        )
-    }
-}
-
-window.onload = () => ReactDOM.render(<MainComponent />, document.body);
+window.onload = () => deviceDiffer() ? ReactDOM.render(<MobileComponent />, document.body) : ReactDOM.render(<WindowsComponent />, document.body)
