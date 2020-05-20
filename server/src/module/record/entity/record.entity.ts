@@ -27,7 +27,7 @@ export class RecordEntity {
     /**
      * 定义: 内容
      * 作用: 可以使用 JSON.stringify 存储数据
-     * 包含: Cause\Process\Situation\Target\Action\Result\Cclusion
+     * 包含: Cause\Process\Situation\Target\Action\Result\Clusion
      */
     @Column({ type: 'text' })
     content: string;

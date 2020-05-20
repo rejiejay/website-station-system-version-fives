@@ -92,6 +92,6 @@ export class RecordService {
         const result = await this.repository.query(sql);
         if (!result || result instanceof Array === false) return consequencer.error('sql incorrect query');
         if (result.length === 0) return consequencer.error('数据为空');
-        return consequencer.success();
+        return consequencer.success(result);
     }
 }

@@ -1,6 +1,9 @@
 import login from './../../components/login.js';
 import fetch from './../../components/async-fetch/fetch.js';
 import PaginationComponent from './../../components/pagination.jsx';
+import loadPageVar from './../../utils/load-page-var.js';
+import { objValueToArray } from './../../utils/object-handle.js';
+import jsonHandle from './../../utils/json-handle.js';
 
 import CONST from './const.js';
 import WindowsItemDetailComponent from './windows-item-detail.jsx';
@@ -10,11 +13,19 @@ export default class WindowsComponent extends React.Component {
         super(props)
 
         this.state = {
+            sort: CONST.SORT.DEFAULT,
             tag: null,
+            type: CONST.DATA_TYPE.default,
+            search: null,
+
+            minTimestamp: null,
+            maxTimestamp: null,
+
+            list: CONST.DATA.DEFAULTS,
 
             pageNo: 1,
             count: 1,
-            pageSize: 10
+            pageSize: CONST.DEFAULT_PAGE_SIZE
         }
 
         this.clientHeight = document.body.offsetHeight || document.documentElement.clientHeight || window.innerHeight
@@ -23,6 +34,119 @@ export default class WindowsComponent extends React.Component {
 
     async componentDidMount() {
         await login()
+        await this.initData()
+    }
+
+    async initData() {
+        const sort = loadPageVar('sort')
+        const tag = loadPageVar('tag')
+        const type = loadPageVar('type')
+        const search = loadPageVar('search')
+        const minTimestamp = loadPageVar('minTimestamp')
+        const maxTimestamp = loadPageVar('maxTimestamp')
+
+        this.setState({
+            sort: objValueToArray(CONST.SORT).includes(sort) ? sort : null,
+            tag,
+            type: objValueToArray(CONST.DATA_TYPE).filter(filter => filter == type).length > 0 ? type : null,
+            search,
+            minTimestamp,
+            maxTimestamp
+        })
+
+        if (!!search) return await this.initDataBySearch()
+        if (!sort) return await this.initDataByTime({})
+        if (sort === CONST.SORT.TIME) await this.initDataByTime({})
+        if (sort === CONST.SORT.RANDOM) await this.initDataByRandom()
+    }
+
+    async initDataByTime({ isForceRefresh }) {
+        const { pageNo, pageSize, tag, type, minTimestamp, maxTimestamp } = this.state
+        const self = this
+
+        let query = { pageNo, pageSize }
+        if (tag) query.tag = tag
+        if (type) query.type = type
+        if (minTimestamp && maxTimestamp) {
+            query.minTimestamp = minTimestamp
+            query.maxTimestamp = maxTimestamp
+        }
+
+        await fetch.get({ url: 'record/get/list', query }).then(
+            ({ data }) => self.setState({ list: data }),
+            error => { }
+        )
+
+        this.initStatistics(isForceRefresh)
+    }
+
+    initStatistics(isForceRefresh) {
+        const self = this
+        const { tag, type, minTimestamp, maxTimestamp } = this.state
+
+        let query = {}
+        if (tag) query.tag = tag
+        if (type) query.type = type
+        if (minTimestamp && maxTimestamp) {
+            query.minTimestamp = minTimestamp
+            query.maxTimestamp = maxTimestamp
+        }
+
+        const fetchStatisticsList = () => fetch.get({
+            url: 'record/statistics/list',
+            query
+        }).then(
+            ({ data: { count, expiredTimestamp } }) => {
+                self.setState({ count: +count })
+                const statistic = JSON.stringify({ count: +count, expiredTimestamp })
+                window.sessionStorage[`WebSS-record-${JSON.stringify(query)}`] = statistic
+            },
+            error => { }
+        )
+
+        if (isForceRefresh) return fetchStatisticsList()
+
+        /** 判断是否有缓存数据 */
+        const statisticString = window.sessionStorage[`WebSS-record-${JSON.stringify(query)}`]
+        if (!statisticString || statisticString == 'null') return fetchStatisticsList()
+
+        /** 判断缓存数据格式是否正确 */
+        const statisticVerify = jsonHandle.verifyJSONString({ jsonString: statisticString })
+        if (!statisticVerify.isCorrect) return fetchStatisticsList()
+
+        /** 判断是否过期 */
+        const statistic = statisticVerify.data
+        const nowTimestamp = new Date().getTime()
+        if (nowTimestamp > statistic.expiredTimestamp) return fetchStatisticsList()
+
+        /** 数据有效 */
+        this.setState({ count: +statistic.count })
+    }
+
+    async initDataByRandom() {
+        const self = this
+        let query = {}
+
+        await fetch.get({
+            url: 'record/get/random',
+            query
+        }).then(
+            ({ data }) => { },
+            error => { }
+        )
+    }
+
+    async initDataBySearch() {
+        const self = this
+        let query = {}
+
+        await fetch.get({
+            url: 'record/get/search',
+            query
+        }).then(
+            ({ data }) => { },
+            error => { }
+        )
     }
 
     searchHandle() { }

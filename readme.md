@@ -44,4 +44,4 @@ Ctrl + P -> node_modules\._express@4.17.1@express\lib\response.js:771
 localStorage['website-station-system-token']  
 localStorage['website-station-system-password']  
 
-sessionStorage['require-assist-detail-id']  
+sessionStorage['WebSS-record-${JSON.stringify({ tag, type, minTimestamp, maxTimestamp })}']  
