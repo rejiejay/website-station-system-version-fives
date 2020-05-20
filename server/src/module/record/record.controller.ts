@@ -22,6 +22,13 @@ export class RecordController {
         return await this.service.getList({ pageNo, pageSize, tag, type, minTimestamp, maxTimestamp })
     }
 
+    @Get('statistics/list')
+    async statisticsList(@Query() query: any): Promise<Consequencer> {
+        const { tag, type, minTimestamp, maxTimestamp } = query
+
+        return await this.service.statisticsList({ tag, type, minTimestamp, maxTimestamp })
+    }
+
     @Get('search')
     async getBySearch(@Query() query: any): Promise<Consequencer> {
         const { keyword, tag, type } = query

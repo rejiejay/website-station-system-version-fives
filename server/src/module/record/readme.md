@@ -3,6 +3,9 @@
 - get:/record/get/list
 [获取列表](http://localhost:1932/record/get/list)
 
+- get:/record/statistics/list
+[统计列表数据](http://localhost:1932/record/statistics/list)
+
 - get:/record/get/random
 [随机获取](http://localhost:1932/record/get/random)
 
