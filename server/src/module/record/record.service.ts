@@ -36,7 +36,7 @@ export class RecordService {
         const result = await this.repository.query(sql);
         if (!result || result instanceof Array === false) return consequencer.error('sql incorrect query');
         if (result.length === 0) return consequencer.error('数据为空');
-        return consequencer.success();
+        return consequencer.success(result);
     }
 
     async statisticsList({ tag, type, minTimestamp, maxTimestamp }): Promise<Consequencer> {
@@ -79,7 +79,19 @@ export class RecordService {
         return consequencer.success(titleResult.concat(contenResult));
     }
 
-    async getRandom({ tag, type }): Promise<Consequencer> {
+    async getRandom(size, { tag, type }): Promise<Consequencer> {
+        let condition = ''
+
+        /** 标签 */
+        if (!!tag) condition = this.conditionHandle({ initial: condition, sql: `tag="${tag}"` });
+        /** 标签 */
+        if (!!type) condition = this.conditionHandle({ initial: condition, sql: `type="${type}"` });
+
+        const sql = `select * from record_entity ${condition ? `where ${condition}` : ''} order by rand() limit ${size};`
+
+        const result = await this.repository.query(sql);
+        if (!result || result instanceof Array === false) return consequencer.error('sql incorrect query');
+        if (result.length === 0) return consequencer.error('数据为空');
         return consequencer.success();
     }
 }

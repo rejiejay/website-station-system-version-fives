@@ -40,8 +40,10 @@ export class RecordController {
 
     @Get('get/random')
     async getRandom(@Query() query: any): Promise<Consequencer> {
-        const { tag, type } = query
+        const { size, tag, type } = query
 
-        return await this.service.getRandom({ tag, type })
+        if (!size) return consequencer.error('参数有误');
+
+        return await this.service.getRandom(size, { tag, type })
     }
 }
