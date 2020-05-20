@@ -1,29 +1,85 @@
+import fetch from './../../components/async-fetch/fetch.js';
+import { confirmPopUp } from './../../components/confirm-popup.js';
+import jsonHandle from './../../utils/json-handle.js';
+
 import CONST from './const.js';
 
 export default class WindowsItemDetailComponent extends React.Component {
     constructor(props) {
         super(props)
 
-        this.state = {
-        }
+        this.state = {}
     }
 
     componentDidMount() {
+        const { data } = this.props
+
+        if (!data) this.initByRandom()
+    }
+
+    initByRandom() {
+        const { self } = this.props
+
+        fetch.get({
+            url: 'record/get/random',
+            query: { size: 1 }
+        }).then(
+            ({ data }) => (data && data.length > 0) ? self.setState({ detail: data[0] }) : null,
+            error => { }
+        )
+    }
+
+    navigateToDetail() {
+    }
+
+    delDetailHandle() {
+        const { self, data } = this.props
+
+        const handle = () => {
+            fetch.post({
+                url: 'record/del/id',
+                body: { id: data.id }
+            }).then(
+                ({ data }) => self.initData(),
+                error => { }
+            )
+        }
+
+        confirmPopUp({
+            title: '你确定要删除这条数据吗?',
+            succeedHandle: handle
+        })
+    }
+
+    static detailToDiary(detail) {
+        if (!detail || !detail.content) return []
+
+        const diaryString = detail.content
+        const diaryVerify = jsonHandle.verifyJSONString({ jsonString: diaryString })
+        if (!diaryVerify.isCorrect) return []
+
+        const diary = diaryVerify.data
+        const format = CONST.DATA_FORMAT.diary
+
+        return Object.keys(format).map(key => ({
+            title: format[key],
+            description: diary[key] ? diary[key] : false
+        }))
     }
 
     render() {
-        const { children, className, style } = this.props
+        const { data, children, className, style } = this.props
 
         return (
             <div className={className}>
                 <div className="content-detail-container " style={style}>
 
-                    {/* 此处需要添加判断, 渲染哪种数据类型 */}
-                    <div className="detail-preview">
-                        {children.recordNode || children.diaryNode}
-                    </div>
+                    {data && <div className="detail-preview">
+                        {data.type === CONST.DATA_TYPE.record && children.recordNode}
+                        {data.type === CONST.DATA_TYPE.diary && children.diaryNode}
+                    </div>}
 
-                    <div className="detail-operate">
+                    <div className="detail-operate flex-start-center noselect">
                         {children.operateNode}
                     </div>
                 </div>

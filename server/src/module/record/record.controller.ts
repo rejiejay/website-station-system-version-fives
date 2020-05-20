@@ -1,4 +1,4 @@
-import { Controller, Get, Query } from '@nestjs/common';
+import { Controller, Get, Query, Post, Body } from '@nestjs/common';
 
 import { consequencer, Consequencer } from 'src/utils/consequencer';
 
@@ -45,5 +45,23 @@ export class RecordController {
         if (!size) return consequencer.error('参数有误');
 
         return await this.service.getRandom(size, { tag, type })
+    }
+
+    @Get('get/one')
+    async getOne(@Query() query: any): Promise<Consequencer> {
+        const { id } = query
+
+        if (!id) return consequencer.error('参数有误');
+
+        return await this.service.getOne({ id })
+    }
+
+    @Post('del/id')
+    async delById(@Body() body: any): Promise<Consequencer> {
+        const { id } = body
+
+        if (!id) return consequencer.error('参数有误');
+
+        return await this.service.delById({ id })
     }
 }

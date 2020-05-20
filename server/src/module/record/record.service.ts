@@ -94,4 +94,19 @@ export class RecordService {
         if (result.length === 0) return consequencer.error('数据为空');
         return consequencer.success(result);
     }
+
+    async getOne({ id }): Promise<Consequencer> {
+        const result = await this.repository.findOne({ id });
+        if (!result) return consequencer.error('This record does not exist');
+        return consequencer.success(result);
+    }
+
+    async delById({ id }): Promise<Consequencer> {
+        const record = await this.repository.findOne({ id });
+        if (!record) return consequencer.error('This record does not exist');
+        
+        const result = await this.repository.delete(record);
+        if (result && result.raw && result.raw.warningCount === 0) return consequencer.success(record);
+        return consequencer.error(`del [${id}] failure`);
+    }
 }

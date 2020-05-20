@@ -21,7 +21,8 @@ export default class WindowsComponent extends React.Component {
             minTimestamp: null,
             maxTimestamp: null,
 
-            list: CONST.DATA.DEFAULTS,
+            list: CONST.DATA.DEFAULT_LIST,
+            detail: CONST.DATA.DEFAULT_ITEM,
             selectedId: null,
 
             pageNo: 1,
@@ -161,10 +162,16 @@ export default class WindowsComponent extends React.Component {
         )
     }
 
+    selectedHandle(id) {
+        const { list } = this.state
+        const detail = list.find(item => item.id === id)
+        this.setState({ selectedId: id, detail })
+    }
+
     render() {
         const self = this
         const { clientHeight } = this
-        const { list, selectedId, tag, pageNo, count, pageSize } = this.state
+        const { list, selectedId, detail, tag, pageNo, count, pageSize } = this.state
         const minHeight = `${clientHeight - 185}px`
 
         return [
@@ -203,7 +210,7 @@ export default class WindowsComponent extends React.Component {
                     <div className="list-float noselect">{list.map((data, key) => (
                         <div className={`list-item ${selectedId === data.id ? 'list-item-selected' : ''}`} key={key}>
                             <div className="list-item-container"
-                                onClick={() => this.setState({ selectedId: data.id })}
+                                onClick={() => this.selectedHandle(data.id)}
                             >{data.title}</div>
                         </div>
                     ))}</div>
@@ -213,11 +220,33 @@ export default class WindowsComponent extends React.Component {
                     className="content-detail"
                     style={{ minHeight }}
                     ref="itemDetail"
+                    data={detail}
                     self={self}
                 >{{
-                    recordNode: <div>record</div>,
-                    diaryNode: <div>diary</div>,
-                    operateNode: <div>operate</div>
+                    recordNode: [
+                        <div className="detail-preview-title">{detail && detail.title}</div>,
+                        <div className="detail-record-content">{detail && detail.content}</div>
+                    ],
+                    diaryNode: [
+                        <div className="detail-preview-title">{detail && detail.title}</div>,
+                        WindowsItemDetailComponent.detailToDiary(detail).map((diary, key) => diary.description ?
+                            <div className="detail-diary-item" key={key}>
+                                <div className="detail-diary-title">{diary.title}</div>
+                                <div className="detail-diary-description">{diary.description}</div>
+                            </div> : ''
+                        )
+                    ],
+                    operateNode: [
+                        <div className="flex-rest flex-center"
+                            onClick={() => self.refs.itemDetail.initByRandom()}
+                        >随机查看</div>,
+                        <div className="flex-rest flex-center"
+                            onClick={() => self.refs.itemDetail.navigateToDetail()}
+                        >编辑</div>,
+                        <div className="flex-rest flex-center"
+                            onClick={() => self.refs.itemDetail.delDetailHandle()}
+                        >删除</div>
+                    ]
                 }}</WindowsItemDetailComponent>
             </div>,
 
