@@ -9,7 +9,7 @@ export class RecordEntity {
      * 定义: 标签分类
      * 作用: 用于区分以及关联数据
      */
-    @Column({ type: 'tinytext' })
+    @Column({ type: 'tinytext', nullable: true })
     tag: string;
 
     /**
