@@ -140,20 +140,37 @@ export default class WindowsComponent extends React.Component {
 
     async initDataBySearch() {
         const self = this
-        let query = {}
+        const { search, pageSize, tag, type } = this.state
+
+        let query = {
+            keyword: search,
+            searchSize: pageSize
+        }
+        if (tag) query.tag = tag
+        if (type) query.type = type
 
         await fetch.get({
-            url: 'record/get/search',
+            url: 'record/search',
             query
         }).then(
-            ({ data }) => { },
+            ({ data }) => self.setState({ list: data }),
             error => { }
         )
     }
 
-    searchHandle() { }
+    async searchHandle({ target: { value } }) {
+        if (!value) return this.clearSearch()
 
-    clearSearch() { }
+        this.setState(
+            { search: value },
+            this.initDataBySearch
+        )
+    }
+
+    clearSearch() {
+        this.setState({ search: null })
+        this.initData()
+    }
 
     pageNoChangeHandle(newPageNo) {
         this.setState(
