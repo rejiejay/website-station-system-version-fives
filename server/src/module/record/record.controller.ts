@@ -64,4 +64,9 @@ export class RecordController {
 
         return await this.service.delById({ id })
     }
+
+    @Get('statistics/tag')
+    async statisticsTag(@Query() query: any): Promise<Consequencer> {
+        return await this.service.statisticsTag()
+    }
 }

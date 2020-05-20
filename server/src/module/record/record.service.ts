@@ -104,9 +104,18 @@ export class RecordService {
     async delById({ id }): Promise<Consequencer> {
         const record = await this.repository.findOne({ id });
         if (!record) return consequencer.error('This record does not exist');
-        
+
         const result = await this.repository.delete(record);
         if (result && result.raw && result.raw.warningCount === 0) return consequencer.success(record);
         return consequencer.error(`del [${id}] failure`);
+    }
+
+    async statisticsTag(): Promise<Consequencer> {
+        const result = await this.repository.query('select distinct tag from record_entity;');
+        if (!result || result instanceof Array === false) return consequencer.error('sql incorrect query');
+
+        const tags = result.map(record => record.tag)
+        const expiredTimestamp = new Date().getTime() + (1000 * 60 * 25) /** 25分钟过期 */
+        return consequencer.success({ tags, expiredTimestamp });
     }
 }

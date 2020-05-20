@@ -19,6 +19,7 @@ export default class WindowsComponent extends React.Component {
         this.state = {
             sort: CONST.SORT.DEFAULT,
             tag: null,
+            tags: [],
             type: CONST.DATA_TYPE.DEFAULT.value,
             search: null,
 
@@ -40,7 +41,43 @@ export default class WindowsComponent extends React.Component {
 
     async componentDidMount() {
         await login()
+        await this.initTag({})
         await this.initData()
+        await this.refs.itemDetail.initByRandom()
+    }
+
+    async initTag({ isForceRefresh }) {
+        const self = this
+
+        const fetchStatisticsTag = () => fetch.get({
+            url: 'record/statistics/tag',
+            query: {}
+        }).then(
+            ({ data: { tags, expiredTimestamp } }) => {
+                self.setState({ tags: tags })
+                const statistic = JSON.stringify({ tags: tags, expiredTimestamp })
+                window.localStorage['website-station-system-record-tags'] = statistic
+            },
+            error => { }
+        )
+
+        if (isForceRefresh) return await fetchStatisticsTag()
+
+        /** 判断是否有缓存数据 */
+        const statisticString = window.localStorage['website-station-system-record-tags']
+        if (!statisticString || statisticString == 'null') return await fetchStatisticsTag()
+
+        /** 判断缓存数据格式是否正确 */
+        const statisticVerify = jsonHandle.verifyJSONString({ jsonString: statisticString })
+        if (!statisticVerify.isCorrect) return await fetchStatisticsTag()
+
+        /** 判断是否过期 */
+        const statistic = statisticVerify.data
+        const nowTimestamp = new Date().getTime()
+        if (nowTimestamp > statistic.expiredTimestamp) return await fetchStatisticsTag()
+
+        /** 数据有效 */
+        this.setState({ tags: statistic.tags })
     }
 
     async initData() {
@@ -54,7 +91,7 @@ export default class WindowsComponent extends React.Component {
         this.setState({
             sort: objValueToArray(CONST.SORT).includes(sort) ? sort : null,
             tag,
-            type: objValueToArray(CONST.DATA_TYPE).filter(filter => filter.value == type).length > 0 ? +type : null,
+            type: (type === 0 || !!type) ? +type : null,
             search,
             minTimestamp,
             maxTimestamp
@@ -170,6 +207,25 @@ export default class WindowsComponent extends React.Component {
         this.setState({ selectedId: id, detail })
     }
 
+    showTagsSelected() {
+        const self = this
+        const { tags } = this.state
+
+        const handle = ({ value, label }) => {
+            self.setState({ tag: value })
+            const { sort, type, minTimestamp, maxTimestamp } = self.state
+            let query = { sort, tag: value, type, minTimestamp, maxTimestamp }
+            window.location.replace(`./index.html${queryToUrl(query)}`)
+            toast.show()
+        }
+
+        dropDownSelectPopup({
+            list: [{ label: '所有', value: '' }].concat(tags.map(tag => ({ label: tag, value: tag }))),
+            handle,
+            mustSelect: false
+        })
+    }
+
     showDataTypeSelected() {
         const self = this
 
@@ -203,12 +259,12 @@ export default class WindowsComponent extends React.Component {
                 <div className="left-operating flex-start-center">
 
                     <div className="operat-item hover-item"
-                        onClick={() => window.location.href = "./../why/index.html"}
+                        onClick={this.showTagsSelected.bind(this)}
                     >标签分类: {tag ? tag : 'ALL'}</div>
 
                     <div className="operat-item hover-item"
                         onClick={this.showDataTypeSelected.bind(this)}
-                    >数据类型: {type ? constHandle.findValueByValue({ CONST: CONST.DATA_TYPE, supportKey: 'value', supportValue: type, targetKey: 'label' }) : 'ALL'}</div>
+                    >数据类型: {(type === 0 || !!type) ? constHandle.findValueByValue({ CONST: CONST.DATA_TYPE, supportKey: 'value', supportValue: type, targetKey: 'label' }) : 'ALL'}</div>
 
                 </div>
 

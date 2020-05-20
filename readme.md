@@ -45,3 +45,4 @@ localStorage['website-station-system-token']
 localStorage['website-station-system-password']  
 
 sessionStorage['WebSS-record-${JSON.stringify({ tag, type, minTimestamp, maxTimestamp })}']  
+localStorage['website-station-system-record-tags']  

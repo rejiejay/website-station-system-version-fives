@@ -17,3 +17,6 @@
 
 - post:/record/del/id
 [根据id删除一条数据](http://localhost:1932/record/del/id)
+
+- get:/record/statistics/tag
+[统计Tag标签](http://localhost:1932/record/statistics/tag)

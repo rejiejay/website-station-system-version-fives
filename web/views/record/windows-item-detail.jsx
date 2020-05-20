@@ -11,18 +11,13 @@ export default class WindowsItemDetailComponent extends React.Component {
         this.state = {}
     }
 
-    componentDidMount() {
-        const { data } = this.props
-
-        if (!data) this.initByRandom()
-    }
-
     initByRandom() {
         const { self } = this.props
+        const { tag, type } = self.state
 
         fetch.get({
             url: 'record/get/random',
-            query: { size: 1 }
+            query: { size: 1, tag, type }
         }).then(
             ({ data }) => (data && data.length > 0) ? self.setState({ detail: data[0] }) : null,
             error => { }
