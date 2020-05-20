@@ -58,8 +58,25 @@ export class RecordService {
         return consequencer.success({ count, expiredTimestamp });
     }
 
-    async getBySearch(keyword: string, { tag, type }): Promise<Consequencer> {
-        return consequencer.success();
+    async getBySearch(keyword: string, searchSize: number, { tag, type }): Promise<Consequencer> {
+        let condition = ''
+
+        /** 标签 */
+        if (!!tag) condition += ` AND tag="${tag}"`
+        /** 标签 */
+        if (!!type) condition += ` AND type="${type}"`
+
+        const titleSql = `select * from record_entity where title LIKE '%${keyword}%' ${condition} order by timestamp desc limit ${searchSize};`
+        const titleResult = await this.repository.query(titleSql);
+        if (!titleResult || titleResult instanceof Array === false) return consequencer.error('sql incorrect query');
+
+        if (titleResult.length >= searchSize) return consequencer.success(titleResult);
+
+        const laveCount = searchSize - titleResult.length
+        const contentSql = `select * from record_entity where content LIKE '%${keyword}%' ${condition} order by timestamp desc limit ${laveCount};`
+        const contenResult = await this.repository.query(contentSql);
+        if (!titleResult || titleResult instanceof Array === false) return consequencer.error('sql incorrect query');
+        return consequencer.success(titleResult.concat(contenResult));
     }
 
     async getRandom({ tag, type }): Promise<Consequencer> {
