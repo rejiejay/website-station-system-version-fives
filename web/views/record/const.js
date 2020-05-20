@@ -15,9 +15,18 @@ const CONST = {
     },
 
     DATA_TYPE: {
-        default: null,
-        record: 0,
-        diary: 1
+        DEFAULT: {
+            value: null,
+            label: '所有'
+        },
+        RECORD: {
+            value: 0,
+            label: '记录'
+        },
+        DIARY: {
+            value: 1,
+            label: '日记'
+        }
     },
 
     DATA_FORMAT: {

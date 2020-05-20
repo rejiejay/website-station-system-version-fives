@@ -1,9 +1,13 @@
 import login from './../../components/login.js';
 import fetch from './../../components/async-fetch/fetch.js';
 import PaginationComponent from './../../components/pagination.jsx';
+import { dropDownSelectPopup } from './../../components/drop-down-select-popup.js';
+import toast from './../../components/toast.js';
 import loadPageVar from './../../utils/load-page-var.js';
 import { objValueToArray } from './../../utils/object-handle.js';
 import jsonHandle from './../../utils/json-handle.js';
+import constHandle from './../../utils/const-handle.js';
+import { queryToUrl } from './../../utils/url-handle.js';
 
 import CONST from './const.js';
 import WindowsItemDetailComponent from './windows-item-detail.jsx';
@@ -15,7 +19,7 @@ export default class WindowsComponent extends React.Component {
         this.state = {
             sort: CONST.SORT.DEFAULT,
             tag: null,
-            type: CONST.DATA_TYPE.default,
+            type: CONST.DATA_TYPE.DEFAULT.value,
             search: null,
 
             minTimestamp: null,
@@ -50,7 +54,7 @@ export default class WindowsComponent extends React.Component {
         this.setState({
             sort: objValueToArray(CONST.SORT).includes(sort) ? sort : null,
             tag,
-            type: objValueToArray(CONST.DATA_TYPE).filter(filter => filter == type).length > 0 ? type : null,
+            type: objValueToArray(CONST.DATA_TYPE).filter(filter => filter.value == type).length > 0 ? +type : null,
             search,
             minTimestamp,
             maxTimestamp
@@ -66,15 +70,10 @@ export default class WindowsComponent extends React.Component {
         const { pageNo, pageSize, tag, type, minTimestamp, maxTimestamp } = this.state
         const self = this
 
-        let query = { pageNo, pageSize }
-        if (tag) query.tag = tag
-        if (type) query.type = type
-        if (minTimestamp && maxTimestamp) {
-            query.minTimestamp = minTimestamp
-            query.maxTimestamp = maxTimestamp
-        }
-
-        await fetch.get({ url: 'record/get/list', query }).then(
+        await fetch.get({
+            url: 'record/get/list',
+            query: { pageNo, pageSize, tag, type, minTimestamp, maxTimestamp }
+        }).then(
             ({ data }) => self.setState({ list: data }),
             error => { }
         )
@@ -85,14 +84,7 @@ export default class WindowsComponent extends React.Component {
     initStatistics(isForceRefresh) {
         const self = this
         const { tag, type, minTimestamp, maxTimestamp } = this.state
-
-        let query = {}
-        if (tag) query.tag = tag
-        if (type) query.type = type
-        if (minTimestamp && maxTimestamp) {
-            query.minTimestamp = minTimestamp
-            query.maxTimestamp = maxTimestamp
-        }
+        const query = { tag, type, minTimestamp, maxTimestamp }
 
         const fetchStatisticsList = () => fetch.get({
             url: 'record/statistics/list',
@@ -127,13 +119,13 @@ export default class WindowsComponent extends React.Component {
 
     async initDataByRandom() {
         const self = this
-        let query = {}
+        const { pageSize } = this.state
 
         await fetch.get({
             url: 'record/get/random',
-            query
+            query: { size: pageSize }
         }).then(
-            ({ data }) => { },
+            ({ data }) => self.setState({ list: data }),
             error => { }
         )
     }
@@ -142,16 +134,9 @@ export default class WindowsComponent extends React.Component {
         const self = this
         const { search, pageSize, tag, type } = this.state
 
-        let query = {
-            keyword: search,
-            searchSize: pageSize
-        }
-        if (tag) query.tag = tag
-        if (type) query.type = type
-
         await fetch.get({
             url: 'record/search',
-            query
+            query: { search, pageSize, tag, type }
         }).then(
             ({ data }) => self.setState({ list: data }),
             error => { }
@@ -185,15 +170,47 @@ export default class WindowsComponent extends React.Component {
         this.setState({ selectedId: id, detail })
     }
 
+    showDataTypeSelected() {
+        const self = this
+
+        const handle = ({ value, label }) => {
+            self.setState({ type: value })
+            const { sort, tag, minTimestamp, maxTimestamp } = self.state
+            let query = { sort, tag, type: value, minTimestamp, maxTimestamp }
+            window.location.replace(`./index.html${queryToUrl(query)}`)
+            toast.show()
+        }
+
+        dropDownSelectPopup({
+            list: constHandle.toDownSelectFormat({
+                CONST: CONST.DATA_TYPE,
+                labelName: 'label',
+                valueName: 'value'
+            }),
+            handle,
+            mustSelect: false
+        })
+    }
+
     render() {
         const self = this
         const { clientHeight } = this
-        const { list, selectedId, detail, tag, pageNo, count, pageSize } = this.state
+        const { list, selectedId, detail, tag, type, pageNo, count, pageSize } = this.state
         const minHeight = `${clientHeight - 185}px`
 
         return [
             <div className="windows-header flex-start-center noselect">
-                <div className="header-tag hover-item">标签分类: {tag ? tag : 'ALL'}</div>
+                <div className="left-operating flex-start-center">
+
+                    <div className="operat-item hover-item"
+                        onClick={() => window.location.href = "./../why/index.html"}
+                    >标签分类: {tag ? tag : 'ALL'}</div>
+
+                    <div className="operat-item hover-item"
+                        onClick={this.showDataTypeSelected.bind(this)}
+                    >数据类型: {type ? constHandle.findValueByValue({ CONST: CONST.DATA_TYPE, supportKey: 'value', supportValue: type, targetKey: 'label' }) : 'ALL'}</div>
+
+                </div>
 
                 <div className="search flex-rest">
                     <div className="search-container flex-start-center">
@@ -215,7 +232,7 @@ export default class WindowsComponent extends React.Component {
                     </div>
                 </div>
 
-                <div className="fast-operating flex-start-center">
+                <div className="right-operating flex-start-center">
                     <div className="operat-item hover-item"
                         onClick={() => window.location.href = "./../why/index.html"}
                     >理由</div>

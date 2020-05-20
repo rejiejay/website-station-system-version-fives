@@ -75,8 +75,8 @@ export default class WindowsItemDetailComponent extends React.Component {
                 <div className="content-detail-container " style={style}>
 
                     {data && <div className="detail-preview">
-                        {data.type === CONST.DATA_TYPE.record && children.recordNode}
-                        {data.type === CONST.DATA_TYPE.diary && children.diaryNode}
+                        {data.type === CONST.DATA_TYPE.RECORD.value && children.recordNode}
+                        {data.type === CONST.DATA_TYPE.DIARY.value && children.diaryNode}
                     </div>}
 
                     <div className="detail-operate flex-start-center noselect">

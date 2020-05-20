@@ -4,7 +4,7 @@ import toast from './../toast.js';
 
 import config from './config.js';
 import initHeaders from './headers.js';
-import queryToUrl from './url-handle.js';
+import { queryToUrl } from './../../utils/url-handle.js';
 
 import unAuthHandle from './auth-handle.js';
 

@@ -7,7 +7,7 @@ export const dropDownSelectPopup = ({
     /** { value, label } */
     list,
     handle,
-    mustInput
+    mustSelect
 }) => {
     /** 目标: 防止重复调用 */
     if (document.getElementById('rejiejay-drop-down-select-popup')) return false;
@@ -19,7 +19,7 @@ export const dropDownSelectPopup = ({
     }) => `<div class='select-item'>${label}</div>`
 
     const node_content = `
-        ${!!mustInput ? '' : "<div id='rejiejay-drop-down-select-popup-mask'></div>"}
+        ${!!mustSelect ? '' : "<div id='rejiejay-drop-down-select-popup-mask'></div>"}
         <div class='select-container'>${
             list.map(item => renderItem(item)).join('')
         }</div>
@@ -40,7 +40,7 @@ export const dropDownSelectPopup = ({
         }
     }
 
-    if (!mustInput) document.getElementById('rejiejay-drop-down-select-popup-mask').onclick = function() {
+    if (!mustSelect) document.getElementById('rejiejay-drop-down-select-popup-mask').onclick = function() {
         dropDownSelectPopupDestroy()
     }
 }
