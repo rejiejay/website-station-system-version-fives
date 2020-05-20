@@ -7,17 +7,17 @@ import { createRandomStr } from 'src/utils/string-handle';
 import { AuthHandle } from 'src/auth/auth.handle';
 import { ResultCode } from 'src/config/result-code';
 
-import { WebsiteStationUser } from './entity/user.entity';
+import { UserEntity } from './entity/user.entity';
 
 @Injectable()
 export class UserService {
     constructor(
-        @InjectRepository(WebsiteStationUser)
-        private readonly userRepository: Repository<WebsiteStationUser>,
+        @InjectRepository(UserEntity)
+        private readonly userRepository: Repository<UserEntity>,
     ) { }
 
     // 刷新 token 和 expired
-    async refresh(user: WebsiteStationUser): Promise<Consequencer> {
+    async refresh(user: UserEntity): Promise<Consequencer> {
         const newToken = createRandomStr({ length: 16 })
         const oneHour = 1000 * 60 * 60
         const expiredTime = new Date().getTime() + oneHour
