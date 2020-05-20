@@ -31,9 +31,10 @@ export default class WindowsComponent extends React.Component {
     pageNoChangeHandle() { }
 
     render() {
+        const self = this
         const { clientHeight } = this
         const { tag, pageNo, count, pageSize } = this.state
-        const minHeight = clientHeight - 185
+        const minHeight = `${clientHeight - 185}px`
 
         return [
             <div className="windows-header flex-start-center noselect">
@@ -68,16 +69,25 @@ export default class WindowsComponent extends React.Component {
 
             <div className="windows-content-container flex-start-top" style={{ minHeight }}>
                 <div className="content-list flex-rest">
-                </div>
-                <div className="content-detail">
-                    <WindowsItemDetailComponent
-                        ref="itemDetail"
-                    >
-                        <div>
-                            12321321321
+                    <div className="task-float noselect">
+                        <div className="task-item">
+                            <div className="task-item-container">
+                                selectedTaskId
+                            </div>
                         </div>
-                    </WindowsItemDetailComponent>
+                    </div>
                 </div>
+
+                <WindowsItemDetailComponent
+                    className="content-detail"
+                    style={{ minHeight }}
+                    ref="itemDetail"
+                    self={self}
+                >{{
+                    recordNode: <div>record</div>,
+                    diaryNode: <div>diary</div>,
+                    operateNode: <div>operate</div>
+                }}</WindowsItemDetailComponent>
             </div>,
 
             <div className="pagination flex-center">

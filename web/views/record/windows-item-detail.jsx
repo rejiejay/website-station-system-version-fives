@@ -12,11 +12,21 @@ export default class WindowsItemDetailComponent extends React.Component {
     }
 
     render() {
-        const { children } = this.props
+        const { children, className, style } = this.props
 
         return (
-            <div>
-                {children}
+            <div className={className}>
+                <div className="content-detail-container " style={style}>
+
+                    {/* 此处需要添加判断, 渲染哪种数据类型 */}
+                    <div className="detail-preview">
+                        {children.recordNode || children.diaryNode}
+                    </div>
+
+                    <div className="detail-operate">
+                        {children.operateNode}
+                    </div>
+                </div>
             </div>
         )
     }

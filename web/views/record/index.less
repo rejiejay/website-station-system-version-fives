@@ -98,14 +98,68 @@ body {
 
 .windows-content-container {
     padding: 25px;
+
+    .content-list {
+        .task-float {
+            overflow: hidden;
+    
+            >div {
+                float: left;
+            }
+        }
+    
+        .task-item {
+            width: 176px;
+            padding: 0px 7.5px 15px 7.5px;
+    
+            .task-item-container {
+                border: 1px solid #fff;
+                padding: 15px;
+                height: 90px;
+                background-color: #fff;
+                border-radius: 4px;
+                word-wrap: break-word;
+                overflow: hidden;
+                cursor: pointer;
+            }
+        }
+    
+        .task-item-selected .task-item-container {
+            border: 1px solid #1890ff;
+        }
+    }
+
+    .content-detail {
+        padding-left: 25px;
+
+        .content-detail-container {
+            position: relative;
+            padding: 15px;
+            width: 470px;
+            background-color: #fff;
+        }
+
+        .detail-preview {
+            padding-bottom: 45px;
+        }
+
+        .detail-operate {
+            position: absolute;
+            left: 0px;
+            bottom: 0px;
+            width: 100%;
+            height: 45px;
+            border-top: 1px solid #ddd;
+        }
+    }
 }
 
 .copyright-component {
-    padding-top: 25px;
+    padding-top   : 25px;
     padding-bottom: 5px;
 
     .copyright-describe {
         text-align: center;
-        font-size: 14px;
+        font-size : 14px;
     }
 }
