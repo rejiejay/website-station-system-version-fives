@@ -22,10 +22,11 @@ export default class WindowsComponent extends React.Component {
             maxTimestamp: null,
 
             list: CONST.DATA.DEFAULTS,
+            selectedId: null,
 
             pageNo: 1,
             count: 1,
-            pageSize: CONST.DEFAULT_PAGE_SIZE
+            pageSize: CONST.DEFAULT_PAGE_SIZE.windows
         }
 
         this.clientHeight = document.body.offsetHeight || document.documentElement.clientHeight || window.innerHeight
@@ -153,12 +154,17 @@ export default class WindowsComponent extends React.Component {
 
     clearSearch() { }
 
-    pageNoChangeHandle() { }
+    pageNoChangeHandle(newPageNo) {
+        this.setState(
+            { pageNo: newPageNo },
+            () => this.initDataByTime({})
+        )
+    }
 
     render() {
         const self = this
         const { clientHeight } = this
-        const { tag, pageNo, count, pageSize } = this.state
+        const { list, selectedId, tag, pageNo, count, pageSize } = this.state
         const minHeight = `${clientHeight - 185}px`
 
         return [
@@ -194,13 +200,13 @@ export default class WindowsComponent extends React.Component {
 
             <div className="windows-content-container flex-start-top" style={{ minHeight }}>
                 <div className="content-list flex-rest">
-                    <div className="task-float noselect">
-                        <div className="task-item">
-                            <div className="task-item-container">
-                                selectedTaskId
-                            </div>
+                    <div className="list-float noselect">{list.map((data, key) => (
+                        <div className={`list-item ${selectedId === data.id ? 'list-item-selected' : ''}`} key={key}>
+                            <div className="list-item-container"
+                                onClick={() => this.setState({ selectedId: data.id })}
+                            >{data.title}</div>
                         </div>
-                    </div>
+                    ))}</div>
                 </div>
 
                 <WindowsItemDetailComponent

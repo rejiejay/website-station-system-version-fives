@@ -25,7 +25,10 @@ const CONST = {
         RANDOM: 'random'
     },
 
-    DEFAULT_PAGE_SIZE: 10
+    DEFAULT_PAGE_SIZE: {
+        windows: 30,
+        mobile: 10
+    }
 }
 
 export default CONST
