@@ -1,4 +1,5 @@
 import login from './../../components/login.js';
+import fetch from './../../components/async-fetch/fetch.js';
 import PaginationComponent from './../../components/pagination.jsx';
 
 import CONST from './const.js';
