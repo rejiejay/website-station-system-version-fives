@@ -4,6 +4,7 @@
 @import './input-popup.less';
 @import './confirm-popup.less';
 @import './drop-down-select-popup.less';
+@import './pagination.less';
 
 @black1: #303133;
 @black2: #606266;
@@ -19,4 +20,92 @@ body {
     font-size       : 14px;
     color           : @black2;
     background-color: #f1f1f1;
+}
+
+.windows-header {
+    width        : 100%;
+    height       : 46px;
+    background   : #fff;
+    border-bottom: 1px solid #ddd;
+
+    .header-tag {
+        padding: 0px 15px;
+    }
+
+    .fast-operating {
+        padding-right: 7.5px;
+
+        .operat-item {
+            padding: 7.5px;
+        }
+    }
+
+    .hover-item {
+        cursor            : pointer;
+        transition        : color 0.25s;
+        -moz-transition   : color 0.25s;
+        /* Firefox 4 */
+        -webkit-transition: color 0.25s;
+        /* Safari 和 Chrome */
+        -o-transition     : color 0.25s;
+        /* Opera */
+        transition        : background-color 1s;
+        -moz-transition   : background-color 1s;
+        /* Firefox 4 */
+        -webkit-transition: background-color 1s;
+        /* Safari 和 Chrome */
+        -o-transition     : background-color 1s;
+        /* Opera */
+    }
+
+    .hover-item:hover {
+        color           : @black1;
+        background-color: rgba(0, 0, 0, 0.08);
+    }
+
+    .search {
+        height : 32px;
+        padding: 0px 15px;
+
+        .search-container {
+            height          : 32px;
+            border-radius   : 16px;
+            overflow        : hidden;
+            background-color: #f1f1f1;
+        }
+
+        .search-input input {
+            padding: 0px;
+        }
+
+        .cancel-icon,
+        .search-icon {
+            padding: 0px 15px;
+            cursor : pointer;
+
+            path {
+                fill: @black3;
+            }
+        }
+
+        .cancel-icon:hover path,
+        .search-icon:hover path {
+            fill: #ff4d4f;
+        }
+
+    }
+}
+
+.windows-content-container {
+    padding: 25px;
+}
+
+.copyright-component {
+    padding-top: 25px;
+    padding-bottom: 5px;
+
+    .copyright-describe {
+        text-align: center;
+        font-size: 14px;
+    }
 }
