@@ -1,6 +1,7 @@
 import fetch from './../../components/async-fetch/fetch.js';
 import { confirmPopUp } from './../../components/confirm-popup.js';
 import jsonHandle from './../../utils/json-handle.js';
+import { queryToUrl } from './../../utils/url-handle.js';
 
 import CONST from './const.js';
 
@@ -25,6 +26,10 @@ export default class WindowsItemDetailComponent extends React.Component {
     }
 
     navigateToDetail() {
+        const { self, data } = this.props
+        const { sort, tag, type, minTimestamp, maxTimestamp } = self.state
+        let query = { id: data.id, sort, tag, type, minTimestamp, maxTimestamp }
+        window.open(`./edit/index.html${queryToUrl(query)}`)
     }
 
     delDetailHandle() {

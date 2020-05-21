@@ -40,9 +40,18 @@ const CONST = {
     },
 
     SORT: {
-        DEFAULT: 'time',
-        TIME: 'time',
-        RANDOM: 'random'
+        DEFAULT: {
+            value: null,
+            label: '默认'
+        },
+        TIME: {
+            value: 'time',
+            label: '日期'
+        },
+        RANDOM: {
+            value: 'random',
+            label: '随机'
+        }
     },
 
     DEFAULT_PAGE_SIZE: {

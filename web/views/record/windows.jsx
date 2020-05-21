@@ -4,7 +4,6 @@ import PaginationComponent from './../../components/pagination.jsx';
 import { dropDownSelectPopup } from './../../components/drop-down-select-popup.js';
 import toast from './../../components/toast.js';
 import loadPageVar from './../../utils/load-page-var.js';
-import { objValueToArray } from './../../utils/object-handle.js';
 import jsonHandle from './../../utils/json-handle.js';
 import constHandle from './../../utils/const-handle.js';
 import { queryToUrl } from './../../utils/url-handle.js';
@@ -17,7 +16,7 @@ export default class WindowsComponent extends React.Component {
         super(props)
 
         this.state = {
-            sort: CONST.SORT.DEFAULT,
+            sort: CONST.SORT.DEFAULT.value,
             tag: null,
             tags: [],
             type: CONST.DATA_TYPE.DEFAULT.value,
@@ -89,7 +88,7 @@ export default class WindowsComponent extends React.Component {
         const maxTimestamp = loadPageVar('maxTimestamp')
 
         this.setState({
-            sort: objValueToArray(CONST.SORT).includes(sort) ? sort : null,
+            sort,
             tag,
             type: (type === 0 || !!type) ? +type : null,
             search,
@@ -99,8 +98,8 @@ export default class WindowsComponent extends React.Component {
 
         if (!!search) return await this.initDataBySearch()
         if (!sort) return await this.initDataByTime({})
-        if (sort === CONST.SORT.TIME) await this.initDataByTime({})
-        if (sort === CONST.SORT.RANDOM) await this.initDataByRandom()
+        if (sort === CONST.SORT.TIME.value) await this.initDataByTime({})
+        if (sort === CONST.SORT.RANDOM.value) await this.initDataByRandom()
     }
 
     async initDataByTime({ isForceRefresh }) {
@@ -248,10 +247,38 @@ export default class WindowsComponent extends React.Component {
         })
     }
 
+    showSortSelected() {
+        const self = this
+
+        const handle = ({ value, label }) => {
+            self.setState({ sort: value })
+            const { tag, type, minTimestamp, maxTimestamp } = self.state
+            let query = { sort: value, tag, type, minTimestamp, maxTimestamp }
+            window.location.replace(`./index.html${queryToUrl(query)}`)
+            toast.show()
+        }
+
+        dropDownSelectPopup({
+            list: constHandle.toDownSelectFormat({
+                CONST: CONST.SORT,
+                labelName: 'label',
+                valueName: 'value'
+            }),
+            handle,
+            mustSelect: false
+        })
+    }
+
+    navigateToCreateDetail() {
+        const { sort, tag, type, minTimestamp, maxTimestamp } = this.state
+        let query = { sort, tag, type, minTimestamp, maxTimestamp }
+        window.open(`./edit/index.html${queryToUrl(query)}`)
+    }
+
     render() {
         const self = this
         const { clientHeight } = this
-        const { list, selectedId, detail, tag, type, pageNo, count, pageSize } = this.state
+        const { list, selectedId, detail, tag, type, sort, pageNo, count, pageSize } = this.state
         const minHeight = `${clientHeight - 185}px`
 
         return [
@@ -290,8 +317,11 @@ export default class WindowsComponent extends React.Component {
 
                 <div className="right-operating flex-start-center">
                     <div className="operat-item hover-item"
-                        onClick={() => window.location.href = "./../why/index.html"}
-                    >理由</div>
+                        onClick={this.showSortSelected.bind(this)}
+                    >排序: {sort ? constHandle.findValueByValue({ CONST: CONST.SORT, supportKey: 'value', supportValue: type, targetKey: 'label' }) : '默认'}</div>
+                    <div className="operat-item hover-item"
+                        onClick={this.navigateToCreateDetail.bind(this)}
+                    >创建</div>
                 </div>
             </div>,
 
@@ -340,7 +370,7 @@ export default class WindowsComponent extends React.Component {
                 }}</WindowsItemDetailComponent>
             </div>,
 
-            <div className="pagination flex-center">
+            sort === CONST.SORT.TIME.value && <div className="pagination flex-center">
                 <PaginationComponent
                     pageNo={pageNo}
                     pageTotal={Math.ceil(count / pageSize)}

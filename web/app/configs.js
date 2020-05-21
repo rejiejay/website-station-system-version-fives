@@ -10,6 +10,10 @@ const configs = [{
     entry: './views/record',
     output: './build/record'
 }, {
+    route: '/record/edit/index.html',
+    entry: './views/record/edit',
+    output: './build/record/edit'
+}, {
     route: '/require/index.html',
     entry: './views/require',
     output: './build/require'
