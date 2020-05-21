@@ -20,3 +20,66 @@ body {
     color           : @black2;
     background-color: #f1f1f1;
 }
+
+.windows {
+    padding: 15px;
+
+    .windows-container {
+        width: 1265px;
+
+        .windows-separation {
+            width: 25px;
+        }
+    }
+
+    .windows-container-left {
+        background: #fff;
+
+        .title-input {
+            padding      : 15px;
+            height       : 32px;
+            border-bottom: 1px solid #ddd;
+
+            input {
+                font-size: 18px;
+            }
+        }
+
+        .content-input {
+            position: relative;
+
+            textarea {
+                color: @black2;
+            }
+
+            .data-type-selected {
+                top        : 15px;
+                right      : 15px;
+                position   : absolute;
+                font-size  : 16px;
+                font-weight: bold;
+                cursor     : pointer;
+            }
+        }
+
+    }
+
+    .windows-container-right {
+        .soft-operate {
+            padding-bottom: 15px;
+            color         : #fff;
+            cursor        : pointer;
+
+            .soft-operate-item {
+                height          : 45px;
+                border-right    : 1px solid #ddd;
+                background-color: #1890ff;
+            }
+
+            .soft-operate-item:hover {
+                color           : #fff;
+                background-color: #52c41a;
+            }
+        }
+    }
+}
