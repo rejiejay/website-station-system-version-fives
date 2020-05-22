@@ -1,5 +1,8 @@
+import fetch from './../../../components/async-fetch/fetch.js';
 import { dropDownSelectPopup } from './../../../components/drop-down-select-popup.js';
+import toast from './../../../components/toast.js'
 import constHandle from './../../../utils/const-handle.js';
+import { queryToUrl, loadPageVar, parseQueryString } from './../../../utils/url-handle.js';
 
 import CONST from './const.js';
 import WINDOWS_CONST from './../const.js';
@@ -16,7 +19,8 @@ export default class WindowsComponent extends React.Component {
             images: ''
         }
 
-        this.status = CONST.PAGE_EDIT_STATUS.DEFAULTS
+        this.status = CONST.PAGE_STATUS.DEFAULTS
+        this.callbackUrl = ''
         this.data = {}
         this.id = null
 
@@ -24,11 +28,46 @@ export default class WindowsComponent extends React.Component {
         this.clientWidth = document.body.offsetWidth || document.documentElement.clientWidth || window.innerWidth
     }
 
-    async componentDidMount() { }
+    async componentDidMount() {
+        this.initCallbackPageVar()
+        await this.initData()
+    }
+
+    initCallbackPageVar() {
+        const callbackQuery = parseQueryString()
+        delete callbackQuery.id
+        this.callbackUrl = queryToUrl(callbackQuery)
+    }
+
+    async initData() {
+        const self = this
+        const id = loadPageVar('id')
+        this.id = id
+        this.status = id ? CONST.PAGE_STATUS.EDIT : CONST.PAGE_STATUS.ADD
+
+        if (!id) return
+
+        await fetch.get({
+            url: 'record/get/one',
+            query: { id }
+        }).then(
+            ({ data }) => {
+                self.data = data
+                self.setState({
+                    title: data.title,
+                    content: data.content,
+                    tag: data.tag,
+                    type: data.type,
+                    images: data.images
+                })
+            },
+            error => { }
+        )
+    }
 
     verifyEditDiff() {
         const { status } = this
-        if (status !== CONST.PAGE_EDIT_STATUS.EDIT) return false
+        if (status !== CONST.PAGE_STATUS.EDIT) return false
 
         const { title, content, tag, type, images } = this.state
         const data = this.data
@@ -56,7 +95,23 @@ export default class WindowsComponent extends React.Component {
         })
     }
 
+    addHandle() {
+        const { callbackUrl } = this
+        const { title, content, tag, type, images } = this.state
+        if (!title) return toast.show('标题不能为空');
+        if (!content) return toast.show('内容不能为空');
+
+        fetch.post({
+            url: 'record/add',
+            body: { title, content, tag, type, images }
+        }).then(
+            res => window.location.replace(`./../index.html${callbackUrl}`),
+            error => { }
+        )
+    }
+
     render() {
+        const self = this
         const { title, content, type } = this.state
         const { clientHeight, status } = this
         const minHeight = clientHeight - 75
@@ -89,8 +144,13 @@ export default class WindowsComponent extends React.Component {
                     <div className="windows-container-right flex-rest">
                         <div className="soft-operate flex-start">
                             <div className="soft-operate-item flex-center flex-rest">关闭</div>
-                            {status === CONST.PAGE_EDIT_STATUS.EDIT && self.verifyEditDiff() &&
+                            {status === CONST.PAGE_STATUS.EDIT && self.verifyEditDiff() &&
                                 <div className="soft-operate-item flex-center flex-rest">暂存</div>
+                            }
+                            {status === CONST.PAGE_STATUS.ADD &&
+                                <div className="soft-operate-item flex-center flex-rest"
+                                    onClick={this.addHandle.bind(this)}
+                                >新增</div>
                             }
                         </div>
 

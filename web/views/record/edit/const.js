@@ -1,5 +1,5 @@
 const CONST = {
-    PAGE_EDIT_STATUS: {
+    PAGE_STATUS: {
         DEFAULTS: 'add',
         ADD: 'add',
         EDIT: 'edit'

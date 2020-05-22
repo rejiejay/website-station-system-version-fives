@@ -23,3 +23,20 @@ export const queryToUrl = query => {
 
     return url
 }
+
+export const loadPageVar = sVar => decodeURI(
+    window.location.search.replace(
+        new RegExp(
+            `^(?:.*[&\\?]${encodeURI(sVar).replace(/[\.\+\*]/g, '\\$&')}(?:\\=([^&]*))?)?.*$`,
+            'i'
+        ), '$1'
+    )
+)
+
+// URL参数转换对象
+export const parseQueryString = () => {
+    var search = location.search.substring(1);
+
+    return search ? JSON.parse('{"' + search.replace(/&/g, '","').replace(/=/g, '":"') + '"}',
+        function(key, value) { return key === "" ? value : decodeURIComponent(value) }) : {}
+}

@@ -2,6 +2,7 @@ import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 
+import { uploadByStr, getUploadInfor, pullCopyUpload, pullDeleteUpload, getCredential } from 'src/sdk/tencent-oss';
 import { consequencer, Consequencer } from 'src/utils/consequencer';
 
 import { RecordEntity } from './entity/record.entity';
@@ -117,5 +118,77 @@ export class RecordService {
         const tags = result.map(record => record.tag)
         const expiredTimestamp = new Date().getTime() + (1000 * 60 * 25) /** 25分钟过期 */
         return consequencer.success({ tags, expiredTimestamp });
+    }
+
+    async addById({ title, content, tag, type, images }): Promise<Consequencer> {
+        let record = new RecordEntity()
+        record.title = title
+        record.content = content
+        if (tag) record.tag = tag
+        record.type = type ? type : 0
+        if (images) record.images = images
+        record.timestamp = new Date().getTime()
+
+        const result = await this.repository.save(record);
+        return result ? consequencer.success(result) : consequencer.error('add record to repository failure');
+    }
+
+    async temporaryImagetoProduceImage({ temporaryImageListPath }): Promise<Consequencer> {
+        const produceImages = []
+
+        for (let index = 0; index < temporaryImageListPath.length; index++) {
+            const temporaryImagePath = temporaryImageListPath[index]
+
+            /** 含义: 找到临时路径的图片 */
+            const uploadInfor = await getUploadInfor(temporaryImagePath).then(
+                infor => consequencer.success(infor),
+                error => consequencer.error(error)
+            )
+            if (uploadInfor.result !== 1) return uploadInfor
+
+            /** 含义: 复制临时图片到生产目录 */
+            const nowTimestamp = new Date().getTime()
+            const producePath = `website-station-system/diary-record/${nowTimestamp}.png`;
+            const copyUpload = await pullCopyUpload({ oldPath: temporaryImagePath, newPath: producePath }).then(
+                infor => consequencer.success(infor),
+                error => consequencer.error(error)
+            )
+            if (copyUpload.result !== 1) return copyUpload
+
+            /** 含义: 删除复制临时图片 */
+            const deleteUpload = await this.delImage({ path: temporaryImagePath })
+            if (deleteUpload.result !== 1) return deleteUpload
+
+            produceImages.push(producePath)
+        }
+
+        return consequencer.success(produceImages);
+    }
+
+    async delImage({ path }): Promise<Consequencer> {
+        /** 含义: 找到路径的图片 */
+        const delInfor = await getUploadInfor(path).then(
+            infor => consequencer.success(infor),
+            error => consequencer.error(error)
+        )
+        if (delInfor.result !== 1) return delInfor
+
+        /** 含义: 删除路径图片 */
+        const deleteUpload = await pullDeleteUpload(path).then(
+            infor => consequencer.success(infor),
+            error => consequencer.error(error)
+        )
+        if (deleteUpload.result !== 1) return deleteUpload
+
+        return consequencer.success();
+    }
+
+    async uploadImageTemporary(imageBase64String): Promise<Consequencer> {
+        const path = `website-station-system/diary-record/temporary/${new Date().getTime()}.png`;
+
+        /** 注意: UI值是经过Base64加密过后的值 */
+        const str = imageBase64String.replace(/^data:image\/\w+;base64,/, '')
+
+        return await uploadByStr({ str, path, encoding: 'base64' }).then(() => consequencer.success(path), error => consequencer.error(error))
     }
 }

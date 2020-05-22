@@ -20,3 +20,9 @@
 
 - get:/record/statistics/tag
 [统计Tag标签](http://localhost:1932/record/statistics/tag)
+
+- post:/record/add
+[新增一条数据](http://localhost:1932/record/add)
+
+- post:/record/image/temporary/upload
+[临时新增图片](http://localhost:1932/record/image/temporary/upload)

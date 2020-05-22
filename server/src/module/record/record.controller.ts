@@ -1,6 +1,7 @@
 import { Controller, Get, Query, Post, Body } from '@nestjs/common';
 
 import { consequencer, Consequencer } from 'src/utils/consequencer';
+import jsonHandle from 'src/utils/json-handle';
 
 import { RecordService } from './record.service';
 
@@ -68,5 +69,36 @@ export class RecordController {
     @Get('statistics/tag')
     async statisticsTag(@Query() query: any): Promise<Consequencer> {
         return await this.service.statisticsTag()
+    }
+
+    @Post('add')
+    async addById(@Body() body: any): Promise<Consequencer> {
+        let { title, content, tag, type, images } = body
+
+        if (!title || !content) return consequencer.error('参数有误');
+
+        if (!images) return await this.service.addById({ title, content, tag, type, images })
+
+        /** 含义: 开始处理图片 */
+        const imagesVerify = jsonHandle.verifyJSONString({ jsonString: images, isArray: true })
+        if (!imagesVerify) return await this.service.addById({ title, content, tag, type, images })
+        const imageArray = imagesVerify.data
+
+        /** 含义: 临时图片路径转为正式路径 */
+        const transform = await this.service.temporaryImagetoProduceImage({ temporaryImageListPath: imageArray })
+        if (transform.result !== 1) return transform
+
+        /** 含义: 转换成功 */
+        images = JSON.stringify(transform.data)
+        return await this.service.addById({ title, content, tag, type, images })
+    }
+
+    @Post('image/temporary/upload')
+    async uploadImage(@Body() body: any): Promise<object> {
+        const { imageBase64String } = body
+
+        if (!imageBase64String) return consequencer.error('参数有误');
+
+        return this.service.uploadImageTemporary(imageBase64String);
     }
 }

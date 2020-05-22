@@ -3,10 +3,9 @@ import fetch from './../../components/async-fetch/fetch.js';
 import PaginationComponent from './../../components/pagination.jsx';
 import { dropDownSelectPopup } from './../../components/drop-down-select-popup.js';
 import toast from './../../components/toast.js';
-import loadPageVar from './../../utils/load-page-var.js';
 import jsonHandle from './../../utils/json-handle.js';
 import constHandle from './../../utils/const-handle.js';
-import { queryToUrl } from './../../utils/url-handle.js';
+import { queryToUrl, loadPageVar } from './../../utils/url-handle.js';
 
 import CONST from './const.js';
 import WindowsItemDetailComponent from './windows-item-detail.jsx';
