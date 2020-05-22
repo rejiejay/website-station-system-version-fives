@@ -35,6 +35,12 @@ export default class WindowsComponent extends React.Component {
 
     initCallbackPageVar() {
         const callbackQuery = parseQueryString()
+
+        let state = {}
+        if (callbackQuery.tag) state.tag = callbackQuery.tag
+        if (callbackQuery.type) state.type = callbackQuery.type
+        this.setState(state)
+
         delete callbackQuery.id
         this.callbackUrl = queryToUrl(callbackQuery)
     }
