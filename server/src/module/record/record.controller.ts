@@ -101,4 +101,42 @@ export class RecordController {
 
         return this.service.uploadImageTemporary(imageBase64String);
     }
+
+    @Post('image/delete')
+    async deleteImage(@Body() body: any): Promise<object> {
+        const { path } = body
+
+        if (!path) return consequencer.error('参数有误');
+
+        return this.service.delImage({ path });
+    }
+
+    @Post('edit')
+    async editById(@Body() body: any): Promise<Consequencer> {
+        let { id, title, content, tag, type, images } = body
+
+        if (!id || !title || !content) return consequencer.error('参数有误');
+
+        /** 含义: 不存在图片则直接更新 */
+        if (!images) return this.service.editById({ id, title, content, tag, type, images });
+
+        /** 含义: 图片是否有修改 */
+        const recordResult = await this.service.getById(id);
+        if (recordResult.result !== 1) return recordResult
+        const record = recordResult.data
+        if (images === record.images) return await this.service.editById({ id, title, content, tag, type, images });
+
+        /** 含义: 开始处理图片 */
+        const imagesVerify = jsonHandle.verifyJSONString({ jsonString: images, isArray: true })
+        if (!imagesVerify) return consequencer.error('参数有误')
+        const imageArray = imagesVerify.data
+
+        /** 含义: 临时图片路径转为正式路径 */
+        const transform = await this.service.updateProduceImageList({ produceImagePathList: imageArray })
+        if (transform.result !== 1) return transform
+
+        /** 含义: 转换成功 */
+        images = JSON.stringify(transform.data)
+        return await this.service.editById({ id, title, content, tag, type, images });
+    }
 }

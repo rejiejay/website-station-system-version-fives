@@ -26,3 +26,9 @@
 
 - post:/record/image/temporary/upload
 [临时新增图片](http://localhost:1932/record/image/temporary/upload)
+
+- post:/record/image/delete
+[删除图片(包括生产图片)](http://localhost:1932/record/image/delete)
+
+- post:/record/edit
+[根据id编辑一条数据](http://localhost:1932/record/edit)

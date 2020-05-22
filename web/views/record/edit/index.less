@@ -23,13 +23,14 @@ body {
 
 .windows {
     padding: 15px;
+}
 
-    .windows-container {
-        width: 1265px;
+.windows .windows-container {
+    width         : 1265px;
+    padding-bottom: 15px;
 
-        .windows-separation {
-            width: 25px;
-        }
+    .windows-separation {
+        width: 25px;
     }
 
     .windows-container-left {
@@ -81,5 +82,69 @@ body {
                 background-color: #52c41a;
             }
         }
+
+        .tag-selected {
+            overflow      : hidden;
+            padding-bottom: 5px;
+
+            .tag-selected-title {
+                padding-bottom: 5px;
+                font-size     : 12px;
+
+            }
+
+            .tag-selected-item {
+                float  : left;
+                padding: 0px 7.5px 7.5px 0px;
+
+                .tag-item-container {
+                    border          : 1px solid #fff;
+                    padding         : 0px 15px;
+                    height          : 32px;
+                    background-color: #fff;
+                    border-radius   : 4px;
+                    word-wrap       : break-word;
+                    overflow        : hidden;
+                    cursor          : pointer;
+                }
+
+                .tag-item-container:hover {
+                    border: 1px solid #1890ff;
+                }
+            }
+
+        }
+
+        .other-input {
+            .content-input {
+                padding-bottom: 15px;
+
+                .content-input-title {
+                    padding-bottom: 5px;
+                    font-size     : 12px;
+                }
+
+                textarea {
+                    background-color: #fff;
+                }
+            }
+        }
+    }
+}
+
+.windows .windows-operate {
+    width : 1265px;
+    color : #fff;
+    cursor: pointer;
+
+    .windows-operate-item {
+        height          : 45px;
+        border-right    : 1px solid #ddd;
+        background-color: #1890ff;
+    }
+
+    .windows-operate-item:hover {
+        color           : #fff;
+        background-color: #52c41a;
     }
 }

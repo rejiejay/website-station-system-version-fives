@@ -1,11 +1,14 @@
 import fetch from './../../../components/async-fetch/fetch.js';
 import { dropDownSelectPopup } from './../../../components/drop-down-select-popup.js';
 import toast from './../../../components/toast.js'
+import { confirmPopUp } from './../../../components/confirm-popup.js';
 import constHandle from './../../../utils/const-handle.js';
+import jsonHandle from './../../../utils/json-handle.js';
 import { queryToUrl, loadPageVar, parseQueryString } from './../../../utils/url-handle.js';
 
 import CONST from './const.js';
 import WINDOWS_CONST from './../const.js';
+import server from './../server.js';
 
 export default class WindowsComponent extends React.Component {
     constructor(props) {
@@ -16,7 +19,10 @@ export default class WindowsComponent extends React.Component {
             content: '',
             tag: null,
             type: CONST.DATA_TYPE.RECORD.value,
-            images: ''
+            images: '',
+
+            isShowTagsSelected: false,
+            tags: []
         }
 
         this.status = CONST.PAGE_STATUS.DEFAULTS
@@ -30,6 +36,7 @@ export default class WindowsComponent extends React.Component {
 
     async componentDidMount() {
         this.initCallbackPageVar()
+        await this.initTag({})
         await this.initData()
     }
 
@@ -38,11 +45,16 @@ export default class WindowsComponent extends React.Component {
 
         let state = {}
         if (callbackQuery.tag) state.tag = callbackQuery.tag
-        if (callbackQuery.type) state.type = callbackQuery.type
+        if (callbackQuery.type) state.type = +callbackQuery.type
         this.setState(state)
 
         delete callbackQuery.id
         this.callbackUrl = queryToUrl(callbackQuery)
+    }
+
+    async initTag({ isForceRefresh }) {
+        const tags = await server.getTags({ isForceRefresh })
+        this.setState({ tags })
     }
 
     async initData() {
@@ -116,11 +128,125 @@ export default class WindowsComponent extends React.Component {
         )
     }
 
+    editHandle() {
+        const self = this
+        const { id } = this
+        const { title, content, tag, type, images } = this.state
+        if (!title) return toast.show('标题不能为空');
+        if (!content) return toast.show('内容不能为空');
+
+        fetch.post({
+            url: 'record/edit',
+            body: { id, title, content, tag, type, images }
+        }).then(
+            ({ data }) => {
+                toast.show('编辑成功')
+                self.data = data
+                self.setState({
+                    title: data.title,
+                    content: data.content,
+                    tag: data.tag,
+                    type: data.type,
+                    images: data.images
+                })
+            },
+            error => { }
+        )
+    }
+
+    changeValueByDataTypeHandle({ key, value }) {
+        let { type, content } = this.state
+
+        if (type === WINDOWS_CONST.DATA_TYPE.DIARY.value) {
+            let diary = this.getJsonByDataType()
+            diary[key] = value
+            content = JSON.stringify(diary)
+        }
+
+        this.setState({ content })
+    }
+
+    getJsonByDataType() {
+        const { type, content } = this.state
+        if (type === WINDOWS_CONST.DATA_TYPE.DIARY.value) {
+            const verifyJSOresult = jsonHandle.verifyJSONString({ jsonString: content })
+            if (verifyJSOresult.isCorrect) {
+                let diary = verifyJSOresult.data
+                return diary
+            } else {
+                let diary = WINDOWS_CONST.DATA_FORMAT.diary
+                diary.clusion = content
+                return diary
+            }
+        }
+
+        return content
+    }
+
+    renderContent() {
+        const { clientHeight } = this
+        const self = this
+        const { type, content } = this.state
+
+        let value = content
+        let placeholder = '详细描述与记录是什么'
+        let onChangeHandle = ({ target: { value } }) => this.setState({ content: value })
+
+        if (type === WINDOWS_CONST.DATA_TYPE.DIARY.value) {
+            value = self.getJsonByDataType().clusion
+            placeholder = '得出什么结论'
+            onChangeHandle = ({ target: { value } }) => self.changeValueByDataTypeHandle({ key: 'clusion', value })
+        }
+
+        return (
+            <textarea className="content-textarea fiex-rest" type="text"
+                placeholder={placeholder}
+                style={{ height: clientHeight - 215 }}
+                value={value}
+                onChange={onChangeHandle}
+            ></textarea>
+        )
+    }
+
+    delHandle() {
+        const { id, callbackUrl } = this
+
+        const handle = () => {
+            fetch.post({
+                url: 'record/del/id',
+                body: { id }
+            }).then(
+                res => window.location.replace(`./../index.html${callbackUrl}`),
+                error => { }
+            )
+        }
+
+        confirmPopUp({
+            title: '你确定要删除这条数据吗?',
+            succeedHandle: handle
+        })
+    }
+
+    closeHandle() {
+        const { status, callbackUrl } = this
+
+        const handleBack = () => window.location.replace(`./../index.html${callbackUrl}`)
+
+        if (status === CONST.PAGE_STATUS.EDIT && this.verifyEditDiff()) {
+            confirmPopUp({
+                title: '你有数据尚未保存，你确定要返回吗?',
+                succeedHandle: handleBack
+            })
+        }
+
+        handleBack()
+    }
+
     render() {
         const self = this
-        const { title, content, type } = this.state
+        const { title, type, tag, tags, isShowTagsSelected } = this.state
         const { clientHeight, status } = this
-        const minHeight = clientHeight - 75
+        const minHeight = clientHeight - 125
 
         return (
             <div className="windows flex-column-center">
@@ -136,12 +262,7 @@ export default class WindowsComponent extends React.Component {
                             <div className="data-type-selected"
                                 onClick={this.showDataTypeSelected.bind(this)}
                             >{constHandle.findValueByValue({ CONST: CONST.DATA_TYPE, supportKey: 'value', supportValue: type, targetKey: 'label' })}</div>
-                            <textarea className="content-textarea fiex-rest" type="text"
-                                placeholder="详细描述与记录是什么"
-                                style={{ height: minHeight - 63 - 32 }}
-                                value={content}
-                                onChange={({ target: { value } }) => this.setState({ content: value })}
-                            ></textarea>
+                            {self.renderContent.call(this)}
                         </div>
                     </div>
 
@@ -149,26 +270,88 @@ export default class WindowsComponent extends React.Component {
 
                     <div className="windows-container-right flex-rest">
                         <div className="soft-operate flex-start">
-                            <div className="soft-operate-item flex-center flex-rest">关闭</div>
-                            {status === CONST.PAGE_STATUS.EDIT && self.verifyEditDiff() &&
-                                <div className="soft-operate-item flex-center flex-rest">暂存</div>
-                            }
-                            {status === CONST.PAGE_STATUS.ADD &&
-                                <div className="soft-operate-item flex-center flex-rest"
-                                    onClick={this.addHandle.bind(this)}
-                                >新增</div>
-                            }
+                            <div className="soft-operate-item flex-center flex-rest"
+                                onClick={() => self.setState({ isShowTagsSelected: true })}
+                            >{tag ? tag : '标签选择'}</div>
+                            <div className="soft-operate-item flex-center flex-rest">图片选择</div>
                         </div>
 
-                        <div className="tag-selected">
-                        </div>
+                        {isShowTagsSelected && <div className="tag-selected">
+                            <div className="tag-selected-title">标签选择</div>
+                            {tags.map((item, key) => (
+                                item ? <div className="tag-selected-item" key={key}>
+                                    <div className="tag-item-container flex-center"
+                                        onClick={() => self.setState({ tag: item, isShowTagsSelected: false })}
+                                    >{item}</div>
+                                </div> : ''
+                            ))}
+                        </div>}
 
                         <div className="image-selected">
                         </div>
 
                         <div className="other-input">
+                            {type === WINDOWS_CONST.DATA_TYPE.DIARY.value && [
+                                <div className="content-input">
+                                    <div className="content-input-title">情况是什么</div>
+                                    <textarea className="content-textarea fiex-rest" type="text"
+                                        placeholder="情况是什么"
+                                        style={{ height: '125px' }}
+                                        value={self.getJsonByDataType().situation}
+                                        onChange={({ target: { value } }) => self.changeValueByDataTypeHandle({ key: 'situation', value })}
+                                    ></textarea>
+                                </div>,
+                                <div className="content-input">
+                                    <div className="content-input-title">当时目标想法是什么</div>
+                                    <textarea className="content-textarea fiex-rest" type="text"
+                                        placeholder="当时目标想法是什么"
+                                        style={{ height: '125px' }}
+                                        value={self.getJsonByDataType().target}
+                                        onChange={({ target: { value } }) => self.changeValueByDataTypeHandle({ key: 'target', value })}
+                                    ></textarea>
+                                </div>,
+                                <div className="content-input">
+                                    <div className="content-input-title">有啥行动</div>
+                                    <textarea className="content-textarea fiex-rest" type="text"
+                                        placeholder="有啥行动"
+                                        style={{ height: '125px' }}
+                                        value={self.getJsonByDataType().action}
+                                        onChange={({ target: { value } }) => self.changeValueByDataTypeHandle({ key: 'action', value })}
+                                    ></textarea>
+                                </div>,
+                                <div className="content-input">
+                                    <div className="content-input-title">结果如何</div>
+                                    <textarea className="content-textarea fiex-rest" type="text"
+                                        placeholder="结果如何"
+                                        style={{ height: '125px' }}
+                                        value={self.getJsonByDataType().result}
+                                        onChange={({ target: { value } }) => self.changeValueByDataTypeHandle({ key: 'result', value })}
+                                    ></textarea>
+                                </div>
+                            ]}
                         </div>
                     </div>
+                </div>
+
+                <div className="windows-operate flex-start">
+                    <div className="windows-operate-item flex-center flex-rest"
+                        onClick={this.closeHandle.bind(this)}
+                    >关闭</div>
+                    {status === CONST.PAGE_STATUS.EDIT && self.verifyEditDiff() &&
+                        <div className="windows-operate-item flex-center flex-rest"
+                            onClick={this.editHandle.bind(this)}
+                        >暂存</div>
+                    }
+                    {status === CONST.PAGE_STATUS.EDIT &&
+                        <div className="windows-operate-item flex-center flex-rest"
+                            onClick={this.delHandle.bind(this)}
+                        >删除</div>
+                    }
+                    {status === CONST.PAGE_STATUS.ADD &&
+                        <div className="windows-operate-item flex-center flex-rest"
+                            onClick={this.addHandle.bind(this)}
+                        >新增</div>
+                    }
                 </div>
             </div>
         )

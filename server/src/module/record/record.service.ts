@@ -191,4 +191,61 @@ export class RecordService {
 
         return await uploadByStr({ str, path, encoding: 'base64' }).then(() => consequencer.success(path), error => consequencer.error(error))
     }
+
+    async getById(id): Promise<Consequencer> {
+        const record = await this.repository.findOne({ id });
+        if (record) return consequencer.success(record);
+        return consequencer.error('This record does not exist');
+    }
+
+    async editById({ id, title, content, tag, type, images }): Promise<Consequencer> {
+        const record = await this.repository.findOne({ id });
+        if (!record) return consequencer.error('This record does not exist');
+
+        const result = await this.repository.update(record, { title, content, tag, type, images });
+        if (result && result.raw && result.raw.warningCount === 0) return consequencer.success({ title, content, tag, type, images });
+
+        return consequencer.error(`update record failure`);
+    }
+
+    /**
+     * 含义: 更新图片
+     * 注意: 表示一定有临时路径
+     */
+    async updateProduceImageList({ produceImagePathList }): Promise<Consequencer> {
+        const produceImages = []
+
+        for (let index = 0; index < produceImagePathList.length; index++) {
+            const imagePath = produceImagePathList[index]
+            if (imagePath.search('temporary') === -1) {
+                produceImages.push(imagePath)
+                continue
+            }
+
+            /** 含义: 找到临时路径的图片 */
+            const uploadInfor = await getUploadInfor(imagePath).then(
+                infor => consequencer.success(infor),
+                error => consequencer.error(error)
+            )
+            if (uploadInfor.result !== 1) return uploadInfor
+
+            /** 含义: 复制临时图片到生产目录 */
+            const nowTimestamp = new Date().getTime()
+            const producePath = `website-station-system/diary-record/${nowTimestamp}.png`;
+            const copyUpload = await pullCopyUpload({ oldPath: imagePath, newPath: producePath }).then(
+                infor => consequencer.success(infor),
+                error => consequencer.error(error)
+            )
+            if (copyUpload.result !== 1) return copyUpload
+
+            /** 含义: 删除复制临时图片 */
+            const deleteUpload = await this.delImage({ path: imagePath })
+            if (deleteUpload.result !== 1) return deleteUpload
+
+            produceImages.push(producePath)
+        }
+
+        /** 含义: 所有图片都转化为生产目录 */
+        return consequencer.success(produceImages);
+    }
 }

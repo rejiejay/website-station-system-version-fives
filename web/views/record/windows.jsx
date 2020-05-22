@@ -8,6 +8,7 @@ import constHandle from './../../utils/const-handle.js';
 import { queryToUrl, loadPageVar } from './../../utils/url-handle.js';
 
 import CONST from './const.js';
+import server from './server.js';
 import WindowsItemDetailComponent from './windows-item-detail.jsx';
 
 export default class WindowsComponent extends React.Component {
@@ -45,37 +46,8 @@ export default class WindowsComponent extends React.Component {
     }
 
     async initTag({ isForceRefresh }) {
-        const self = this
-
-        const fetchStatisticsTag = () => fetch.get({
-            url: 'record/statistics/tag',
-            query: {}
-        }).then(
-            ({ data: { tags, expiredTimestamp } }) => {
-                self.setState({ tags: tags })
-                const statistic = JSON.stringify({ tags: tags, expiredTimestamp })
-                window.localStorage['website-station-system-record-tags'] = statistic
-            },
-            error => { }
-        )
-
-        if (isForceRefresh) return await fetchStatisticsTag()
-
-        /** 判断是否有缓存数据 */
-        const statisticString = window.localStorage['website-station-system-record-tags']
-        if (!statisticString || statisticString == 'null') return await fetchStatisticsTag()
-
-        /** 判断缓存数据格式是否正确 */
-        const statisticVerify = jsonHandle.verifyJSONString({ jsonString: statisticString })
-        if (!statisticVerify.isCorrect) return await fetchStatisticsTag()
-
-        /** 判断是否过期 */
-        const statistic = statisticVerify.data
-        const nowTimestamp = new Date().getTime()
-        if (nowTimestamp > statistic.expiredTimestamp) return await fetchStatisticsTag()
-
-        /** 数据有效 */
-        this.setState({ tags: statistic.tags })
+        const tags = await server.getTags({ isForceRefresh })
+        this.setState({ tags })
     }
 
     async initData() {
