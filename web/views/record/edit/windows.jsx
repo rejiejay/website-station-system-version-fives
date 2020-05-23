@@ -5,9 +5,11 @@ import { confirmPopUp } from './../../../components/confirm-popup.js';
 import constHandle from './../../../utils/const-handle.js';
 import jsonHandle from './../../../utils/json-handle.js';
 import { queryToUrl, loadPageVar, parseQueryString } from './../../../utils/url-handle.js';
+import { arrayRemoveItemByValue } from './../../../utils/array-handle.js';
 
 import CONST from './const.js';
-import WINDOWS_CONST from './../const.js';
+import RECORD_CONST from './../const.js';
+import BASE_CONST from './../../const.js';
 import server from './../server.js';
 import homeServer from './../../server.js';
 
@@ -33,7 +35,7 @@ export default class WindowsComponent extends React.Component {
 
         this.cossdk = null
         this.file = null
-        this.resource = WINDOWS_CONST.IMAGES.TEMPORARY_RESOURCE
+        this.resource = RECORD_CONST.IMAGES.TEMPORARY_RESOURCE
 
         this.clientHeight = document.body.offsetHeight || document.documentElement.clientHeight || window.innerHeight
         this.clientWidth = document.body.offsetWidth || document.documentElement.clientWidth || window.innerWidth
@@ -168,7 +170,7 @@ export default class WindowsComponent extends React.Component {
     changeValueByDataTypeHandle({ key, value }) {
         let { type, content } = this.state
 
-        if (type === WINDOWS_CONST.DATA_TYPE.DIARY.value) {
+        if (type === RECORD_CONST.DATA_TYPE.DIARY.value) {
             let diary = this.getJsonByDataType()
             diary[key] = value
             content = JSON.stringify(diary)
@@ -179,13 +181,13 @@ export default class WindowsComponent extends React.Component {
 
     getJsonByDataType() {
         const { type, content } = this.state
-        if (type === WINDOWS_CONST.DATA_TYPE.DIARY.value) {
+        if (type === RECORD_CONST.DATA_TYPE.DIARY.value) {
             const verifyJSONresult = jsonHandle.verifyJSONString({ jsonString: content })
             if (verifyJSONresult.isCorrect) {
                 let diary = verifyJSONresult.data
                 return diary
             } else {
-                let diary = WINDOWS_CONST.DATA_FORMAT.diary
+                let diary = RECORD_CONST.DATA_FORMAT.diary
                 diary.clusion = content
                 return diary
             }
@@ -203,7 +205,7 @@ export default class WindowsComponent extends React.Component {
         let placeholder = '详细描述与记录是什么'
         let onChangeHandle = ({ target: { value } }) => this.setState({ content: value })
 
-        if (type === WINDOWS_CONST.DATA_TYPE.DIARY.value) {
+        if (type === RECORD_CONST.DATA_TYPE.DIARY.value) {
             value = self.getJsonByDataType().clusion
             placeholder = '得出什么结论'
             onChangeHandle = ({ target: { value } }) => self.changeValueByDataTypeHandle({ key: 'clusion', value })
@@ -296,11 +298,34 @@ export default class WindowsComponent extends React.Component {
         )
     }
 
+    delImageHandle(key) {
+        const self = this
+        const images = this.getImageArray()
+        const image = images[key]
+
+        const handle = () => fetch.post({
+            url: 'record/image/delete',
+            body: { path: image }
+        }).then(
+            res => {
+                const newImages = arrayRemoveItemByValue(images, image)
+                self.setState({ images: JSON.stringify(newImages) })
+            },
+            error => { }
+        )
+
+        confirmPopUp({
+            title: '你确定要删除这张图片吗?',
+            succeedHandle: handle
+        })
+    }
+
     render() {
         const self = this
         const { title, type, tag, tags, isShowTagsSelected } = this.state
         const { clientHeight, status } = this
         const minHeight = clientHeight - 125
+        const images = this.getImageArray()
 
         return (
             <div className="windows flex-column-center">
@@ -343,20 +368,34 @@ export default class WindowsComponent extends React.Component {
 
                         {isShowTagsSelected && <div className="tag-selected">
                             <div className="tag-selected-title">标签选择</div>
-                            {tags.map((item, key) => (
-                                item ? <div className="tag-selected-item" key={key}>
-                                    <div className="tag-item-container flex-center"
-                                        onClick={() => self.setState({ tag: item, isShowTagsSelected: false })}
-                                    >{item}</div>
-                                </div> : ''
-                            ))}
+                            <div className="tag-selected-container">
+                                {tags.map((item, key) => (
+                                    item ? <div className="tag-selected-item" key={key}>
+                                        <div className="tag-item-container flex-center"
+                                            onClick={() => self.setState({ tag: item, isShowTagsSelected: false })}
+                                        >{item}</div>
+                                    </div> : ''
+                                ))}
+                            </div>
                         </div>}
 
-                        <div className="image-selected">
-                        </div>
+                        {images.length > 0 && <div className="image-selected">
+                            <div className="image-selected-title">图片列表</div>
+                            <div className="image-selected-container">
+                                {images.map((image, key) => (
+                                    <div className="image-selected-item" key={key}>
+                                        <div className="image-item-container flex-center"
+                                            onClick={() => self.delImageHandle(key)}
+                                        >
+                                            <img alt="image" src={`${BASE_CONST.TENCENT_OSS_RESOURCE}/${image}`} ></img>
+                                        </div>
+                                    </div>
+                                ))}
+                            </div>
+                        </div>}
 
                         <div className="other-input">
-                            {type === WINDOWS_CONST.DATA_TYPE.DIARY.value && [
+                            {type === RECORD_CONST.DATA_TYPE.DIARY.value && [
                                 <div className="content-input">
                                     <div className="content-input-title">情况是什么</div>
                                     <textarea className="content-textarea fiex-rest" type="text"

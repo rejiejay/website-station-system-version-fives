@@ -84,13 +84,15 @@ body {
         }
 
         .tag-selected {
-            overflow      : hidden;
             padding-bottom: 5px;
 
             .tag-selected-title {
                 padding-bottom: 5px;
                 font-size     : 12px;
+            }
 
+            .tag-selected-container {
+                overflow: hidden;
             }
 
             .tag-selected-item {
@@ -113,6 +115,43 @@ body {
                 }
             }
 
+        }
+
+        .image-selected {
+            padding-bottom: 5px;
+
+            .image-selected-title {
+                padding-bottom: 5px;
+                font-size     : 12px;
+            }
+
+            .image-selected-container {
+                overflow: hidden;
+            }
+
+            .image-selected-item {
+                float  : left;
+                padding: 0px 15px 15px 0px;
+
+                .image-item-container {
+                    border          : 1px solid #fff;
+                    height          : 135px;
+                    width           : 135px;
+                    background-color: #fff;
+                    overflow        : hidden;
+                    cursor          : pointer;
+
+                    img {
+                        display: block;
+                        width  : 100%;
+                        height : 100%;
+                    }
+                }
+
+                .image-item-container:hover {
+                    border: 1px solid #1890ff;
+                }
+            }
         }
 
         .other-input {
