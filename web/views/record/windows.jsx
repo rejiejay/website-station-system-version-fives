@@ -3,7 +3,6 @@ import fetch from './../../components/async-fetch/fetch.js';
 import PaginationComponent from './../../components/pagination.jsx';
 import { dropDownSelectPopup } from './../../components/drop-down-select-popup.js';
 import toast from './../../components/toast.js';
-import jsonHandle from './../../utils/json-handle.js';
 import constHandle from './../../utils/const-handle.js';
 import { queryToUrl, loadPageVar } from './../../utils/url-handle.js';
 
@@ -88,40 +87,11 @@ export default class WindowsComponent extends React.Component {
         this.initStatistics(isForceRefresh)
     }
 
-    initStatistics(isForceRefresh) {
-        const self = this
+    async initStatistics(isForceRefresh) {
         const { tag, type, minTimestamp, maxTimestamp } = this.state
-        const query = { tag, type, minTimestamp, maxTimestamp }
 
-        const fetchStatisticsList = () => fetch.get({
-            url: 'record/statistics/list',
-            query
-        }).then(
-            ({ data: { count, expiredTimestamp } }) => {
-                self.setState({ count: +count })
-                const statistic = JSON.stringify({ count: +count, expiredTimestamp })
-                window.sessionStorage[`WebSS-record-${JSON.stringify(query)}`] = statistic
-            },
-            error => { }
-        )
-
-        if (isForceRefresh) return fetchStatisticsList()
-
-        /** 判断是否有缓存数据 */
-        const statisticString = window.sessionStorage[`WebSS-record-${JSON.stringify(query)}`]
-        if (!statisticString || statisticString == 'null') return fetchStatisticsList()
-
-        /** 判断缓存数据格式是否正确 */
-        const statisticVerify = jsonHandle.verifyJSONString({ jsonString: statisticString })
-        if (!statisticVerify.isCorrect) return fetchStatisticsList()
-
-        /** 判断是否过期 */
-        const statistic = statisticVerify.data
-        const nowTimestamp = new Date().getTime()
-        if (nowTimestamp > statistic.expiredTimestamp) return fetchStatisticsList()
-
-        /** 数据有效 */
-        this.setState({ count: +statistic.count })
+        const count = await server.getStatistics({ tag, type, minTimestamp, maxTimestamp, isForceRefresh })
+        this.setState({ count })
     }
 
     async initDataByRandom() {
@@ -143,7 +113,7 @@ export default class WindowsComponent extends React.Component {
 
         await fetch.get({
             url: 'record/search',
-            query: { search, pageSize, tag, type }
+            query: { keyword: search, searchSize: pageSize, tag, type }
         }).then(
             ({ data }) => self.setState({ list: data }),
             error => { }
@@ -154,7 +124,7 @@ export default class WindowsComponent extends React.Component {
         if (!value) return this.clearSearch()
 
         this.setState(
-            { search: value },
+            { search: value, minTimestamp: null, maxTimestamp: null },
             this.initDataBySearch
         )
     }

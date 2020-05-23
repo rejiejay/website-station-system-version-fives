@@ -33,7 +33,7 @@ body {
     }
 
     .left-operating {
-        padding-left: 7.5px;
+        padding-left : 7.5px;
         padding-right: 25px;
 
         .operat-item {
@@ -42,7 +42,7 @@ body {
     }
 
     .right-operating {
-        padding-left: 25px;
+        padding-left : 25px;
         padding-right: 7.5px;
 
         .operat-item {
@@ -192,7 +192,7 @@ body {
             .flex-rest {
                 height      : 45px;
                 border-right: 1px solid #ddd;
-                cursor: pointer;
+                cursor      : pointer;
             }
         }
     }
@@ -206,4 +206,71 @@ body {
         text-align: center;
         font-size : 14px;
     }
+}
+
+.mobile-header {
+    position     : fixed;
+    width        : 100%;
+    background   : #fff;
+    border-bottom: 1px solid #ddd;
+
+    .header-filter {
+        height       : 25px;
+        border-bottom: 1px solid #ddd;
+
+        .header-filter-separation {
+            width: 65px;
+            height: 25px;
+            border-left : 1px solid #ddd;
+            border-right: 1px solid #ddd;
+        }
+    }
+
+    .header-operating {
+        height: 45px;
+    }
+
+    .left-operating {
+        padding-left: 15px;
+    }
+
+    .right-operating {
+        padding-right: 15px;
+    }
+
+    .search {
+        height : 32px;
+        padding: 0px 15px;
+
+        .search-container {
+            height          : 32px;
+            border-radius   : 16px;
+            overflow        : hidden;
+            background-color: #f1f1f1;
+        }
+
+        .search-input input {
+            padding: 0px;
+        }
+
+        .cancel-icon,
+        .search-icon {
+            padding: 0px 15px;
+            cursor : pointer;
+
+            path {
+                fill: @black3;
+            }
+        }
+
+        .cancel-icon:hover path,
+        .search-icon:hover path {
+            fill: #ff4d4f;
+        }
+
+    }
+}
+
+.mobile-list {
+    padding-top: 87px;
 }
