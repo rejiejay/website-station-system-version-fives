@@ -1,6 +1,8 @@
 import fetch from './../../components/async-fetch/fetch.js';
 import jsonHandle from './../../utils/json-handle.js';
 
+import CONST from './const.js';
+
 let server = {}
 
 server.getTags = async({ isForceRefresh }) => {
@@ -77,6 +79,28 @@ server.getStatistics = async({ tag, type, minTimestamp, maxTimestamp, isForceRef
     if (nowTimestamp > statistic.expiredTimestamp) return fetchStatisticsList()
 
     return +statistic.count
+}
+
+server.getJsonByDataType = ({ type, content }) => {
+    if (type === CONST.DATA_TYPE.DIARY.value) {
+        const verifyJSONresult = jsonHandle.verifyJSONString({ jsonString: content })
+        if (verifyJSONresult.isCorrect) {
+            let diary = verifyJSONresult.data
+            return diary
+        } else {
+            let diary = CONST.DATA_FORMAT.diary
+            diary.clusion = content
+            return diary
+        }
+    }
+
+    return content
+}
+
+server.getImageArray = ({ imageArrayString }) => {
+    const verifyJSONresult = jsonHandle.verifyJSONString({ jsonString: imageArrayString, isArray: true })
+    if (!verifyJSONresult.isCorrect) return [];
+    return verifyJSONresult.data
 }
 
 export default server

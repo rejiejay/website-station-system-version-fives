@@ -8,6 +8,7 @@ import { queryToUrl, loadPageVar } from './../../utils/url-handle.js';
 import timeTransformers from './../../utils/time-transformers.js';
 
 import CONST from './const.js';
+import BASE_CONST from './../const.js';
 import server from './server.js';
 
 export default class MobileComponent extends React.Component {
@@ -211,11 +212,18 @@ export default class MobileComponent extends React.Component {
         })
     }
 
+    navigateToDetail({ id }) {
+        const { sort, tag, type, minTimestamp, maxTimestamp } = this.state
+        window.location.href = `./edit/index.html${queryToUrl({ id, sort, tag, type, minTimestamp, maxTimestamp })}`
+    }
+
+    showBigImageHandle = imageUrl => previewImage.start({ urls: [imageUrl], current: imageUrl })
+
     render() {
         const self = this
         const { clientHeight } = this
         const { list, tag, type, sort, pageNo, count, pageSize, minTimestamp, maxTimestamp } = this.state
-        const minItemHeight = clientHeight - 102
+        const minItemHeight = clientHeight - 147
 
         return [
             <div className="mobile-header noselect">
@@ -278,8 +286,47 @@ export default class MobileComponent extends React.Component {
                 </div>
             </div>,
 
-            <div className="mobile-list">
-            </div>
+            <div className="mobile-list">{list.map(({ id, tag, type, title, content, timestamp, images }, key) => {
+                let record = content
+                if (type === CONST.DATA_TYPE.DIARY.value) record = server.getJsonByDataType({ type, content })
+                const imageArray = server.getImageArray({ imageArrayString: images })
+
+                return (
+                    <div className="list-item" key={key}>
+                        <div className="list-item-container" style={{ minHeight: `${minItemHeight}px` }} >
+                            <div className="list-item-title">{title}</div>
+                            {type === CONST.DATA_TYPE.RECORD.value && <div className="list-item-content" dangerouslySetInnerHTML={{ __html: record.replace(/\n/g, "<br>") }}></div>}
+                            {type === CONST.DATA_TYPE.DIARY.value && [
+                                record.clusion && <div className="list-item-content" dangerouslySetInnerHTML={{ __html: `结论: ${record.clusion.replace(/\n/g, "<br>")}` }}></div>,
+                                record.situation && <div className="list-item-content" dangerouslySetInnerHTML={{ __html: `情况: ${record.situation.replace(/\n/g, "<br>")}` }}></div>,
+                                record.target && <div className="list-item-content" dangerouslySetInnerHTML={{ __html: `目标: ${record.target.replace(/\n/g, "<br>")}` }}></div>,
+                                record.action && <div className="list-item-content" dangerouslySetInnerHTML={{ __html: `行动: ${record.action.replace(/\n/g, "<br>")}` }}></div>,
+                                record.result && <div className="list-item-content" dangerouslySetInnerHTML={{ __html: `结果: ${record.result.replace(/\n/g, "<br>")}` }}></div>
+                            ]}
+                            {imageArray.length > 0 && <div className="image-show">
+                                <div className="image-show-container">
+                                    {imageArray.map((image, key) => (
+                                        <div className="image-show-item" key={key}>
+                                            <div className="image-item-container flex-center"
+                                                onClick={() => self.showBigImageHandle(`${BASE_CONST.TENCENT_OSS_RESOURCE}/${image}`)}
+                                            >
+                                                <img alt="image" src={`${BASE_CONST.TENCENT_OSS_RESOURCE}/${image}`} ></img>
+                                            </div>
+                                        </div>
+                                    ))}
+                                </div>
+                            </div>}
+                            <div className="list-item-operating flex-start-center">
+                                <div className="operating-tag flex-rest">{tag ? tag : 'ALL'}</div>
+                                <div className="operating-navigate flex-center"
+                                    onClick={() => self.navigateToDetail({ id })}
+                                >编辑</div>
+                                <div className="operating-time flex-rest">{timeTransformers.dateToFormat(new Date(+timestamp))}</div>
+                            </div>
+                        </div>
+                    </div>
+                )
+            })}</div>
         ]
     }
 }

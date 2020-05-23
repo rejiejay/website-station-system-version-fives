@@ -181,19 +181,7 @@ export default class WindowsComponent extends React.Component {
 
     getJsonByDataType() {
         const { type, content } = this.state
-        if (type === RECORD_CONST.DATA_TYPE.DIARY.value) {
-            const verifyJSONresult = jsonHandle.verifyJSONString({ jsonString: content })
-            if (verifyJSONresult.isCorrect) {
-                let diary = verifyJSONresult.data
-                return diary
-            } else {
-                let diary = RECORD_CONST.DATA_FORMAT.diary
-                diary.clusion = content
-                return diary
-            }
-        }
-
-        return content
+        return server.getJsonByDataType({ type, content })
     }
 
     renderContent() {
@@ -255,17 +243,11 @@ export default class WindowsComponent extends React.Component {
         handleBack()
     }
 
-    getImageArray() {
-        let { images } = this.state
-        const verifyJSONresult = jsonHandle.verifyJSONString({ jsonString: images, isArray: true })
-        if (!verifyJSONresult.isCorrect) return [];
-        return verifyJSONresult.data
-    }
-
     uploadFileHandle({ target: { files } }) {
         const self = this
+        let { images } = this.state
         let { file, cossdk, resource } = this
-        const images = this.getImageArray()
+        const images = server.getImageArray({ imageArrayString: images })
 
         const nowTimestamp = new Date().getTime()
         const path = `${resource}/${nowTimestamp}.png`
@@ -300,17 +282,15 @@ export default class WindowsComponent extends React.Component {
 
     delImageHandle(key) {
         const self = this
-        const images = this.getImageArray()
-        const image = images[key]
+        let { images } = this.state
+        const imageArray = server.getImageArray({ imageArrayString: images })
+        const image = imageArray[key]
 
         const handle = () => fetch.post({
             url: 'record/image/delete',
             body: { path: image }
         }).then(
-            res => {
-                const newImages = arrayRemoveItemByValue(images, image)
-                self.setState({ images: JSON.stringify(newImages) })
-            },
+            res => self.setState({ images: JSON.stringify(arrayRemoveItemByValue(imageArray, image)) }),
             error => { }
         )
 
@@ -322,10 +302,10 @@ export default class WindowsComponent extends React.Component {
 
     render() {
         const self = this
-        const { title, type, tag, tags, isShowTagsSelected } = this.state
+        const { title, type, tag, tags, isShowTagsSelected, images } = this.state
         const { clientHeight, status } = this
         const minHeight = clientHeight - 125
-        const images = this.getImageArray()
+        const imageArray = server.getImageArray({ imageArrayString: images })
 
         return (
             <div className="windows flex-column-center">
@@ -379,11 +359,11 @@ export default class WindowsComponent extends React.Component {
                             </div>
                         </div>}
 
-                        {images.length > 0 && <div className="image-selected">
-                            <div className="image-selected-title">图片列表</div>
-                            <div className="image-selected-container">
-                                {images.map((image, key) => (
-                                    <div className="image-selected-item" key={key}>
+                        {imageArray.length > 0 && <div className="list-image">
+                            <div className="list-image-title">图片列表</div>
+                            <div className="list-image-container">
+                                {imageArray.map((image, key) => (
+                                    <div className="list-image-item" key={key}>
                                         <div className="image-item-container flex-center"
                                             onClick={() => self.delImageHandle(key)}
                                         >
