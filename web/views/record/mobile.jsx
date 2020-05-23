@@ -6,6 +6,7 @@ import toast from './../../components/toast.js';
 import constHandle from './../../utils/const-handle.js';
 import { queryToUrl, loadPageVar } from './../../utils/url-handle.js';
 import timeTransformers from './../../utils/time-transformers.js';
+import { arrayDuplicateByKey } from './../../utils/array-handle.js';
 
 import CONST from './const.js';
 import BASE_CONST from './../const.js';
@@ -29,7 +30,7 @@ export default class MobileComponent extends React.Component {
 
             pageNo: 1,
             count: 1,
-            pageSize: CONST.DEFAULT_PAGE_SIZE.windows
+            pageSize: CONST.DEFAULT_PAGE_SIZE.mobile
         }
 
         this.clientHeight = document.body.offsetHeight || document.documentElement.clientHeight || window.innerHeight
@@ -71,14 +72,23 @@ export default class MobileComponent extends React.Component {
     }
 
     async initDataByTime({ isForceRefresh }) {
-        const { pageNo, pageSize, tag, type, minTimestamp, maxTimestamp } = this.state
+        const { pageNo, pageSize, count, tag, type, list, minTimestamp, maxTimestamp } = this.state
         const self = this
 
         await fetch.get({
             url: 'record/get/list',
             query: { pageNo, pageSize, tag, type, minTimestamp, maxTimestamp }
         }).then(
-            ({ data }) => self.setState({ list: data }),
+            ({ data }) => {
+                if (data.length === 0) return toast.show('已加载完成所有数据!')
+
+                if (isForceRefresh) return self.setState({ pageNo: 1, list: data })
+
+                /** 是否新增, 通过 pageNo 判断 */
+                if (list.length > 0 && pageNo > 1 && count > 1) return self.setState({ list: list.concat(data) })
+
+                self.setState({ list: data })
+            },
             error => { }
         )
 
@@ -94,13 +104,18 @@ export default class MobileComponent extends React.Component {
 
     async initDataByRandom() {
         const self = this
-        const { pageSize } = this.state
+        const { pageNo, pageSize, count, list } = this.state
 
         await fetch.get({
             url: 'record/get/random',
             query: { size: pageSize }
         }).then(
-            ({ data }) => self.setState({ list: data }),
+            ({ data }) => {
+                /** 是否新增, 通过 pageNo 判断 */
+                if (list.length > 0 && pageNo > 1 && count > 1) return self.setState({ list: arrayDuplicateByKey(list.concat(data), 'id') })
+
+                self.setState({ list: data })
+            },
             error => { }
         )
     }
@@ -113,9 +128,11 @@ export default class MobileComponent extends React.Component {
             url: 'record/search',
             query: { keyword: search, searchSize: pageSize, tag, type }
         }).then(
-            ({ data }) => self.setState({ list: data }),
+            ({ data }) => self.setState({ pageNo: 1, list: data }),
             error => { }
         )
+
+        this.initStatistics()
     }
 
     async searchHandle({ target: { value } }) {
@@ -219,11 +236,23 @@ export default class MobileComponent extends React.Component {
 
     showBigImageHandle = imageUrl => previewImage.start({ urls: [imageUrl], current: imageUrl })
 
+    showMoreHandle() {
+        const self = this
+        const { sort, pageNo } = this.state
+
+        this.setState({ pageNo: pageNo + 1 }, () => {
+            if (sort === CONST.SORT.TIME.value) self.initDataByTime({})
+            if (sort === CONST.SORT.RANDOM.value) self.initDataByRandom()
+        })
+    }
+
     render() {
         const self = this
         const { clientHeight } = this
-        const { list, tag, type, sort, pageNo, count, pageSize, minTimestamp, maxTimestamp } = this.state
+        const { list, tag, type, sort, search, pageNo, count, pageSize, minTimestamp, maxTimestamp } = this.state
         const minItemHeight = clientHeight - 147
+        let diff = count - list.length
+        diff = diff > 0 ? diff : 0
 
         return [
             <div className="mobile-header noselect">
@@ -326,7 +355,13 @@ export default class MobileComponent extends React.Component {
                         </div>
                     </div>
                 )
-            })}</div>
+            })}</div>,
+
+            !search && <div className="mobile-load">
+                <div className="mobile-load-container flex-center"
+                    onClick={this.showMoreHandle.bind(this)}
+                >加载更多{sort !== CONST.SORT.RANDOM.value && ` (${diff})`}</div>
+            </div>
         ]
     }
 }
