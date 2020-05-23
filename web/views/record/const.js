@@ -57,6 +57,11 @@ const CONST = {
     DEFAULT_PAGE_SIZE: {
         windows: 30,
         mobile: 10
+    },
+
+    IMAGES: {
+        RESOURCE: 'website-station-system/diary-record',
+        TEMPORARY_RESOURCE: 'website-station-system/diary-record/temporary',
     }
 }
 

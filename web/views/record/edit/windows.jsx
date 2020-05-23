@@ -9,6 +9,7 @@ import { queryToUrl, loadPageVar, parseQueryString } from './../../../utils/url-
 import CONST from './const.js';
 import WINDOWS_CONST from './../const.js';
 import server from './../server.js';
+import homeServer from './../../server.js';
 
 export default class WindowsComponent extends React.Component {
     constructor(props) {
@@ -30,12 +31,17 @@ export default class WindowsComponent extends React.Component {
         this.data = {}
         this.id = null
 
+        this.cossdk = null
+        this.file = null
+        this.resource = WINDOWS_CONST.IMAGES.TEMPORARY_RESOURCE
+
         this.clientHeight = document.body.offsetHeight || document.documentElement.clientHeight || window.innerHeight
         this.clientWidth = document.body.offsetWidth || document.documentElement.clientWidth || window.innerWidth
     }
 
     async componentDidMount() {
         this.initCallbackPageVar()
+        this.initCosJsSdk()
         await this.initTag({})
         await this.initData()
     }
@@ -50,6 +56,11 @@ export default class WindowsComponent extends React.Component {
 
         delete callbackQuery.id
         this.callbackUrl = queryToUrl(callbackQuery)
+    }
+
+    initCosJsSdk() {
+        const { resource } = this
+        this.cossdk = homeServer.getImageAuthorization({ resource })
     }
 
     async initTag({ isForceRefresh }) {
@@ -169,9 +180,9 @@ export default class WindowsComponent extends React.Component {
     getJsonByDataType() {
         const { type, content } = this.state
         if (type === WINDOWS_CONST.DATA_TYPE.DIARY.value) {
-            const verifyJSOresult = jsonHandle.verifyJSONString({ jsonString: content })
-            if (verifyJSOresult.isCorrect) {
-                let diary = verifyJSOresult.data
+            const verifyJSONresult = jsonHandle.verifyJSONString({ jsonString: content })
+            if (verifyJSONresult.isCorrect) {
+                let diary = verifyJSONresult.data
                 return diary
             } else {
                 let diary = WINDOWS_CONST.DATA_FORMAT.diary
@@ -242,6 +253,40 @@ export default class WindowsComponent extends React.Component {
         handleBack()
     }
 
+    getImageArray() {
+        let { images } = this.state
+        const verifyJSONresult = jsonHandle.verifyJSONString({ jsonString: images, isArray: true })
+        if (!verifyJSONresult.isCorrect) return [];
+        return verifyJSONresult.data
+    }
+
+    uploadFileHandle({ target: { files } }) {
+        const self = this
+        let { file, cossdk, resource } = this
+        const images = this.getImageArray()
+
+        const nowTimestamp = new Date().getTime()
+        const path = `${resource}/${nowTimestamp}.png`
+
+        file = files[0]
+
+        if (!file) return toast.show('不存在文件');
+        if (!cossdk) return toast.show('未初始化SDK');
+
+        cossdk.putObject({
+            Bucket: 'rejiejay-1251940173',
+            Region: 'ap-guangzhou',
+            Key: path,
+            Body: file,
+        }, function (err, data) {
+            if (err) return toast.show(err);
+            self.refs.file.value = null
+            self.file = null
+            images.push(path)
+            self.setState({ images: JSON.stringify(images) })
+        })
+    }
+
     render() {
         const self = this
         const { title, type, tag, tags, isShowTagsSelected } = this.state
@@ -270,10 +315,21 @@ export default class WindowsComponent extends React.Component {
 
                     <div className="windows-container-right flex-rest">
                         <div className="soft-operate flex-start">
+
                             <div className="soft-operate-item flex-center flex-rest"
                                 onClick={() => self.setState({ isShowTagsSelected: true })}
                             >{tag ? tag : '标签选择'}</div>
-                            <div className="soft-operate-item flex-center flex-rest">图片选择</div>
+
+                            <input className="image-input"
+                                style={{ display: 'none' }}
+                                ref='file'
+                                type="file"
+                                name="file"
+                                onChange={this.uploadFileHandle.bind(this)}
+                            />
+                            <div className="soft-operate-item flex-center flex-rest"
+                                onClick={() => self.refs.file.click()}
+                            >图片选择</div>
                         </div>
 
                         {isShowTagsSelected && <div className="tag-selected">

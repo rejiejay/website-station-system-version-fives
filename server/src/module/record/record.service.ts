@@ -7,6 +7,8 @@ import { consequencer, Consequencer } from 'src/utils/consequencer';
 
 import { RecordEntity } from './entity/record.entity';
 
+import CONST from './const';
+
 @Injectable()
 export class RecordService {
     constructor(
@@ -184,7 +186,7 @@ export class RecordService {
     }
 
     async uploadImageTemporary(imageBase64String): Promise<Consequencer> {
-        const path = `website-station-system/diary-record/temporary/${new Date().getTime()}.png`;
+        const path = `${CONST.IMAGES.TEMPORARY_RESOURCE}/${new Date().getTime()}.png`;
 
         /** 注意: UI值是经过Base64加密过后的值 */
         const str = imageBase64String.replace(/^data:image\/\w+;base64,/, '')
@@ -231,7 +233,7 @@ export class RecordService {
 
             /** 含义: 复制临时图片到生产目录 */
             const nowTimestamp = new Date().getTime()
-            const producePath = `website-station-system/diary-record/${nowTimestamp}.png`;
+            const producePath = `${CONST.IMAGES.RESOURCE}/${nowTimestamp}.png`;
             const copyUpload = await pullCopyUpload({ oldPath: imagePath, newPath: producePath }).then(
                 infor => consequencer.success(infor),
                 error => consequencer.error(error)
