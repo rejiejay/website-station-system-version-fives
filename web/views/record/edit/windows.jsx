@@ -273,11 +273,11 @@ export default class WindowsComponent extends React.Component {
         if (!file) return toast.show('不存在文件');
         if (!cossdk) return toast.show('未初始化SDK');
 
-        cossdk.putObject({
+        const uploadHandle = Body => cossdk.putObject({
             Bucket: 'rejiejay-1251940173',
             Region: 'ap-guangzhou',
             Key: path,
-            Body: file,
+            Body
         }, function (err, data) {
             if (err) return toast.show(err);
             self.refs.file.value = null
@@ -285,6 +285,15 @@ export default class WindowsComponent extends React.Component {
             images.push(path)
             self.setState({ images: JSON.stringify(images) })
         })
+
+        /**
+         * 含义: 压缩图片
+         */
+        lrz(file).then(
+            rst => uploadHandle(rst)
+        ).catch(
+            err => toast.show('压缩图片失败')
+        )
     }
 
     render() {
