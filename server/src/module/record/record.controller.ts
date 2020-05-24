@@ -113,18 +113,18 @@ export class RecordController {
 
     @Post('edit')
     async editById(@Body() body: any): Promise<Consequencer> {
-        let { id, title, content, tag, type, images } = body
+        let { id, title, content, tag, type, images, timestamp } = body
 
         if (!id || !title || !content) return consequencer.error('参数有误');
 
         /** 含义: 不存在图片则直接更新 */
-        if (!images) return this.service.editById({ id, title, content, tag, type, images });
+        if (!images) return this.service.editById({ id, title, content, tag, type, images, timestamp });
 
         /** 含义: 图片是否有修改 */
         const recordResult = await this.service.getById(id);
         if (recordResult.result !== 1) return recordResult
         const record = recordResult.data
-        if (images === record.images) return await this.service.editById({ id, title, content, tag, type, images });
+        if (images === record.images) return await this.service.editById({ id, title, content, tag, type, images, timestamp });
 
         /** 含义: 开始处理图片 */
         const imagesVerify = jsonHandle.verifyJSONString({ jsonString: images, isArray: true })
@@ -137,6 +137,11 @@ export class RecordController {
 
         /** 含义: 转换成功 */
         images = JSON.stringify(transform.data)
-        return await this.service.editById({ id, title, content, tag, type, images });
+        return await this.service.editById({ id, title, content, tag, type, images, timestamp });
+    }
+
+    @Get('statistics/time')
+    async statisticsTime(@Query() query: any): Promise<Consequencer> {
+        return await this.service.statisticsTime()
     }
 }

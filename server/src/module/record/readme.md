@@ -32,3 +32,6 @@
 
 - post:/record/edit
 [根据id编辑一条数据](http://localhost:1932/record/edit)
+
+- get:/record/statistics/time
+[统计日期范围](http://localhost:1932/record/statistics/time)

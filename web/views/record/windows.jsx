@@ -219,7 +219,7 @@ export default class WindowsComponent extends React.Component {
     render() {
         const self = this
         const { clientHeight } = this
-        const { list, selectedId, detail, tag, type, sort, pageNo, count, pageSize } = this.state
+        const { list, search, selectedId, detail, tag, type, sort, pageNo, count, pageSize } = this.state
         const minHeight = `${clientHeight - 185}px`
 
         return [
@@ -243,6 +243,7 @@ export default class WindowsComponent extends React.Component {
                         </svg>
                         <div className="search-input flex-rest">
                             <input type="text" placeholder="输入结论关键字搜索..."
+                                value={search}
                                 onChange={this.searchHandle.bind(this)}
                             />
                         </div>

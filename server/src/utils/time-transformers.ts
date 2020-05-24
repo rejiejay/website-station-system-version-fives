@@ -90,3 +90,9 @@ export const YYYYmmDDToTimestamp = (YYYYmmDD: string): number => {
 
     return new Date(+YYYYmmDDarray[0], (+YYYYmmDDarray[1] - 1), +YYYYmmDDarray[2]).getTime();
 }
+
+/**
+ * 含义: 根据年月日获取时间戳
+ * 注意: 月份为 1~12月
+ */
+export const getTimestampByyyyyMMdd = ({ year, month, day }): number => new Date(year, month - 1, day).getTime()

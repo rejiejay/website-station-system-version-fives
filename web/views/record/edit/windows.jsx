@@ -3,7 +3,6 @@ import { dropDownSelectPopup } from './../../../components/drop-down-select-popu
 import toast from './../../../components/toast.js'
 import { confirmPopUp } from './../../../components/confirm-popup.js';
 import constHandle from './../../../utils/const-handle.js';
-import jsonHandle from './../../../utils/json-handle.js';
 import { queryToUrl, loadPageVar, parseQueryString } from './../../../utils/url-handle.js';
 import { arrayRemoveItemByValue } from './../../../utils/array-handle.js';
 
@@ -247,7 +246,7 @@ export default class WindowsComponent extends React.Component {
         const self = this
         let { images } = this.state
         let { file, cossdk, resource } = this
-        const images = server.getImageArray({ imageArrayString: images })
+        const imageArray = server.getImageArray({ imageArrayString: images })
 
         const nowTimestamp = new Date().getTime()
         const path = `${resource}/${nowTimestamp}.png`
@@ -266,8 +265,8 @@ export default class WindowsComponent extends React.Component {
             if (err) return toast.show(err);
             self.refs.file.value = null
             self.file = null
-            images.push(path)
-            self.setState({ images: JSON.stringify(images) })
+            imageArray.push(path)
+            self.setState({ images: JSON.stringify(imageArray) })
         })
 
         /**

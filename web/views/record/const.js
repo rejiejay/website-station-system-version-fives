@@ -62,6 +62,21 @@ const CONST = {
     IMAGES: {
         RESOURCE: 'website-station-system/diary-record',
         TEMPORARY_RESOURCE: 'website-station-system/diary-record/temporary',
+    },
+
+    MOBILE_HEADER_DOWN_SELECT: {
+        TIME_SELECT: {
+            value: 'time_select',
+            label: '日期选择'
+        },
+        ADD_RECORD: {
+            value: 'add_record',
+            label: '新增记录'
+        },
+        ADD_DIARY: {
+            value: 'add_diary',
+            label: '新增日记'
+        }
     }
 }
 

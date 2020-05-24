@@ -32,10 +32,6 @@ export class RecordEntity {
     @Column({ type: 'text' })
     content: string;
 
-    // 记录时间
-    @Column({ type: 'bigint' })
-    timestamp: number;
-
     /**
      * 定义: 图片列表
      * 定义: 使用 JSON.stringify 存储数据
@@ -44,4 +40,15 @@ export class RecordEntity {
      */
     @Column({ type: 'text', nullable: true })
     images: string;
+
+    // 记录时间
+    @Column({ type: 'bigint' })
+    timestamp: number;
+
+    /**
+     * 含义: 年份(2019)
+     * 作用: 日期统计
+     */
+    @Column({ type: 'tinytext' })
+    fullyear: number;
 }

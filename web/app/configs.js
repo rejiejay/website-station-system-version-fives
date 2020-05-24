@@ -13,6 +13,10 @@ const configs = [{
     route: '/record/edit/index.html',
     entry: './views/record/edit',
     output: './build/record/edit'
+}, , {
+    route: '/record/time-selection/index.html',
+    entry: './views/record/time-selection',
+    output: './build/record/time-selection'
 }, {
     route: '/require/index.html',
     entry: './views/require',
