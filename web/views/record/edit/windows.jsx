@@ -5,6 +5,7 @@ import { confirmPopUp } from './../../../components/confirm-popup.js';
 import constHandle from './../../../utils/const-handle.js';
 import { queryToUrl, loadPageVar, parseQueryString } from './../../../utils/url-handle.js';
 import { arrayRemoveItemByValue } from './../../../utils/array-handle.js';
+import timeTransformers from './../../../utils/time-transformers.js';
 
 import CONST from './const.js';
 import RECORD_CONST from './../const.js';
@@ -100,7 +101,7 @@ export default class WindowsComponent extends React.Component {
         const { status } = this
         if (status !== CONST.PAGE_STATUS.EDIT) return false
 
-        const { title, content, tag, type, images } = this.state
+        const { title, content, tag, type, images, timestamp } = this.state
         const data = this.data
 
         let isDiff = false
@@ -109,6 +110,7 @@ export default class WindowsComponent extends React.Component {
         if (tag !== data.tag) isDiff = true
         if (type !== data.type) isDiff = true
         if (images !== data.images) isDiff = true
+        if (timestamp !== data.timestamp) isDiff = true
         return isDiff
     }
 
@@ -128,13 +130,16 @@ export default class WindowsComponent extends React.Component {
 
     addHandle() {
         const { callbackUrl } = this
-        const { title, content, tag, type, images } = this.state
+        const { title, content, tag, type, images, timestamp } = this.state
         if (!title) return toast.show('标题不能为空');
         if (!content) return toast.show('内容不能为空');
 
+        let body = { title, content, tag, type, images }
+        if (timestamp) body.timestamp = timestamp
+
         fetch.post({
             url: 'record/add',
-            body: { title, content, tag, type, images }
+            body
         }).then(
             res => window.location.replace(`./../index.html${callbackUrl}`),
             error => { }
@@ -144,13 +149,13 @@ export default class WindowsComponent extends React.Component {
     editHandle() {
         const self = this
         const { id } = this
-        const { title, content, tag, type, images } = this.state
+        const { title, content, tag, type, images, timestamp } = this.state
         if (!title) return toast.show('标题不能为空');
         if (!content) return toast.show('内容不能为空');
 
         fetch.post({
             url: 'record/edit',
-            body: { id, title, content, tag, type, images }
+            body: { id, title, content, tag, type, images, timestamp }
         }).then(
             ({ data }) => {
                 toast.show('编辑成功')
@@ -160,7 +165,8 @@ export default class WindowsComponent extends React.Component {
                     content: data.content,
                     tag: data.tag,
                     type: data.type,
-                    images: data.images
+                    images: data.images,
+                    timestamp: data.timestamp
                 })
             },
             error => { }
@@ -300,9 +306,34 @@ export default class WindowsComponent extends React.Component {
         })
     }
 
+    timeStampHandle() {
+        const self = this
+        const nowYear = new Date().getFullYear()
+        const handle = data => self.setState({ timestamp: data })
+
+        const datepicker = new Rolldate({
+            el: '#picka-date',
+            format: 'YYYY-MM-DD hh:mm',
+            beginYear: nowYear - 10,
+            endYear: nowYear + 10,
+            lang: { title: '当时时间?' },
+            confirm: function confirm(date) {
+                const timestamp = timeTransformers.YYYYmmDDhhMMToTimestamp(date)
+                handle(timestamp)
+            }
+        })
+
+        datepicker.show()
+    }
+
+    timeStampClearHandle() {
+        document.getElementById('picka-date').value = ''
+        this.setState({ timestamp: null });
+    }
+
     render() {
         const self = this
-        const { title, type, tag, tags, isShowTagsSelected, images } = this.state
+        const { title, type, tag, tags, isShowTagsSelected, images, timestamp } = this.state
         const { clientHeight, status } = this
         const minHeight = clientHeight - 125
         const imageArray = server.getImageArray({ imageArrayString: images })
@@ -344,6 +375,17 @@ export default class WindowsComponent extends React.Component {
                             <div className="soft-operate-item flex-center flex-rest"
                                 onClick={() => self.refs.file.click()}
                             >图片选择</div>
+                            <div className="soft-operate-item flex-center flex-rest" >
+                                <input readonly type="text"
+                                    id="picka-date"
+                                    value={timestamp ? timeTransformers.dateToYYYYmmDDhhMM(new Date(+timestamp)) : ''}
+                                    placeholder="时间?"
+                                    onClick={this.timeStampHandle.bind(this)}
+                                />
+                                <div class="picka-clear flex-center"
+                                    onClick={this.timeStampClearHandle.bind(this)}
+                                >取消</div>
+                            </div>
                         </div>
 
                         {isShowTagsSelected && <div className="tag-selected">

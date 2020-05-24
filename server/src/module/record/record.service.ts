@@ -123,7 +123,7 @@ export class RecordService {
         return consequencer.success({ tags, expiredTimestamp });
     }
 
-    async addById({ title, content, tag, type, images }): Promise<Consequencer> {
+    async addById({ title, content, tag, type, images, timestamp }): Promise<Consequencer> {
         let record = new RecordEntity()
         record.title = title
         record.content = content
@@ -131,7 +131,7 @@ export class RecordService {
         record.type = type ? type : 0
         if (images) record.images = images
 
-        const nowTime = new Date()
+        const nowTime = timestamp ? new Date(+timestamp) : new Date()
         record.timestamp = nowTime.getTime()
         record.fullyear = nowTime.getFullYear()
 

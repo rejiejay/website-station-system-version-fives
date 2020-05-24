@@ -100,7 +100,7 @@ export default class MobileComponent extends React.Component {
         const { status } = this
         if (status !== CONST.PAGE_STATUS.EDIT) return false
 
-        const { title, content, tag, type, images } = this.state
+        const { title, content, tag, type, images, timestamp } = this.state
         const data = this.data
 
         let isDiff = false
@@ -109,6 +109,7 @@ export default class MobileComponent extends React.Component {
         if (tag !== data.tag) isDiff = true
         if (type !== data.type) isDiff = true
         if (images !== data.images) isDiff = true
+        if (timestamp !== data.timestamp) isDiff = true
         return isDiff
     }
 
@@ -204,13 +205,16 @@ export default class MobileComponent extends React.Component {
 
     addHandle() {
         const { callbackUrl } = this
-        const { title, content, tag, type, images } = this.state
+        const { title, content, tag, type, images, timestamp } = this.state
         if (!title) return toast.show('标题不能为空');
         if (!content) return toast.show('内容不能为空');
 
+        let body = { title, content, tag, type, images }
+        if (timestamp) body.timestamp = timestamp
+
         fetch.post({
             url: 'record/add',
-            body: { title, content, tag, type, images }
+            body
         }).then(
             res => window.location.replace(`./../index.html${callbackUrl}`),
             error => { }
@@ -220,13 +224,13 @@ export default class MobileComponent extends React.Component {
     editHandle() {
         const self = this
         const { id } = this
-        const { title, content, tag, type, images } = this.state
+        const { title, content, tag, type, images, timestamp } = this.state
         if (!title) return toast.show('标题不能为空');
         if (!content) return toast.show('内容不能为空');
 
         fetch.post({
             url: 'record/edit',
-            body: { id, title, content, tag, type, images }
+            body: { id, title, content, tag, type, images, timestamp }
         }).then(
             ({ data }) => {
                 toast.show('编辑成功')
@@ -236,7 +240,8 @@ export default class MobileComponent extends React.Component {
                     content: data.content,
                     tag: data.tag,
                     type: data.type,
-                    images: data.images
+                    images: data.images,
+                    timestamp: data.timestamp
                 })
             },
             error => { }

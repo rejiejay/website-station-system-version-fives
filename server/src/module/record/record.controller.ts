@@ -73,15 +73,15 @@ export class RecordController {
 
     @Post('add')
     async addById(@Body() body: any): Promise<Consequencer> {
-        let { title, content, tag, type, images } = body
+        let { title, content, tag, type, images, timestamp } = body
 
         if (!title || !content) return consequencer.error('参数有误');
 
-        if (!images) return await this.service.addById({ title, content, tag, type, images })
+        if (!images) return await this.service.addById({ title, content, tag, type, images, timestamp })
 
         /** 含义: 开始处理图片 */
         const imagesVerify = jsonHandle.verifyJSONString({ jsonString: images, isArray: true })
-        if (!imagesVerify) return await this.service.addById({ title, content, tag, type, images })
+        if (!imagesVerify) return await this.service.addById({ title, content, tag, type, images, timestamp })
         const imageArray = imagesVerify.data
 
         /** 含义: 临时图片路径转为正式路径 */
@@ -90,7 +90,7 @@ export class RecordController {
 
         /** 含义: 转换成功 */
         images = JSON.stringify(transform.data)
-        return await this.service.addById({ title, content, tag, type, images })
+        return await this.service.addById({ title, content, tag, type, images, timestamp })
     }
 
     @Post('image/temporary/upload')
