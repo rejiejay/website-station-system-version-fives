@@ -268,11 +268,13 @@ export default class MobileComponent extends React.Component {
         const { type, content } = this.state
 
         let value = content
+        let height = clientHeight - 235
         let placeholder = '详细描述与记录是什么'
         let onChangeHandle = ({ target: { value } }) => this.setState({ content: value })
 
         if (type === RECORD_CONST.DATA_TYPE.DIARY.value) {
             value = self.getJsonByDataType().clusion
+            height = 250
             placeholder = '得出什么结论'
             onChangeHandle = ({ target: { value } }) => self.changeValueByDataTypeHandle({ key: 'clusion', value })
         }
@@ -280,7 +282,7 @@ export default class MobileComponent extends React.Component {
         return (
             <textarea className="content-textarea fiex-rest" type="text"
                 placeholder={placeholder}
-                style={{ height: clientHeight - 235 }}
+                style={{ height: height }}
                 value={value}
                 onChange={onChangeHandle}
             ></textarea>
@@ -312,6 +314,41 @@ export default class MobileComponent extends React.Component {
                 <div class="edit-input flex-start-center">
                     {this.renderContent.call(this)}
                 </div>
+
+                {type === RECORD_CONST.DATA_TYPE.DIARY.value && [
+                    <div class="edit-title">情况是什么:</div>,
+                    <div class="edit-input flex-start-center">
+                        <textarea type="text" placeholder="情况是什么"
+                            style={{ height: '125px' }}
+                            value={self.getJsonByDataType().situation}
+                            onChange={({ target: { value } }) => self.changeValueByDataTypeHandle({ key: 'situation', value })}
+                        />
+                    </div>,
+                    <div class="edit-title">当时目标想法是什么:</div>,
+                    <div class="edit-input flex-start-center">
+                        <textarea type="text" placeholder="当时目标想法是什么"
+                            style={{ height: '125px' }}
+                            value={self.getJsonByDataType().target}
+                            onChange={({ target: { value } }) => self.changeValueByDataTypeHandle({ key: 'target', value })}
+                        />
+                    </div>,
+                    <div class="edit-title">有啥行动:</div>,
+                    <div class="edit-input flex-start-center">
+                        <textarea type="text" placeholder="有啥行动"
+                            style={{ height: '125px' }}
+                            value={self.getJsonByDataType().action}
+                            onChange={({ target: { value } }) => self.changeValueByDataTypeHandle({ key: 'action', value })}
+                        />
+                    </div>,
+                    <div class="edit-title">结果如何:</div>,
+                    <div class="edit-input flex-start-center">
+                        <textarea type="text" placeholder="结果如何"
+                            style={{ height: '125px' }}
+                            value={self.getJsonByDataType().result}
+                            onChange={({ target: { value } }) => self.changeValueByDataTypeHandle({ key: 'result', value })}
+                        />
+                    </div>
+                ]}
 
                 <div class="edit-title">当时时间?</div>
                 <div class="edit-input flex-start-center">
