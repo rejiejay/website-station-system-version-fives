@@ -55,7 +55,6 @@ export default class MobileComponent extends React.Component {
         if (callbackQuery.type) state.type = +callbackQuery.type
         this.setState(state)
 
-        delete callbackQuery.id
         this.callbackUrl = queryToUrl(callbackQuery)
     }
 

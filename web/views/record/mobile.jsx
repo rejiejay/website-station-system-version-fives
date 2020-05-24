@@ -26,6 +26,7 @@ export default class MobileComponent extends React.Component {
             minTimestamp: null,
             maxTimestamp: null,
 
+            firstData: null,
             list: CONST.DATA.DEFAULT_LIST,
 
             pageNo: 1,
@@ -49,6 +50,7 @@ export default class MobileComponent extends React.Component {
     }
 
     async initData() {
+        const id = loadPageVar('id')
         const sort = loadPageVar('sort')
         const tag = loadPageVar('tag')
         const type = loadPageVar('type')
@@ -65,10 +67,27 @@ export default class MobileComponent extends React.Component {
             maxTimestamp
         })
 
+        /** 
+         * 需求: 如果标签存在id, 第一条显示次条数据
+         * 初衷: 防止编辑一条id后, 找不到这条数据了
+         */
+        if (id) this.initDataById(id)
+
         if (!!search) return await this.initDataBySearch()
         if (!sort) return await this.initDataByTime({})
         if (sort === CONST.SORT.TIME.value) await this.initDataByTime({})
         if (sort === CONST.SORT.RANDOM.value) await this.initDataByRandom()
+    }
+
+    initDataById(id) {
+        const self = this
+        fetch.get({
+            url: 'record/get/one',
+            query: { id }
+        }).then(
+            ({ data }) => self.setState({ firstData: data }),
+            error => { }
+        )
     }
 
     async initDataByTime({ isForceRefresh }) {
@@ -241,7 +260,7 @@ export default class MobileComponent extends React.Component {
         const { sort, pageNo } = this.state
 
         this.setState({ pageNo: pageNo + 1 }, () => {
-            if (sort === CONST.SORT.TIME.value) self.initDataByTime({})
+            if (!sort || sort === CONST.SORT.TIME.value) self.initDataByTime({})
             if (sort === CONST.SORT.RANDOM.value) self.initDataByRandom()
         })
     }
@@ -272,10 +291,11 @@ export default class MobileComponent extends React.Component {
     render() {
         const self = this
         const { clientHeight } = this
-        const { list, tag, type, sort, search, pageNo, count, pageSize, minTimestamp, maxTimestamp } = this.state
+        let { firstData, list, tag, type, sort, search, count, minTimestamp, maxTimestamp } = this.state
         const minItemHeight = clientHeight - 147
         let diff = count - list.length
         diff = diff > 0 ? diff : 0
+        if (firstData && list.length > 0 && firstData.id !== list[0].id) list = [firstData].concat(list)
 
         return [
             <div className="mobile-header noselect">
