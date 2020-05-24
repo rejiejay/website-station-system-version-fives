@@ -96,11 +96,11 @@ export default class WindowsComponent extends React.Component {
 
     async initDataByRandom() {
         const self = this
-        const { pageSize } = this.state
+        const { pageSize, tag, type } = this.state
 
         await fetch.get({
             url: 'record/get/random',
-            query: { size: pageSize }
+            query: { size: pageSize, tag, type }
         }).then(
             ({ data }) => self.setState({ list: data }),
             error => { }

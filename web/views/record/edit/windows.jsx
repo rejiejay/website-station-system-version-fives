@@ -88,7 +88,8 @@ export default class WindowsComponent extends React.Component {
                     content: data.content,
                     tag: data.tag,
                     type: data.type,
-                    images: data.images
+                    images: data.images,
+                    timestamp: data.timestamp
                 })
             },
             error => { }

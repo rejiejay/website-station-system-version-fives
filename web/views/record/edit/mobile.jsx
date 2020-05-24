@@ -112,6 +112,63 @@ export default class MobileComponent extends React.Component {
         return isDiff
     }
 
+    uploadFileHandle({ target: { files } }) {
+        const self = this
+        let { images } = this.state
+        let { file, cossdk, resource } = this
+        const imageArray = server.getImageArray({ imageArrayString: images })
+
+        const nowTimestamp = new Date().getTime()
+        const path = `${resource}/${nowTimestamp}.png`
+
+        file = files[0]
+
+        if (!file) return toast.show('不存在文件');
+        if (!cossdk) return toast.show('未初始化SDK');
+
+        const uploadHandle = Body => cossdk.putObject({
+            Bucket: 'rejiejay-1251940173',
+            Region: 'ap-guangzhou',
+            Key: path,
+            Body
+        }, function (err, data) {
+            if (err) return toast.show(err);
+            self.refs.file.value = null
+            self.file = null
+            imageArray.push(path)
+            self.setState({ images: JSON.stringify(imageArray) })
+        })
+
+        /**
+         * 含义: 压缩图片
+         */
+        lrz(file).then(
+            rst => uploadHandle(rst)
+        ).catch(
+            err => toast.show('压缩图片失败')
+        )
+    }
+
+    delImageHandle(key) {
+        const self = this
+        let { images } = this.state
+        const imageArray = server.getImageArray({ imageArrayString: images })
+        const image = imageArray[key]
+
+        const handle = () => fetch.post({
+            url: 'record/image/delete',
+            body: { path: image }
+        }).then(
+            res => self.setState({ images: JSON.stringify(arrayRemoveItemByValue(imageArray, image)) }),
+            error => { }
+        )
+
+        confirmPopUp({
+            title: '你确定要删除这张图片吗?',
+            succeedHandle: handle
+        })
+    }
+
     showDataTypeSelected() {
         const self = this
 
@@ -292,8 +349,9 @@ export default class MobileComponent extends React.Component {
     render() {
         const self = this
         const { title, type, tag, images, timestamp } = this.state
-        const { status } = this
+        const { status, clientWidth, clientHeight } = this
         const imageArray = server.getImageArray({ imageArrayString: images })
+        const imageSize = `${(clientWidth - 45) / 2}px`
 
         return [
             <div class="mobile-edit">
@@ -363,12 +421,42 @@ export default class MobileComponent extends React.Component {
                     >取消</div>
                 </div>
 
-                <div className="select-tag">
-                    <div className="select-tag-container flex-center"
-                        onClick={this.showTagsSelected.bind(this)}
-                    >{tag ? tag : '请选择标签'}</div>
+                <div className="select-operation">
+                    <input className="image-input"
+                        style={{ display: 'none' }}
+                        ref='file'
+                        type="file"
+                        name="file"
+                        onChange={this.uploadFileHandle.bind(this)}
+                    />
+                    <div className="select-operation-container flex-start-center">
+                        <div className="select-tag flex-rest flex-center"
+                            onClick={this.showTagsSelected.bind(this)}
+                        >{tag ? `标签分类:${tag}` : '请选择标签'}</div>
+                        <div className="select-image flex-rest flex-center"
+                            onClick={() => self.refs.file.click()}
+                        >请选择图片</div>
+                    </div>
                 </div>
             </div>,
+
+            imageArray.length > 0 && <div className="mobile-list-image">
+                <div className="list-image-title">图片列表</div>
+                <div className="list-image-container">
+                    {imageArray.map((image, key) => (
+                        <div className="list-image-item" key={key}>
+                            <div className="image-item-container flex-center"
+                                style={{ height: imageSize, width: imageSize }}
+                                onClick={() => self.delImageHandle(key)}
+                            >
+                                <img alt="image" src={`${BASE_CONST.TENCENT_OSS_RESOURCE}/${image}`} ></img>
+                            </div>
+                        </div>
+                    ))}
+                </div>
+            </div>,
+
+            < div style={{ height: clientHeight }}></div >,
 
             <div class="mobile-operation">
                 <div class="operation-container flex-start-center">

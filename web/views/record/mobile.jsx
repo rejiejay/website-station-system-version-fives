@@ -104,11 +104,11 @@ export default class MobileComponent extends React.Component {
 
     async initDataByRandom() {
         const self = this
-        const { pageNo, pageSize, count, list } = this.state
+        const { pageNo, pageSize, count, list, tag, type } = this.state
 
         await fetch.get({
             url: 'record/get/random',
-            query: { size: pageSize }
+            query: { size: pageSize, tag, type }
         }).then(
             ({ data }) => {
                 /** 是否新增, 通过 pageNo 判断 */

@@ -114,22 +114,21 @@ body {
                     border: 1px solid #1890ff;
                 }
             }
-
         }
 
-        .image-selected {
+        .list-image {
             padding-bottom: 5px;
 
-            .image-selected-title {
+            .list-image-title {
                 padding-bottom: 5px;
                 font-size     : 12px;
             }
 
-            .image-selected-container {
+            .list-image-container {
                 overflow: hidden;
             }
 
-            .image-selected-item {
+            .list-image-item {
                 float  : left;
                 padding: 0px 15px 15px 0px;
 
@@ -189,7 +188,7 @@ body {
 }
 
 .mobile-edit {
-    padding: 25px 15px 275px 15px;
+    padding: 25px 15px 0px 15px;
 
     .edit-title {
         color         : @black1;
@@ -211,6 +210,7 @@ body {
 
         textarea {
             border    : 1px solid #ddd;
+            color     : @black2;
             background: #fff;
         }
 
@@ -222,14 +222,49 @@ body {
         }
     }
 
-    .select-tag {
+    .select-operation {
         padding-bottom: 15px;
 
-
-        .select-tag-container {
+        .select-operation-container {
             height          : 45px;
             background-color: #fff;
-            border          : 1px solid #ddd;
+            border-top      : 1px solid #ddd;
+            border-left     : 1px solid #ddd;
+            border-bottom   : 1px solid #ddd;
+
+            >div {
+                border-right: 1px solid #ddd;
+            }
+        }
+    }
+}
+
+.mobile-list-image {
+    padding-left: 15px;
+
+    .list-image-title {
+        padding-bottom: 5px;
+        font-size     : 12px;
+    }
+
+    .list-image-container {
+        overflow: hidden;
+    }
+
+    .list-image-item {
+        float  : left;
+        padding: 0px 15px 15px 0px;
+
+        .image-item-container {
+            background-color: #fff;
+            overflow        : hidden;
+            cursor          : pointer;
+
+            img {
+                display: block;
+                width  : 100%;
+                height : 100%;
+            }
         }
     }
 }
