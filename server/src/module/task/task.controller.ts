@@ -17,4 +17,13 @@ export class TaskController {
     async getRootList(@Query() query: any): Promise<Consequencer> {
         return await this.service.getRootList()
     }
+
+    @Get('list/group/by')
+    async getListBy(@Query() query: any): Promise<Consequencer> {
+        const { rootid } = query
+
+        if (!rootid) return consequencer.error('参数有误');
+
+        return await this.service.getListBy(rootid)
+    }
 }
