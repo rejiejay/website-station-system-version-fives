@@ -10,9 +10,10 @@ export default class WindowsComponent extends React.Component {
             filter: null,
 
             rootTaskList: CONST.TASK.DEFAULT_LIST,
-            taskMindList: [
+            taskMindList: CONST.TASK.DEFAULT_LIST,
 
-            ]
+            executeTask: CONST.TASK.DEFAULT_ITEM,
+            previewTask: CONST.TASK.DEFAULT_ITEM
         }
 
         this.clientHeight = document.body.offsetHeight || document.documentElement.clientHeight || window.innerHeight
@@ -24,11 +25,20 @@ export default class WindowsComponent extends React.Component {
         await login()
     }
 
+    verifyPreviewExecuteTask() {
+        const { executeTask, previewTask } = this.state
+        if (!previewTask || !executeTask || !previewTask.id || !executeTask.id) return false
+        if (executeTask.id !== executeTask.id) return false
+        return true
+    }
+
     render() {
         const self = this
         const { clientHeight } = this
-        const { filter, rootTaskList } = this.state
+        const { filter, rootTaskList, executeTask, previewTask } = this.state
         const minContentHeight = clientHeight - 185
+        const minTaskHeight = minContentHeight / 3 * 2; /** 显示2/3 */
+        const isPreviewExecuteTask = this.verifyPreviewExecuteTask()
 
         return [
             <div className="windows-header flex-start-center noselect">
@@ -40,6 +50,10 @@ export default class WindowsComponent extends React.Component {
                 <div className="center flex-rest"></div>
 
                 <div className="right-operating flex-start-center">
+                    {!isPreviewExecuteTask && <div className="operat-item hover-item"
+                        onClick={() => self.setState({ previewTask: JSON.parse(JSON.stringify(executeTask)) })}
+                    >查看当前正在执行的任务</div>}
+                    <div className="operat-item hover-item">随机查看</div>
                     <div className="operat-item hover-item">任务统计</div>
                     <div className="operat-item hover-item">新增根任务</div>
                 </div>
@@ -48,7 +62,7 @@ export default class WindowsComponent extends React.Component {
             <div className="windows-content-container flex-start-top">
                 <div className="windows-container-left flex-rest" style={{ minHeight: `${minContentHeight}px` }}>
                     {rootTaskList.filter(task => filter ? task.title.includes(filter) : true).map((task, key) => (
-                        <div className="left-list" key={key}>
+                        <div className="left-list" key={key} style={{ minHeight: `${minTaskHeight}px` }}>
                             {/* 任务 */}
                         </div>
                     ))}
@@ -58,6 +72,8 @@ export default class WindowsComponent extends React.Component {
 
                 <div className="windows-container-right" style={{ minHeight: `${minContentHeight}px` }}>
                     <div className="item-container">
+                        {previewTask && previewTask.putoff && <div className="item-putoff flex-center">推迟的时间: 2020-08-10 18:02</div>}
+
                         <div className="item-title flex-start-center">
                             <div className="flex-rest">标题</div>
                             <div className="dont-want-todo noselect" data-tippy-content="点击查看详情">不想做怎么办?</div>
@@ -66,7 +82,7 @@ export default class WindowsComponent extends React.Component {
                         <div className="item-content">
                             <div className="item-content-title flex-start-center">
                                 <div className="flex-rest">任务内容描述</div>
-                                {/* <div className="item-content-tip noselect" data-tippy-content="Tooltip">Tip</div> */}
+                                <div className="item-content-tip noselect" data-tippy-content="点击跳转需求系统">为什么要做这个?</div>
                             </div>
                             <div className="item-content-description item-content-main">
                                 内容内容
@@ -122,9 +138,22 @@ export default class WindowsComponent extends React.Component {
                                 内容内容
                             </div>
                         </div>
+
+                        {previewTask && previewTask.link && <div className="item-content">
+                            <div className="item-content-title flex-start-center">
+                                <div className="flex-rest">跟进</div>
+                            </div>
+                            <div className="item-content-link"><div className="flex-center">点击查看进度</div></div>
+                        </div>}
                     </div>
                     <div className="detail-operate flex-start-center noselect">
-                        <div className="flex-rest flex-center">随机查看</div>
+                        {!isPreviewExecuteTask && <div className="flex-rest flex-center">执行</div>}
+                        <div className="flex-rest flex-center">完成</div>
+                        {previewTask && !previewTask.link && <div className="flex-rest flex-center">绑定结论</div>}
+                        {previewTask && !previewTask.putoff && <div className="flex-rest flex-center">推迟</div>}
+                        {previewTask && previewTask.putoff && <div className="flex-rest flex-center">取消推迟</div>}
+                        <div className="flex-rest flex-center">新增子节点</div>
+                        <div className="flex-rest flex-center">修改节点</div>
                         <div className="flex-rest flex-center">编辑</div>
                         <div className="flex-rest flex-center">删除</div>
                     </div>

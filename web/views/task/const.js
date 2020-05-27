@@ -13,7 +13,8 @@ const CONST = {
             /** 作用: 绑定结论 */
             link: '',
             timestamp: 1590495644334,
-            putoff: 1590495644334
+            putoff: 1590495644334,
+            complete: 1590495644334
         }],
         ROOT_TASK_LIST_DEMO: [{
             id: '1590495744334',
