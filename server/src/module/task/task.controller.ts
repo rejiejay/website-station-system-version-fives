@@ -12,4 +12,9 @@ export class TaskController {
     test(): string {
         return 'This Action is Test task';
     }
+
+    @Get('list/root')
+    async getRootList(@Query() query: any): Promise<Consequencer> {
+        return await this.service.getRootList()
+    }
 }
