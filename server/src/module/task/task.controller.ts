@@ -31,4 +31,13 @@ export class TaskController {
     async getByRandom(@Query() query: any): Promise<Consequencer> {
         return await this.service.getByRandom()
     }
+
+    @Get('id')
+    async getById(@Query() query: any): Promise<Consequencer> {
+        const { id } = query
+
+        if (!id) return consequencer.error('参数有误');
+
+        return await this.service.getById(id)
+    }
 }

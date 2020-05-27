@@ -34,4 +34,10 @@ export class TaskService {
         if (result.length === 0) return consequencer.error('数据为空');
         return consequencer.success(result);
     }
+
+    async getById(id): Promise<Consequencer> {
+        const result = await this.repository.findOne({ id });
+        if (!result) return consequencer.error('This record does not exist');
+        return consequencer.success(result);
+    }
 }
