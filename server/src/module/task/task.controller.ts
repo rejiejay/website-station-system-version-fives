@@ -26,4 +26,9 @@ export class TaskController {
 
         return await this.service.getListBy(rootid)
     }
+
+    @Get('random')
+    async getByRandom(@Query() query: any): Promise<Consequencer> {
+        return await this.service.getByRandom()
+    }
 }
