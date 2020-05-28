@@ -1,13 +1,15 @@
+import fetch from './../../components/async-fetch/fetch.js';
 import login from './../../components/login.js';
-import DropDownSelect from './../../components/drop-down-select-tooltip.jsx';
 
 import CONST from './const.js';
+import WindowsListItemComponent from './windows-list-item.jsx';
 
 export default class WindowsComponent extends React.Component {
     constructor(props) {
         super(props)
 
         this.state = {
+            /** 含义:过滤; 作用:使用输入的过滤名称来过滤任务 */
             filter: CONST.FILTER.DEFAULT,
 
             rootTaskList: CONST.TASK.DEFAULT_LIST,
@@ -24,6 +26,61 @@ export default class WindowsComponent extends React.Component {
     async componentDidMount() {
         tippy('[data-tippy-content]');
         await login()
+        await this.initRootTaskList()
+    }
+
+    async initRootTaskList() {
+        const self = this
+
+        await fetch.get({
+            url: 'task/list/root',
+            query: {}
+        }).then(
+            ({ data }) => self.setState(
+                { rootTaskList: data },
+                self.initTaskMindList
+            ),
+            error => { }
+        )
+    }
+
+    async initTaskMindList() {
+        const self = this
+        const { rootTaskList } = this.state
+        let taskMindList = []
+        const getTaskMindBy = async rootTask => {
+            let taskMindItem = CONST.MIND_FORMAT
+            taskMindItem.meta.name = rootTask.title
+            const rootMind = {
+                isroot: true,
+                id: rootTask.id,
+                topic: rootTask.title
+            }
+
+            await fetch.get({
+                url: 'task/list/group/by',
+                query: { rootid: rootTask.id }
+            }).then(
+                ({ data }) => taskMindItem.data = [rootMind].concat(data.map(task => ({
+                    id: +task.id,
+                    parentid: +task.parentid,
+                    topic: task.title,
+                    direction: 'right',
+                    expanded: true
+                }))),
+                error => { }
+            )
+
+            return taskMindItem
+        }
+
+        for (let index = 0; index < rootTaskList.length; index++) {
+            const rootTask = rootTaskList[index];
+            const taskMindItem = await getTaskMindBy(rootTask)
+            taskMindList.push(taskMindItem)
+        }
+
+        this.setState({ taskMindList })
     }
 
     verifyPreviewExecuteTask() {
@@ -33,29 +90,27 @@ export default class WindowsComponent extends React.Component {
         return true
     }
 
-    filterHandle({ value, label }) {
-        this.setState({
-            filter: { id: value, label }
-        })
+    /**
+     * 含义: 输入过滤字段名称
+     */
+    inputMindFilterHandle() {
+
     }
 
     render() {
         const self = this
         const { clientHeight } = this
-        const { filter, rootTaskList, executeTask, previewTask } = this.state
+        const { filter, executeTask, taskMindList, previewTask } = this.state
         const minContentHeight = clientHeight - 185
-        const minTaskHeight = minContentHeight / 3 * 2; /** 显示2/3 */
+        const taskMindHeight = clientHeight / 4 * 3; /** 显示3/4 */
         const isPreviewExecuteTask = this.verifyPreviewExecuteTask()
 
         return [
             <div className="windows-header flex-start-center noselect">
                 <div className="left-operating flex-start-center">
-                    <DropDownSelect
-                        options={rootTaskList.map(({ id, title }) => ({ value: id, label: title }))}
-                        handle={this.filterHandle.bind(this)}
-                    >
-                        <div className="operat-item hover-item">过滤: {filter ? filter : 'ALL'}</div>
-                    </DropDownSelect>
+                    <div className="operat-item hover-item"
+                        onClick={this.inputMindFilterHandle.bind(this)}
+                    >过滤: {filter ? filter : 'ALL'}</div>
                 </div>
 
                 <div className="center flex-rest"></div>
@@ -72,10 +127,14 @@ export default class WindowsComponent extends React.Component {
 
             <div className="windows-content-container flex-start-top">
                 <div className="windows-container-left flex-rest" style={{ minHeight: `${minContentHeight}px` }}>
-                    {rootTaskList.filter(task => filter ? task.title.includes(filter) : true).map((task, key) => (
-                        <div className="left-list" key={key} style={{ minHeight: `${minTaskHeight}px` }}>
-                            {/* 任务 */}
-                        </div>
+                    {taskMindList.filter(mind => filter ? mind.meta.name.includes(filter) : true).map((task, key) => (
+                        <WindowsListItemComponent
+                            key={key}
+                            className="left-list"
+                            taskMindHeight={`${taskMindHeight}px`}
+                            taskMindItem={task}
+                        >
+                        </WindowsListItemComponent>
                     ))}
                 </div>
 

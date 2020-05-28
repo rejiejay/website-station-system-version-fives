@@ -22,21 +22,24 @@ const CONST = {
             rootid: '1590495744334'
         }],
         TASK_MIND_LIST_DEMO: [{
-            id: '1590495744334',
-            parentid: 'root',
-            rootid: '1590495744334',
-            topic: '',
-            direction: 'right',
-            expanded: true
+            meta: { name: "jsMind", author: "hizzgdev@163.com", version: "0.4.6" },
+            format: "node_array",
+            format: 'node_array',
+            data: [{
+                isroot: true,
+                id: '1590495744334',
+                parentid: 'root',
+                rootid: '1590495744334',
+                topic: '',
+                direction: 'right',
+                expanded: true
+            }]
         }]
     },
 
     FILTER: {
-        DEFAULT: null,
-        DEMO: {
-            id: 0,
-            label: '过滤名称'
-        }
+        DEFAULT: '',
+        DEMO: '公务员'
     },
 
     MIND_FORMAT: {
