@@ -30,12 +30,22 @@ const CONST = {
             expanded: true
         }]
     },
+
+    FILTER: {
+        DEFAULT: null,
+        DEMO: {
+            id: 0,
+            label: '过滤名称'
+        }
+    },
+
     MIND_FORMAT: {
         meta: { name: "jsMind", author: "hizzgdev@163.com", version: "0.4.6" },
         format: "node_array",
         format: 'node_array',
         data: []
     },
+
     MIND_THEME: {
         PRIMARY: 'primary',
         WARNING: 'warning',

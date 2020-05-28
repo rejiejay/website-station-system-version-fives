@@ -1,7 +1,7 @@
 import login from './../../components/login.js';
 import fetch from './../../components/async-fetch/fetch.js';
 import PaginationComponent from './../../components/pagination.jsx';
-import { dropDownSelectPopup } from './../../components/drop-down-select-popup.js';
+import DropDownSelect from './../../components/drop-down-select-tooltip.jsx';
 import toast from './../../components/toast.js';
 import constHandle from './../../utils/const-handle.js';
 import { queryToUrl, loadPageVar } from './../../utils/url-handle.js';
@@ -141,73 +141,34 @@ export default class WindowsComponent extends React.Component {
         )
     }
 
-    selectedHandle(id) {
+    selectedDetailHandle(id) {
         const { list } = this.state
         const detail = list.find(item => item.id === id)
         this.setState({ selectedId: id, detail })
     }
 
-    showTagsSelected() {
-        const self = this
-        const { tags } = this.state
-
-        const handle = ({ value, label }) => {
-            self.setState({ tag: value })
-            const { sort, type, minTimestamp, maxTimestamp } = self.state
-            let query = { sort, tag: value, type, minTimestamp, maxTimestamp }
-            window.location.replace(`./index.html${queryToUrl(query)}`)
-            toast.show()
-        }
-
-        dropDownSelectPopup({
-            list: [{ label: '所有', value: '' }].concat(tags.map(tag => ({ label: tag, value: tag }))),
-            handle,
-            mustSelect: false
-        })
+    tagSelectedHandle({ value, label }) {
+        const { sort, type, minTimestamp, maxTimestamp } = this.state
+        this.setState({ tag: value })
+        let query = { sort, tag: value, type, minTimestamp, maxTimestamp }
+        window.location.replace(`./index.html${queryToUrl(query)}`)
+        toast.show()
     }
 
-    showDataTypeSelected() {
-        const self = this
-
-        const handle = ({ value, label }) => {
-            self.setState({ type: value })
-            const { sort, tag, minTimestamp, maxTimestamp } = self.state
-            let query = { sort, tag, type: value, minTimestamp, maxTimestamp }
-            window.location.replace(`./index.html${queryToUrl(query)}`)
-            toast.show()
-        }
-
-        dropDownSelectPopup({
-            list: constHandle.toDownSelectFormat({
-                CONST: CONST.DATA_TYPE,
-                labelName: 'label',
-                valueName: 'value'
-            }),
-            handle,
-            mustSelect: false
-        })
+    dataTypeSelectedHandle({ value, label }) {
+        const { sort, tag, minTimestamp, maxTimestamp } = this.state
+        this.setState({ type: value })
+        let query = { sort, tag, type: value, minTimestamp, maxTimestamp }
+        window.location.replace(`./index.html${queryToUrl(query)}`)
+        toast.show()
     }
 
-    showSortSelected() {
-        const self = this
-
-        const handle = ({ value, label }) => {
-            self.setState({ sort: value })
-            const { tag, type, minTimestamp, maxTimestamp } = self.state
-            let query = { sort: value, tag, type, minTimestamp, maxTimestamp }
-            window.location.replace(`./index.html${queryToUrl(query)}`)
-            toast.show()
-        }
-
-        dropDownSelectPopup({
-            list: constHandle.toDownSelectFormat({
-                CONST: CONST.SORT,
-                labelName: 'label',
-                valueName: 'value'
-            }),
-            handle,
-            mustSelect: false
-        })
+    sortSelectedHandle({ value, label }) {
+        const { tag, type, minTimestamp, maxTimestamp } = this.state
+        this.setState({ sort: value })
+        let query = { sort: value, tag, type, minTimestamp, maxTimestamp }
+        window.location.replace(`./index.html${queryToUrl(query)}`)
+        toast.show()
     }
 
     navigateToCreateDetail() {
@@ -219,21 +180,24 @@ export default class WindowsComponent extends React.Component {
     render() {
         const self = this
         const { clientHeight } = this
-        const { list, search, selectedId, detail, tag, type, sort, pageNo, count, pageSize } = this.state
+        const { list, search, selectedId, detail, tag, tags, type, sort, pageNo, count, pageSize } = this.state
         const minHeight = `${clientHeight - 185}px`
 
         return [
             <div className="windows-header flex-start-center noselect">
                 <div className="left-operating flex-start-center">
-
-                    <div className="operat-item hover-item"
-                        onClick={this.showTagsSelected.bind(this)}
-                    >标签分类: {tag ? tag : 'ALL'}</div>
-
-                    <div className="operat-item hover-item"
-                        onClick={this.showDataTypeSelected.bind(this)}
-                    >数据类型: {(type === 0 || !!type) ? constHandle.findValueByValue({ CONST: CONST.DATA_TYPE, supportKey: 'value', supportValue: type, targetKey: 'label' }) : 'ALL'}</div>
-
+                    <DropDownSelect
+                        options={[{ label: '所有', value: '' }].concat(tags.map(tag => ({ label: tag, value: tag })))}
+                        handle={this.tagSelectedHandle.bind(this)}
+                    >
+                        <div className="operat-item hover-item">标签分类: {tag ? tag : 'ALL'}</div>
+                    </DropDownSelect>
+                    <DropDownSelect
+                        options={constHandle.toDownSelectFormat({ CONST: CONST.DATA_TYPE, labelName: 'label', valueName: 'value' })}
+                        handle={this.dataTypeSelectedHandle.bind(this)}
+                    >
+                        <div className="operat-item hover-item">数据类型: {(type === 0 || !!type) ? constHandle.findValueByValue({ CONST: CONST.DATA_TYPE, supportKey: 'value', supportValue: type, targetKey: 'label' }) : 'ALL'}</div>
+                    </DropDownSelect>
                 </div>
 
                 <div className="search flex-rest">
@@ -258,9 +222,12 @@ export default class WindowsComponent extends React.Component {
                 </div>
 
                 <div className="right-operating flex-start-center">
-                    <div className="operat-item hover-item"
-                        onClick={this.showSortSelected.bind(this)}
-                    >排序: {sort ? constHandle.findValueByValue({ CONST: CONST.SORT, supportKey: 'value', supportValue: type, targetKey: 'label' }) : '默认'}</div>
+                    <DropDownSelect
+                        options={constHandle.toDownSelectFormat({ CONST: CONST.SORT, labelName: 'label', valueName: 'value' })}
+                        handle={this.sortSelectedHandle.bind(this)}
+                    >
+                        <div className="operat-item hover-item">排序: {sort ? constHandle.findValueByValue({ CONST: CONST.SORT, supportKey: 'value', supportValue: type, targetKey: 'label' }) : '默认'}</div>
+                    </DropDownSelect>
                     <div className="operat-item hover-item"
                         onClick={this.navigateToCreateDetail.bind(this)}
                     >创建</div>
@@ -272,7 +239,7 @@ export default class WindowsComponent extends React.Component {
                     <div className="list-float noselect">{list.map((data, key) => (
                         <div className={`list-item ${selectedId === data.id ? 'list-item-selected' : ''}`} key={key}>
                             <div className="list-item-container"
-                                onClick={() => this.selectedHandle(data.id)}
+                                onClick={() => this.selectedDetailHandle(data.id)}
                             >{data.title}</div>
                         </div>
                     ))}</div>

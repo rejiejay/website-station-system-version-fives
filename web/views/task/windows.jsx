@@ -1,4 +1,5 @@
 import login from './../../components/login.js';
+import DropDownSelect from './../../components/drop-down-select-tooltip.jsx';
 
 import CONST from './const.js';
 
@@ -7,7 +8,7 @@ export default class WindowsComponent extends React.Component {
         super(props)
 
         this.state = {
-            filter: null,
+            filter: CONST.FILTER.DEFAULT,
 
             rootTaskList: CONST.TASK.DEFAULT_LIST,
             taskMindList: CONST.TASK.DEFAULT_LIST,
@@ -32,6 +33,12 @@ export default class WindowsComponent extends React.Component {
         return true
     }
 
+    filterHandle({ value, label }) {
+        this.setState({
+            filter: { id: value, label }
+        })
+    }
+
     render() {
         const self = this
         const { clientHeight } = this
@@ -43,8 +50,12 @@ export default class WindowsComponent extends React.Component {
         return [
             <div className="windows-header flex-start-center noselect">
                 <div className="left-operating flex-start-center">
-                    <div className="operat-item hover-item"
-                    >过滤: {filter ? filter : 'ALL'}</div>
+                    <DropDownSelect
+                        options={rootTaskList.map(({ id, title }) => ({ value: id, label: title }))}
+                        handle={this.filterHandle.bind(this)}
+                    >
+                        <div className="operat-item hover-item">过滤: {filter ? filter : 'ALL'}</div>
+                    </DropDownSelect>
                 </div>
 
                 <div className="center flex-rest"></div>
