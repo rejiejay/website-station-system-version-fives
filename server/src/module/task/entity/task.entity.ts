@@ -2,15 +2,15 @@ import { Entity, Column, PrimaryGeneratedColumn } from 'typeorm';
 
 @Entity()
 export class TaskEntity {
-    @PrimaryGeneratedColumn()
+    @PrimaryGeneratedColumn({ type: 'bigint' })
     id: number;
 
     /**
      * 含义: 父节点唯一标识
      * 注意: parentid = root 表示 isroot
      */
-    @Column({ type: 'bigint' })
-    parentid: number;
+    @Column({ type: 'tinytext' })
+    parentid: string;
 
     /**
      * 含义: 根标识

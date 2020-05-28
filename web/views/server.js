@@ -1,4 +1,5 @@
 import fetch from './../components/async-fetch/fetch.js';
+import jsonHandle from './../utils/json-handle.js';
 
 let server = {}
 
@@ -23,5 +24,37 @@ server.getImageAuthorization = ({ resource }) => {
         )
     })
 }
+
+server.getServiceStorage = async({ key }) => {
+    let storage = false
+    await fetch.get({
+        url: 'map/get',
+        query: { key }
+    }).then(
+        ({ data: { key, value } }) => {
+            const verifyJSONresult = jsonHandle.verifyJSONString({ jsonString: value })
+            if (verifyJSONresult.isCorrect) storage = verifyJSONresult.data;
+        },
+        error => {}
+    )
+
+    return storage
+}
+
+server.setServiceStorage = async({ key, value }) => await fetch.post({
+    url: 'map/set',
+    body: { key, value }
+}).then(
+    () => {},
+    error => toast.show(error)
+)
+
+server.clearServiceStorage = async({ key }) => await fetch.get({
+    url: 'map/clear',
+    query: { key }
+}).then(
+    () => {},
+    error => toast.show(error)
+)
 
 export default server
