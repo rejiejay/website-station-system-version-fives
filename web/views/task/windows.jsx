@@ -1,6 +1,10 @@
 import fetch from './../../components/async-fetch/fetch.js';
 import login from './../../components/login.js';
 import toast from './../../components/toast.js';
+import {
+    inputPopUp,
+    inputPopUpDestroy
+} from './../../components/input-popup.js';
 
 import CONST from './const.js';
 import server from './server.js';
@@ -141,7 +145,21 @@ export default class WindowsComponent extends React.Component {
      * 含义: 输入过滤字段名称
      */
     inputMindFilterHandle() {
+        const self = this
+        const { filter } = this.state
 
+        const inputHandle = newFilter => {
+            self.setState({ filter: newFilter })
+            inputPopUpDestroy()
+        }
+
+        const defaultValue = filter
+
+        inputPopUp({
+            title: '请输入过滤任务的名称?',
+            inputHandle,
+            defaultValue
+        })
     }
 
     async clickMindHandle({ mindNode, taskItem, refName }) {

@@ -40,9 +40,7 @@ export const inputPopUp = ({
     if (!!defaultValue) input.value = defaultValue;
 
     document.getElementById('rejiejay-input-popup-operate-yes').onclick = function() {
-        if (!input.value) {
-            return toast.show('值不能为空')
-        }
+        if (mustInput && !input.value) return toast.show('值不能为空')
         inputHandle(input.value)
     }
 
