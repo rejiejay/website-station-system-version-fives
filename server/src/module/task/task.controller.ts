@@ -40,4 +40,13 @@ export class TaskController {
 
         return await this.service.getById(id)
     }
+
+    @Post('modify/parentid')
+    async modifyParentid(@Body() body: any): Promise<Consequencer> {
+        const { oldId, newId } = body
+
+        if (!oldId || !newId) return consequencer.error('参数有误');
+
+        return await this.service.modifyParentid({ oldId, newId })
+    }
 }
