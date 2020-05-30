@@ -30,7 +30,7 @@ const requestByMethod = (method, parameter) => new Promise((resolve, reject) => 
  * 策略: 函数每次调用判断是否有正在执行的方法, 如何存在正在执行的方法, 那么此次调用即可作废
  * 策略: 每次await后都判断堆栈是否完成, 如果未完成则循环调用自身
  */
-const asyncRequestHandle = async () => {
+const asyncRequestHandle = async() => {
     if (isAsyncHandle) return console.log('注意出现并发请求;')
     if (requestCacheStack.length === 0) return /** 含义: 处理完成所有请求 */
 

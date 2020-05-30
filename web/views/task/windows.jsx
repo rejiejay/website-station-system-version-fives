@@ -1,7 +1,9 @@
 import fetch from './../../components/async-fetch/fetch.js';
 import login from './../../components/login.js';
+import toast from './../../components/toast.js';
 
 import CONST from './const.js';
+import server from './server.js';
 import WindowsListItemComponent from './windows-list-item.jsx';
 
 export default class WindowsComponent extends React.Component {
@@ -16,9 +18,10 @@ export default class WindowsComponent extends React.Component {
             taskMindList: CONST.TASK.DEFAULT_LIST,
 
             executeTask: CONST.TASK.DEFAULT_ITEM,
-            previewTask: CONST.TASK.DEFAULT_ITEM
+            previewTask: CONST.TASK.DEFAULT_ITEM,
         }
 
+        this.isChangeMindNode = false
         this.clientHeight = document.body.offsetHeight || document.documentElement.clientHeight || window.innerHeight
         this.clientWidth = document.body.offsetWidth || document.documentElement.clientWidth || window.innerWidth
     }
@@ -27,6 +30,7 @@ export default class WindowsComponent extends React.Component {
         tippy('[data-tippy-content]');
         await login()
         await this.initRootTaskList()
+        await this.initExecuteDetailTask()
     }
 
     async initRootTaskList() {
@@ -44,8 +48,51 @@ export default class WindowsComponent extends React.Component {
         )
     }
 
-    async initTaskMindList() {
+    async initExecuteDetailTask() {
+        const task = await server.getStorageTask()
+
+        if (task) {
+            this.setState({ executeTask: data, previewTask: data })
+        } else {
+            const executeTask = await this.initPreviewDetailTask()
+            this.setState({ executeTask })
+        }
+    }
+
+    async initPreviewDetailTask(id) {
         const self = this
+        let previewTask = null
+
+        if (id) {
+            await fetch.get({
+                url: 'task/id',
+                query: { id }
+            }).then(
+                ({ data }) => {
+                    previewTask = data
+                    self.setState({ previewTask })
+                },
+                error => { }
+            )
+
+            return previewTask
+        }
+
+        await fetch.get({
+            url: 'task/random',
+            query: {}
+        }).then(
+            ({ data }) => {
+                previewTask = data
+                self.setState({ previewTask })
+            },
+            error => { }
+        )
+
+        return previewTask
+    }
+
+    async initTaskMindList() {
         const { rootTaskList } = this.state
         let taskMindList = []
         const getTaskMindBy = async rootTask => {
@@ -61,7 +108,7 @@ export default class WindowsComponent extends React.Component {
                 url: 'task/list/group/by',
                 query: { rootid: rootTask.id }
             }).then(
-                ({ data }) => taskMindItem.data = [rootMind].concat(data.map(task => ({
+                ({ data }) => taskMindItem.data = [rootMind].concat(data.filter(task => task.parentid !== 'root').map(task => ({
                     id: +task.id,
                     parentid: +task.parentid,
                     topic: task.title,
@@ -97,13 +144,47 @@ export default class WindowsComponent extends React.Component {
 
     }
 
+    async clickMindHandle({ mindNode, taskItem, refName }) {
+        const { previewTask } = this.state
+        const { isChangeMindNode } = this
+
+        if (!isChangeMindNode) return this.initPreviewDetailTask(mindNode.id)
+
+        const originalTask = previewTask.id
+        const expectTask = mindNode.id
+
+        await fetch.post({
+            url: 'task/modify/parentid',
+            body: { oldId: originalTask, newId: expectTask }
+        }).then(
+            ({ data }) => { },
+            error => { }
+        )
+
+        await this.initTaskMindList()
+
+        this.refs[refName].updateJsMind()
+    }
+
+    changeMindNodeHandle() {
+        toast.show('请选择节点')
+        this.isChangeMindNode = true
+    }
+
     render() {
         const self = this
-        const { clientHeight } = this
+        const { clientHeight, isChangeMindNode } = this
         const { filter, executeTask, taskMindList, previewTask } = this.state
         const minContentHeight = clientHeight - 185
         const taskMindHeight = clientHeight / 4 * 3; /** 显示3/4 */
         const isPreviewExecuteTask = this.verifyPreviewExecuteTask()
+        const smart = server.getJsonDataBySMART(previewTask)
+
+        /**
+         * 含义: 重置操作
+         * 初衷: 每当status发生改变的时候, 即不让重置
+         */
+        if (isChangeMindNode) this.isChangeMindNode = false
 
         return [
             <div className="windows-header flex-start-center noselect">
@@ -130,9 +211,11 @@ export default class WindowsComponent extends React.Component {
                     {taskMindList.filter(mind => filter ? mind.meta.name.includes(filter) : true).map((task, key) => (
                         <WindowsListItemComponent
                             key={key}
+                            ref={`mind_${task.meta.name}_${key}`}
                             className="left-list"
                             taskMindHeight={`${taskMindHeight}px`}
                             taskMindItem={task}
+                            onSelectNodeHandle={mindNode => self.clickMindHandle({ mindNode, task, refName: `mind_${task.meta.name}_${key}` })}
                         >
                         </WindowsListItemComponent>
                     ))}
@@ -145,7 +228,7 @@ export default class WindowsComponent extends React.Component {
                         {previewTask && previewTask.putoff && <div className="item-putoff flex-center">推迟的时间: 2020-08-10 18:02</div>}
 
                         <div className="item-title flex-start-center">
-                            <div className="flex-rest">标题</div>
+                            <div className="flex-rest">{previewTask ? previewTask.title : '标题'}</div>
                             <div className="dont-want-todo noselect" data-tippy-content="点击查看详情">不想做怎么办?</div>
                         </div>
 
@@ -154,60 +237,50 @@ export default class WindowsComponent extends React.Component {
                                 <div className="flex-rest">任务内容描述</div>
                                 <div className="item-content-tip noselect" data-tippy-content="点击跳转需求系统">为什么要做这个?</div>
                             </div>
-                            <div className="item-content-description item-content-main">
-                                内容内容
-                            </div>
+                            <div className="item-content-description item-content-main">{previewTask ? previewTask.content : '内容'}</div>
                         </div>
 
-                        <div className="item-content">
+                        {smart.specific && <div className="item-content">
                             <div className="item-content-title flex-start-center">
                                 <div className="flex-rest">达成任务的具体行为标准?（给未来的自己）</div>
                                 <div className="item-content-tip noselect" data-tippy-content="清楚地说明要达成的行为标准，不明确就没有办法评判、衡量。">Specific</div>
                             </div>
-                            <div className="item-content-description">
-                                内容内容
-                            </div>
-                        </div>
+                            <div className="item-content-description">{smart.specific}</div>
+                        </div>}
 
-                        <div className="item-content">
+                        {smart.measurable && <div className="item-content">
                             <div className="item-content-title flex-start-center">
                                 <div className="flex-rest">是否可衡量目标的完成度?（给未来的自己）</div>
                                 <div className="item-content-tip noselect" data-tippy-content="杜绝在目标设置中使用形容词等概念模糊、无法衡量的描述、这对自己非常重要！">Measurable</div>
                             </div>
-                            <div className="item-content-description">
-                                内容内容
-                            </div>
-                        </div>
+                            <div className="item-content-description">{smart.measurable}</div>
+                        </div>}
 
-                        <div className="item-content">
+                        {smart.attainable && <div className="item-content">
                             <div className="item-content-title flex-start-center">
                                 <div className="flex-rest">可实现?并能够被未来的自己所接受?</div>
                                 <div className="item-content-tip noselect" data-tippy-content="要知道长期无法可实现的目标就非常打击积极性">Attainable</div>
                             </div>
-                            <div className="item-content-description">
-                                内容内容
-                            </div>
-                        </div>
+                            <div className="item-content-description">{smart.attainable}</div>
+                        </div>}
 
-                        <div className="item-content">
+                        {smart.relevant && <div className="item-content">
                             <div className="item-content-title flex-start-center">
                                 <div className="flex-rest">是否和需求相关联，不要跑题</div>
                                 <div className="item-content-tip noselect" data-tippy-content="你想学英语，却让自己看美剧（相关性非常低）">Relevant</div>
                             </div>
-                            <div className="item-content-description">
-                                内容内容
-                            </div>
-                        </div>
+                            <div className="item-content-description">{smart.relevant}</div>
+                        </div>}
 
-                        <div className="item-content">
+                        {smart.timeBound && <div className="item-content">
                             <div className="item-content-title flex-start-center">
-                                <div className="flex-rest">时限性</div>
+                                <div className="flex-rest">{smart.timeBound ? smart.timeBound : '时限性'}</div>
                                 <div className="item-content-tip noselect" data-tippy-content="一直学一直学，时间过去了，自己还在原地徘徊、这就没意思了">Time-bound</div>
                             </div>
                             <div className="item-content-description">
                                 内容内容
                             </div>
-                        </div>
+                        </div>}
 
                         {previewTask && previewTask.link && <div className="item-content">
                             <div className="item-content-title flex-start-center">
@@ -223,7 +296,9 @@ export default class WindowsComponent extends React.Component {
                         {previewTask && !previewTask.putoff && <div className="flex-rest flex-center">推迟</div>}
                         {previewTask && previewTask.putoff && <div className="flex-rest flex-center">取消推迟</div>}
                         <div className="flex-rest flex-center">新增子节点</div>
-                        <div className="flex-rest flex-center">修改节点</div>
+                        {previewTask && previewTask.parentid !== 'root' && <div className="flex-rest flex-center"
+                            onClick={this.changeMindNodeHandle.bind(this)}
+                        >修改节点</div>}
                         <div className="flex-rest flex-center">编辑</div>
                         <div className="flex-rest flex-center">删除</div>
                     </div>

@@ -50,6 +50,7 @@ export class TaskService {
         let update = JSON.parse(JSON.stringify(oldTask))
         update.parentid = `${newTask.id}`
         update.rootid = newTask.rootid
+        update.timestamp = new Date().getTime()
 
         const updateRoot = await this.updateRootTimestamp(oldTask.rootid)
         if (updateRoot.result !== 1) return updateRoot

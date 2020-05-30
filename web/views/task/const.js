@@ -8,7 +8,7 @@ const CONST = {
             rootid: '', // 主要   方便SQL查询
             title: '',
             content: '',
-            /** S=Specific、M=Measurable、A=Attainable、R=Relevant、T=Time-bound */
+            /** S= specific 、M= measurable 、A= attainable 、R= relevant 、T= time-bound */
             SMART: '',
             /** 作用: 绑定结论 */
             link: '',

@@ -7,6 +7,7 @@ const props = {
     children: {},
     className: 'list-left',
     taskMindHeight: '2/3px',
+    onSelectNodeHandle: () => { }
 }
 
 export default class WindowsListItemComponent extends React.Component {
@@ -23,21 +24,24 @@ export default class WindowsListItemComponent extends React.Component {
         this.initJsMind()
     }
 
-    componentDidUpdate(prevProps) {
-        const { taskMindItem } = this.props
+    /**
+     * 这里会出现数据异步问题,所以手动更新DOM
+     */
+    // componentDidUpdate(prevProps) {
+    //     const { taskMindItem } = this.props
 
-        const isJsMindChange = () => {
-            if (!prevProps) return true /** 含义：之前连props都没有 */
-            if (!prevProps.taskMindItem || !prevProps.taskMindItem.data || prevProps.taskMindItem.data.length <= 0) return true
-            if (!taskMindItem || !taskMindItem.data || taskMindItem.data.length <= 0) return false
-            if (JSON.stringify(prevProps.taskMindItem.data) === JSON.stringify(taskMindItem.data)) return false
-            return true
-        }
+    //     const isJsMindChange = () => {
+    //         if (!prevProps) return true /** 含义：之前连props都没有 */
+    //         if (!prevProps.taskMindItem || !prevProps.taskMindItem.data || prevProps.taskMindItem.data.length <= 0) return true
+    //         if (!taskMindItem || !taskMindItem.data || taskMindItem.data.length <= 0) return false
+    //         if (JSON.stringify(prevProps.taskMindItem.data) === JSON.stringify(taskMindItem.data)) return false
+    //         return true
+    //     }
 
-        if (isJsMindChange()) {
-            this.initJsMind()
-        }
-    }
+    //     if (isJsMindChange()) {
+    //         this.initJsMind()
+    //     }
+    // }
 
     initJsMind() {
         const { jsMindContainerRefer } = this
@@ -52,6 +56,28 @@ export default class WindowsListItemComponent extends React.Component {
         })
 
         this.jsMindInstance.show(taskMindItem);
+        this.initSelectHandle()
+    }
+
+    updateJsMind() {
+        const { jsMindContainerRefer } = this
+
+        document.getElementById(jsMindContainerRefer).innerHTML = ''
+        this.initJsMind()
+    }
+
+    initSelectHandle() {
+        const { onSelectNodeHandle } = this.props
+        const self = this
+
+        const selectNodeHandle = node => {
+            const data = self.jsMindInstance.get_node(node)
+            onSelectNodeHandle(data)
+        }
+
+        this.jsMindInstance.add_event_listener((type, { evt, node }) => {
+            if (type === 4 && evt === 'select_node') selectNodeHandle(node)
+        });
     }
 
     render() {
