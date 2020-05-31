@@ -20,3 +20,9 @@
 
 - post:/task/bind/link
 [绑定任务](http://localhost:1932/task/bind/link)
+
+- post:/task/set/putoff
+[推迟任务](http://localhost:1932/task/set/putoff)
+
+- post:/task/clear/putoff
+[取消推迟任务](http://localhost:1932/task/clear/putoff)

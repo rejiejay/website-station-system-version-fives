@@ -67,4 +67,22 @@ export class TaskController {
 
         return await this.service.bindLink(id, link)
     }
+
+    @Post('set/putoff')
+    async setPutoff(@Body() body: any): Promise<Consequencer> {
+        const { id, putoff } = body
+
+        if (!id || !putoff) return consequencer.error('参数有误');
+
+        return await this.service.setPutoff(id, putoff)
+    }
+
+    @Post('clear/putoff')
+    async clearPutoff(@Body() body: any): Promise<Consequencer> {
+        const { id } = body
+
+        if (!id) return consequencer.error('参数有误');
+
+        return await this.service.clearPutoff(id)
+    }
 }

@@ -96,6 +96,32 @@ export class TaskService {
         const result = await this.repository.update(task, update);
 
         if (result && result.raw && result.raw.warningCount === 0) return consequencer.success(update);
-        return consequencer.error('Accomplish root task false');
+        return consequencer.error('bind task link false');
+    }
+
+    async setPutoff(id, putoff): Promise<Consequencer> {
+        const task = await this.repository.findOne({ id });
+        if (!task) return consequencer.error('This record does not exist');
+        let update = JSON.parse(JSON.stringify(task))
+
+        update.putoff = putoff
+        update.timestamp = new Date().getTime()
+        const result = await this.repository.update(task, update);
+
+        if (result && result.raw && result.raw.warningCount === 0) return consequencer.success(update);
+        return consequencer.error('putoff task false');
+    }
+
+    async clearPutoff(id): Promise<Consequencer> {
+        const task = await this.repository.findOne({ id });
+        if (!task) return consequencer.error('This record does not exist');
+        let update = JSON.parse(JSON.stringify(task))
+
+        update.putoff = null
+        update.timestamp = new Date().getTime()
+        const result = await this.repository.update(task, update);
+
+        if (result && result.raw && result.raw.warningCount === 0) return consequencer.success(update);
+        return consequencer.error('un-putoff task false');
     }
 }
