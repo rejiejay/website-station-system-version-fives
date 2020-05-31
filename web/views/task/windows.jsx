@@ -5,6 +5,8 @@ import {
     inputPopUp,
     inputPopUpDestroy
 } from './../../components/input-popup.js';
+import { confirmPopUp } from './../../components/confirm-popup.js';
+import timeTransformers from './../../utils/time-transformers.js';
 
 import CONST from './const.js';
 import server from './server.js';
@@ -81,6 +83,13 @@ export default class WindowsComponent extends React.Component {
 
             return previewTask
         }
+
+        return await this.initRandomPreviewDetailTask()
+    }
+
+    async initRandomPreviewDetailTask() {
+        const self = this
+        let previewTask = null
 
         await fetch.get({
             url: 'task/random',
@@ -189,6 +198,97 @@ export default class WindowsComponent extends React.Component {
         this.isChangeMindNode = true
     }
 
+    accomplishTask() {
+        const self = this
+        const { previewTask } = this.props
+
+        const handle = () => fetch.post({
+            url: 'task/accomplish',
+            body: { id: previewTask.id }
+        }).then(
+            ({ data }) => self.initRandomPreviewDetailTask(),
+            error => { }
+        )
+
+        confirmPopUp({
+            title: '你确定要完成这条数据吗?',
+            succeedHandle: handle
+        })
+    }
+
+    bindTaskLink() {
+        const self = this
+        const { previewTask } = this.state
+
+        const inputHandle = async link => {
+            fetch.post({
+                url: 'task/bind/link',
+                body: { id: previewTask.id, link }
+            }).then(
+                ({ data }) => self.initPreviewDetailTask(previewTask.id),
+                error => { }
+            )
+
+            inputPopUpDestroy()
+        }
+
+        const defaultValue = `./../record/index.html?tag=`
+
+        inputPopUp({
+            title: '请输入绑定任务的链接?',
+            inputHandle,
+            defaultValue
+        })
+    }
+
+    timeStampHandle() {
+        const self = this
+        const nowYear = new Date().getFullYear()
+
+        const handle = data => {
+            const { previewTask } = self.state
+            fetch.post({
+                url: 'task/set/putoff',
+                body: { id: previewTask.id, putoff: new Date().getTime() }
+            }).then(
+                ({ data }) => self.initPreviewDetailTask(previewTask.id),
+                error => { }
+            )
+        }
+
+        const datepicker = new Rolldate({
+            el: '#picka-date',
+            format: 'YYYY-MM-DD hh:mm',
+            beginYear: nowYear - 10,
+            endYear: nowYear + 10,
+            lang: { title: '当时时间?' },
+            confirm: function confirm(date) {
+                const timestamp = timeTransformers.YYYYmmDDhhMMToTimestamp(date)
+                handle(timestamp)
+            }
+        })
+
+        datepicker.show()
+    }
+
+    timeStampClearHandle() {
+        const self = this
+        const { previewTask } = this.state
+
+        const handle = () => fetch.post({
+            url: 'task/clear/putoff',
+            body: { id: previewTask.id }
+        }).then(
+            ({ data }) => self.initPreviewDetailTask(previewTask.id),
+            error => { }
+        )
+
+        confirmPopUp({
+            title: '你确定要取消推迟吗?',
+            succeedHandle: handle
+        })
+    }
+
     render() {
         const self = this
         const { clientHeight, isChangeMindNode } = this
@@ -218,7 +318,9 @@ export default class WindowsComponent extends React.Component {
                     {!isPreviewExecuteTask && <div className="operat-item hover-item"
                         onClick={() => self.setState({ previewTask: JSON.parse(JSON.stringify(executeTask)) })}
                     >查看当前正在执行的任务</div>}
-                    <div className="operat-item hover-item">随机查看</div>
+                    <div className="operat-item hover-item"
+                        onClick={this.initRandomPreviewDetailTask.bind(this)}
+                    >随机查看</div>
                     <div className="operat-item hover-item">任务统计</div>
                     <div className="operat-item hover-item">新增根任务</div>
                 </div>
@@ -243,7 +345,7 @@ export default class WindowsComponent extends React.Component {
 
                 <div className="windows-container-right" style={{ minHeight: `${minContentHeight}px` }}>
                     <div className="item-container">
-                        {previewTask && previewTask.putoff && <div className="item-putoff flex-center">推迟的时间: 2020-08-10 18:02</div>}
+                        {previewTask && previewTask.putoff && <div className="item-putoff flex-center">推迟的时间: {timeTransformers.dateToYYYYmmDDhhMM(new Date(+previewTask.putoff))}</div>}
 
                         <div className="item-title flex-start-center">
                             <div className="flex-rest">{previewTask ? previewTask.title : '标题'}</div>
@@ -304,14 +406,30 @@ export default class WindowsComponent extends React.Component {
                             <div className="item-content-title flex-start-center">
                                 <div className="flex-rest">跟进</div>
                             </div>
-                            <div className="item-content-link"><div className="flex-center">点击查看进度</div></div>
+                            <div className="item-content-link"
+                                onClick={() => window.open(previewTask.link)}
+                            ><div className="flex-center">点击查看进度</div></div>
                         </div>}
                     </div>
                     <div className="detail-operate flex-start-center noselect">
                         {!isPreviewExecuteTask && <div className="flex-rest flex-center">执行</div>}
                         <div className="flex-rest flex-center">完成</div>
-                        {previewTask && !previewTask.link && <div className="flex-rest flex-center">绑定结论</div>}
-                        {previewTask && !previewTask.putoff && <div className="flex-rest flex-center">推迟</div>}
+                        {previewTask && !previewTask.link && <div className="flex-rest flex-center"
+                            onClick={this.bindTaskLink.bind(this)}
+                        >绑定结论</div>}
+                        <input readonly type="text"
+                            id="picka-date"
+                            style={{ display: 'none' }}
+                            placeholder="时间?"
+                            onClick={this.timeStampHandle.bind(this)}
+                        />
+                        {previewTask && !previewTask.putoff && <div className="flex-rest flex-center"
+                            onClick={this.timeStampHandle.bind(this)}
+                        >推迟</div>}
+                        {previewTask && previewTask.putoff && <div className="flex-rest flex-center"
+                            data-tippy-content={timeTransformers.dateToYYYYmmDDhhMM(new Date(+previewTask.putoff))}
+                            onClick={this.timeStampClearHandle.bind(this)}
+                        >取消推迟</div>}
                         {previewTask && previewTask.putoff && <div className="flex-rest flex-center">取消推迟</div>}
                         <div className="flex-rest flex-center">新增子节点</div>
                         {previewTask && previewTask.parentid !== 'root' && <div className="flex-rest flex-center"
