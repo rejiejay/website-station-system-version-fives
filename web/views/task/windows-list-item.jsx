@@ -120,6 +120,11 @@ export default class WindowsListItemComponent extends React.Component {
                                 onClick={this.switchHandle.bind(this)}
                             >{isShowPutoff ? '影藏' : '显示'}putoff</div>
                         </div>
+                        <div className="operation-item">
+                            <div className="operation-item-container flex-center noselect"
+                                onClick={() => window.open('./start-up-assist.index.html')}
+                            >不想做怎么办?</div>
+                        </div>
                     </div>
                 </div>
 

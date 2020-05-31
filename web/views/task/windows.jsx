@@ -308,6 +308,11 @@ export default class WindowsComponent extends React.Component {
         })
     }
 
+    editTaskHandle() {
+        const { previewTask } = this.state
+        window.open(`./edit.html?id=${previewTask.id}`)
+    }
+
     render() {
         const self = this
         const { clientHeight, isChangeMindNode } = this
@@ -368,7 +373,9 @@ export default class WindowsComponent extends React.Component {
 
                         <div className="item-title flex-start-center">
                             <div className="flex-rest">{previewTask ? previewTask.title : '标题'}</div>
-                            <div className="dont-want-todo noselect" data-tippy-content="点击查看详情">不想做怎么办?</div>
+                            <div className="dont-want-todo noselect" data-tippy-content="点击查看详情"
+                                onClick={() => window.open('./start-up-assist.index.html')}
+                            >不想做怎么办?</div>
                         </div>
 
                         <div className="item-content">
@@ -453,7 +460,9 @@ export default class WindowsComponent extends React.Component {
                         {previewTask && previewTask.parentid !== 'root' && <div className="flex-rest flex-center"
                             onClick={this.changeMindNodeHandle.bind(this)}
                         >修改节点</div>}
-                        <div className="flex-rest flex-center">编辑</div>
+                        <div className="flex-rest flex-center"
+                            onClick={this.editTaskHandle.bind(this)}
+                        >编辑</div>
                         <div className="flex-rest flex-center"
                             onClick={this.delMindNodeHandle.bind(this)}
                         >删除</div>
