@@ -81,7 +81,40 @@ body {
         min-height: 500px;
 
         .left-list {
+            position        : relative;
             background-color: #fff;
+
+            .operation {
+                position: absolute;
+                right   : 0px;
+                top     : 0px;
+                z-index : 2;
+
+                .operation-container {
+                    padding: 15px 25px;
+                }
+
+                .operation-item {
+                    padding-left: 15px;
+                }
+
+                .operation-item-container {
+                    height          : 32px;
+                    padding         : 0px 15px;
+                    background-color: #f1f1f1;
+                    cursor          : pointer;
+                }
+            }
+
+            .mind {
+                width : 100%;
+                height: 100%;
+
+                .theme-primary {
+                    z-index: 1;
+                }
+            }
+
         }
     }
 

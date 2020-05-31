@@ -15,7 +15,7 @@ export default class WindowsListItemComponent extends React.Component {
         super(props)
 
         this.state = {
-            isShowPutoff: true
+            isShowPutoff: false
         }
 
         this.jsMindContainerRefer = `jsmind_${createRandomStr({ length: 10 })}`
@@ -48,6 +48,7 @@ export default class WindowsListItemComponent extends React.Component {
     initJsMind() {
         const { jsMindContainerRefer } = this
         const { taskMindItem } = this.props
+        const { isShowPutoff } = this.state
 
         if (!taskMindItem || !taskMindItem.data || taskMindItem.data.length <= 0) return false
 
@@ -57,7 +58,9 @@ export default class WindowsListItemComponent extends React.Component {
             theme: CONST.MIND_THEME.PRIMARY
         })
 
-        this.jsMindInstance.show(taskMindItem);
+        let filterTaskMindItem = JSON.parse(JSON.stringify(taskMindItem))
+        filterTaskMindItem.data = taskMindItem.data.filter(element => isShowPutoff ? true : !element.putoff)
+        this.jsMindInstance.show(filterTaskMindItem);
         this.initSelectHandle()
         this.setPutoffColor()
     }
@@ -70,8 +73,8 @@ export default class WindowsListItemComponent extends React.Component {
     }
 
     initSelectHandle() {
-        const { onSelectNodeHandle } = this.props
         const self = this
+        const { onSelectNodeHandle } = this.props
 
         const selectNodeHandle = node => {
             const data = self.jsMindInstance.get_node(node)
@@ -94,13 +97,33 @@ export default class WindowsListItemComponent extends React.Component {
         })
     }
 
+    switchHandle() {
+        const self = this
+        const { isShowPutoff } = this.state
+        this.setState(
+            { isShowPutoff: !isShowPutoff },
+            self.updateJsMind.bind(self)
+        )
+    }
+
     render() {
         const { jsMindContainerRefer } = this
-        const { children, className, taskMindHeight } = this.props
+        const { className, taskMindHeight } = this.props
+        const { isShowPutoff } = this.state
 
         return (
-            <div className={className} style={{ height: taskMindHeight }} id={jsMindContainerRefer}>
-                {children}
+            <div className={className} style={{ height: taskMindHeight }}>
+                <div className="operation">
+                    <div className="operation-container flex-start">
+                        <div className="operation-item">
+                            <div className="operation-item-container flex-center noselect"
+                                onClick={this.switchHandle.bind(this)}
+                            >{isShowPutoff ? '影藏' : '显示'}putoff</div>
+                        </div>
+                    </div>
+                </div>
+
+                <div className="mind" id={jsMindContainerRefer}></div>
             </div>
         )
     }
