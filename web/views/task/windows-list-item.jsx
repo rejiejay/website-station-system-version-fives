@@ -14,7 +14,9 @@ export default class WindowsListItemComponent extends React.Component {
     constructor(props) {
         super(props)
 
-        this.state = {}
+        this.state = {
+            isShowPutoff: true
+        }
 
         this.jsMindContainerRefer = `jsmind_${createRandomStr({ length: 10 })}`
         this.jsMindInstance = null
@@ -57,6 +59,7 @@ export default class WindowsListItemComponent extends React.Component {
 
         this.jsMindInstance.show(taskMindItem);
         this.initSelectHandle()
+        this.setPutoffColor()
     }
 
     updateJsMind() {
@@ -78,6 +81,17 @@ export default class WindowsListItemComponent extends React.Component {
         this.jsMindInstance.add_event_listener((type, { evt, node }) => {
             if (type === 4 && evt === 'select_node') selectNodeHandle(node)
         });
+    }
+
+    setPutoffColor() {
+        const self = this
+        const { taskMindItem } = this.props
+
+        taskMindItem.data.filter(element => !!element.putoff).map(element => {
+            const bgcolor = '#ff4d4f'
+            const fgcolor = '#FFF'
+            self.jsMindInstance.set_node_color(+element.id, bgcolor, fgcolor)
+        })
     }
 
     render() {

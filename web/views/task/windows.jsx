@@ -125,6 +125,7 @@ export default class WindowsComponent extends React.Component {
                     id: +task.id,
                     parentid: +task.parentid,
                     topic: task.title,
+                    putoff: task.putoff,
                     direction: 'right',
                     expanded: true
                 }))),
@@ -430,7 +431,6 @@ export default class WindowsComponent extends React.Component {
                             data-tippy-content={timeTransformers.dateToYYYYmmDDhhMM(new Date(+previewTask.putoff))}
                             onClick={this.timeStampClearHandle.bind(this)}
                         >取消推迟</div>}
-                        {previewTask && previewTask.putoff && <div className="flex-rest flex-center">取消推迟</div>}
                         <div className="flex-rest flex-center">新增子节点</div>
                         {previewTask && previewTask.parentid !== 'root' && <div className="flex-rest flex-center"
                             onClick={this.changeMindNodeHandle.bind(this)}
