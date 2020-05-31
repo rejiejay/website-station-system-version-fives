@@ -29,6 +29,10 @@ const configs = [{
     route: '/task/start-up-assist/index.html',
     entry: './views/task/start-up-assist',
     output: './build/task/start-up-assist'
+}, {
+    route: '/task/edit/index.html',
+    entry: './views/task/edit',
+    output: './build/task/edit'
 }]
 
 export default configs
