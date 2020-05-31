@@ -26,3 +26,6 @@
 
 - post:/task/clear/putoff
 [取消推迟任务](http://localhost:1932/task/clear/putoff)
+
+- post:/task/del
+[删除任务](http://localhost:1932/task/del)

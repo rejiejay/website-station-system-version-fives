@@ -124,4 +124,13 @@ export class TaskService {
         if (result && result.raw && result.raw.warningCount === 0) return consequencer.success(update);
         return consequencer.error('un-putoff task false');
     }
+
+    async delTask(id): Promise<Consequencer> {
+        const task = await this.repository.findOne({ id });
+        if (!task) return consequencer.error('This record does not exist');
+        const result = await this.repository.delete(task);
+
+        if (result && result.raw && result.raw.warningCount === 0) return consequencer.success();
+        return consequencer.error('delete task false');
+    }
 }

@@ -85,4 +85,13 @@ export class TaskController {
 
         return await this.service.clearPutoff(id)
     }
+
+    @Post('del')
+    async delTask(@Body() body: any): Promise<Consequencer> {
+        const { id } = body
+
+        if (!id) return consequencer.error('参数有误');
+
+        return await this.service.delTask(id)
+    }
 }

@@ -290,6 +290,24 @@ export default class WindowsComponent extends React.Component {
         })
     }
 
+    delMindNodeHandle() {
+        const self = this
+        const { previewTask } = this.state
+
+        const handle = () => fetch.post({
+            url: 'task/del',
+            body: { id: previewTask.id }
+        }).then(
+            ({ data }) => self.initRandomPreviewDetailTask(),
+            error => { }
+        )
+
+        confirmPopUp({
+            title: '你确定要删除任务吗?',
+            succeedHandle: handle
+        })
+    }
+
     render() {
         const self = this
         const { clientHeight, isChangeMindNode } = this
@@ -436,7 +454,9 @@ export default class WindowsComponent extends React.Component {
                             onClick={this.changeMindNodeHandle.bind(this)}
                         >修改节点</div>}
                         <div className="flex-rest flex-center">编辑</div>
-                        <div className="flex-rest flex-center">删除</div>
+                        <div className="flex-rest flex-center"
+                            onClick={this.delMindNodeHandle.bind(this)}
+                        >删除</div>
                     </div>
                 </div>
             </div >,
