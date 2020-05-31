@@ -14,3 +14,9 @@
 
 - post:/task/modify/parentid
 [修改父节点](http://localhost:1932/task/modify/parentid)
+
+- post:/task/accomplish
+[完成任务](http://localhost:1932/task/accomplish)
+
+- post:/task/bind/link
+[绑定任务](http://localhost:1932/task/bind/link)

@@ -49,4 +49,22 @@ export class TaskController {
 
         return await this.service.modifyParentid({ oldId, newId })
     }
+
+    @Post('accomplish')
+    async accomplish(@Body() body: any): Promise<Consequencer> {
+        const { id } = body
+
+        if (!id) return consequencer.error('参数有误');
+
+        return await this.service.accomplish(id)
+    }
+
+    @Post('bind/link')
+    async bindLink(@Body() body: any): Promise<Consequencer> {
+        const { id, link } = body
+
+        if (!id || !link) return consequencer.error('参数有误');
+
+        return await this.service.bindLink(id, link)
+    }
 }

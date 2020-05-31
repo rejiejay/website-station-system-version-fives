@@ -71,4 +71,31 @@ export class TaskService {
         if (result && result.raw && result.raw.warningCount === 0) return consequencer.success(update);
         return consequencer.error('Update root timestamp false');
     }
+
+    async accomplish(id): Promise<Consequencer> {
+        const task = await this.repository.findOne({ id });
+        if (!task) return consequencer.error('This record does not exist');
+        let update = JSON.parse(JSON.stringify(task))
+
+        const nowTimestamp = new Date().getTime()
+        update.complete = nowTimestamp
+        update.timestamp = nowTimestamp
+        const result = await this.repository.update(task, update);
+
+        if (result && result.raw && result.raw.warningCount === 0) return consequencer.success(update);
+        return consequencer.error('Accomplish root task false');
+    }
+
+    async bindLink(id, link): Promise<Consequencer> {
+        const task = await this.repository.findOne({ id });
+        if (!task) return consequencer.error('This record does not exist');
+        let update = JSON.parse(JSON.stringify(task))
+
+        update.link = link
+        update.timestamp = new Date().getTime()
+        const result = await this.repository.update(task, update);
+
+        if (result && result.raw && result.raw.warningCount === 0) return consequencer.success(update);
+        return consequencer.error('Accomplish root task false');
+    }
 }
