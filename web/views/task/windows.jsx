@@ -320,7 +320,7 @@ export default class WindowsComponent extends React.Component {
         const minContentHeight = clientHeight - 185
         const taskMindHeight = clientHeight / 4 * 3; /** 显示3/4 */
         const isPreviewExecuteTask = this.verifyPreviewExecuteTask()
-        const smart = server.getJsonDataBySMART(previewTask)
+        const smart = server.getJsonDataBySMART(previewTask.SMART)
 
         /**
          * 含义: 重置操作
@@ -423,9 +423,7 @@ export default class WindowsComponent extends React.Component {
                                 <div className="flex-rest">{smart.timeBound ? smart.timeBound : '时限性'}</div>
                                 <div className="item-content-tip noselect" data-tippy-content="一直学一直学，时间过去了，自己还在原地徘徊、这就没意思了">Time-bound</div>
                             </div>
-                            <div className="item-content-description">
-                                内容内容
-                            </div>
+                            <div className="item-content-description">{smart.timeBound}</div>
                         </div>}
 
                         {previewTask && previewTask.link && <div className="item-content">

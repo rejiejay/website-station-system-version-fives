@@ -26,7 +26,7 @@ server.getStorageTask = async() => {
 }
 
 /**
- * 含义: 获取缓存任务
+ * 含义: 获取任务的其他信息
  */
 server.getJsonDataBySMART = task => {
     let smart = {
@@ -48,6 +48,14 @@ server.getJsonDataBySMART = task => {
     if (result.timeBound) smart.timeBound = result.timeBound
 
     return smart
+}
+
+/**
+ * 含义: 获取任务的其他信息
+ */
+server.updateSMARThandle = ({ smart, key, value }) => {
+    smart[key] = value
+    return JSON.stringify(smart)
 }
 
 export default server

@@ -1,6 +1,7 @@
 import { loadPageVar } from './../../../utils/url-handle.js';
 
 import CONST from './const.js';
+import server from './../server.js';
 
 export default class WindowsComponent extends React.Component {
     constructor(props) {
@@ -24,6 +25,7 @@ export default class WindowsComponent extends React.Component {
     }
 
     async componentDidMount() {
+        tippy('[data-tippy-content]');
         this.initPageVar()
     }
 
@@ -35,9 +37,10 @@ export default class WindowsComponent extends React.Component {
 
     render() {
         const self = this
-        const { title, content } = this.state
+        const { title, content, SMART } = this.state
         const { clientHeight, status } = this
         const minHeight = clientHeight - 125
+        const smart = server.getJsonDataBySMART(SMART)
 
         return (
             <div className="windows flex-column-center">
@@ -67,6 +70,64 @@ export default class WindowsComponent extends React.Component {
 
                             <div className="soft-operate-item flex-center flex-rest"
                             >a</div>
+                        </div>
+
+                        <div className="other-input">
+                            <div className="content-input"
+                                data-tippy-content="清楚地说明要达成的行为标准，不明确就没有办法评判、衡量。"
+                            >
+                                <div className="content-input-title">达成任务的具体行为标准?（给未来的自己）</div>
+                                <textarea className="content-textarea fiex-rest" type="text"
+                                    placeholder="达成任务的具体行为标准?（给未来的自己）"
+                                    style={{ height: '105px' }}
+                                    value={smart.specific}
+                                    onChange={({ target: { value } }) => self.setState({ SMART: server.updateSMARThandle({ smart, key: 'specific', value }) })}
+                                ></textarea>
+                            </div>
+                            <div className="content-input"
+                                data-tippy-content="杜绝在目标设置中使用形容词等概念模糊、无法衡量的描述、这对自己非常重要！"
+                            >
+                                <div className="content-input-title">是否可衡量目标的完成度?（给未来的自己）</div>
+                                <textarea className="content-textarea fiex-rest" type="text"
+                                    placeholder="是否可衡量目标的完成度?（给未来的自己）"
+                                    style={{ height: '105px' }}
+                                    value={smart.measurable}
+                                    onChange={({ target: { value } }) => self.setState({ SMART: server.updateSMARThandle({ smart, key: 'measurable', value }) })}
+                                ></textarea>
+                            </div>
+                            <div className="content-input"
+                                data-tippy-content="要知道长期无法可实现的目标就非常打击积极性"
+                            >
+                                <div className="content-input-title">可实现?并能够被未来的自己所接受?</div>
+                                <textarea className="content-textarea fiex-rest" type="text"
+                                    placeholder="可实现?并能够被未来的自己所接受?"
+                                    style={{ height: '105px' }}
+                                    value={smart.attainable}
+                                    onChange={({ target: { value } }) => self.setState({ SMART: server.updateSMARThandle({ smart, key: 'attainable', value }) })}
+                                ></textarea>
+                            </div>
+                            <div className="content-input"
+                                data-tippy-content="你想学英语，却让自己看美剧（相关性非常低）"
+                            >
+                                <div className="content-input-title">是否和需求相关联，不要跑题</div>
+                                <textarea className="content-textarea fiex-rest" type="text"
+                                    placeholder="是否和需求相关联，不要跑题"
+                                    style={{ height: '105px' }}
+                                    value={smart.relevant}
+                                    onChange={({ target: { value } }) => self.setState({ SMART: server.updateSMARThandle({ smart, key: 'relevant', value }) })}
+                                ></textarea>
+                            </div>
+                            <div className="content-input"
+                                data-tippy-content="一直学一直学，时间过去了，自己还在原地徘徊、这就没意思了"
+                            >
+                                <div className="content-input-title">时限性</div>
+                                <textarea className="content-textarea fiex-rest" type="text"
+                                    placeholder="时限性"
+                                    style={{ height: '105px' }}
+                                    value={smart.timeBound}
+                                    onChange={({ target: { value } }) => self.setState({ SMART: server.updateSMARThandle({ smart, key: 'timeBound', value }) })}
+                                ></textarea>
+                            </div>
                         </div>
                     </div>
                 </div>
