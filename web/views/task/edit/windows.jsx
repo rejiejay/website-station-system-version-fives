@@ -1,6 +1,9 @@
 import { loadPageVar } from './../../../utils/url-handle.js';
+import { confirmPopUp } from './../../../components/confirm-popup.js';
+import timeTransformers from './../../../utils/time-transformers.js';
 
 import CONST from './const.js';
+import TASK_CONST from './../const.js';
 import server from './../server.js';
 
 export default class WindowsComponent extends React.Component {
@@ -19,6 +22,7 @@ export default class WindowsComponent extends React.Component {
 
         this.status = CONST.PAGE_STATUS.DEFAULTS
         this.id = null
+        this.data = TASK_CONST.TASK.DEFAULT_ITEM
 
         this.clientHeight = document.body.offsetHeight || document.documentElement.clientHeight || window.innerHeight
         this.clientWidth = document.body.offsetWidth || document.documentElement.clientWidth || window.innerWidth
@@ -35,9 +39,57 @@ export default class WindowsComponent extends React.Component {
         this.status = id ? CONST.PAGE_STATUS.EDIT : CONST.PAGE_STATUS.ADD
     }
 
+    putoffHandle() {
+        const self = this
+        const nowYear = new Date().getFullYear()
+
+        const handle = data => self.setState({ putoff: data })
+
+        const datepicker = new Rolldate({
+            el: '#picka-date',
+            format: 'YYYY-MM-DD hh:mm',
+            beginYear: nowYear - 10,
+            endYear: nowYear + 10,
+            lang: { title: '当时时间?' },
+            confirm: function confirm(date) {
+                const timestamp = timeTransformers.YYYYmmDDhhMMToTimestamp(date)
+                handle(timestamp)
+            }
+        })
+
+        datepicker.show()
+    }
+
+    clearPutoffHandle() {
+        const self = this
+
+        const handle = () => self.setState({ putoff: null })
+
+        confirmPopUp({
+            title: '你确定要取消推迟吗?',
+            succeedHandle: handle
+        })
+    }
+
+    verifyEditDiff() {
+        const { status } = this
+        if (status !== CONST.PAGE_EDIT_STATUS.EDIT) return false
+
+        const { title, content, SMART, link, putoff } = this.state
+        const data = this.data
+
+        let isDiff = false
+        if (title !== data.title) isDiff = true
+        if (content !== data.content) isDiff = true
+        if (SMART !== data.SMART) isDiff = true
+        if (link !== data.link) isDiff = true
+        if (putoff !== data.putoff) isDiff = true
+        return isDiff
+    }
+
     render() {
         const self = this
-        const { title, content, SMART } = this.state
+        const { title, content, SMART, putoff } = this.state
         const { clientHeight, status } = this
         const minHeight = clientHeight - 125
         const smart = server.getJsonDataBySMART(SMART)
@@ -66,10 +118,19 @@ export default class WindowsComponent extends React.Component {
                     <div className="windows-separation"></div>
 
                     <div className="windows-container-right flex-rest">
+                        <div className="windows-right-putoff"></div>
                         <div className="soft-operate flex-start">
-
-                            <div className="soft-operate-item flex-center flex-rest"
-                            >a</div>
+                            <input readonly type="text"
+                                id="picka-date"
+                                style={{ display: 'none' }}
+                                placeholder="时间?"
+                            />
+                            {!putoff && <div className="soft-operate-item flex-center flex-rest"
+                                onClick={this.putoffHandle.bind(this)}
+                            >推迟?</div>}
+                            {putoff && <div className="soft-operate-item flex-center flex-rest"
+                                onClick={this.clearPutoffHandle.bind(this)}
+                            >取消推迟</div>}
                         </div>
 
                         <div className="other-input">

@@ -250,7 +250,7 @@ export default class WindowsComponent extends React.Component {
             const { previewTask } = self.state
             fetch.post({
                 url: 'task/set/putoff',
-                body: { id: previewTask.id, putoff: new Date().getTime() }
+                body: { id: previewTask.id, putoff: data }
             }).then(
                 ({ data }) => self.initPreviewDetailTask(previewTask.id),
                 error => { }
@@ -310,7 +310,7 @@ export default class WindowsComponent extends React.Component {
 
     editTaskHandle() {
         const { previewTask } = this.state
-        window.open(`./edit.html?id=${previewTask.id}`)
+        window.open(`./edit/index.html?id=${previewTask.id}`)
     }
 
     render() {
@@ -320,7 +320,7 @@ export default class WindowsComponent extends React.Component {
         const minContentHeight = clientHeight - 185
         const taskMindHeight = clientHeight / 4 * 3; /** 显示3/4 */
         const isPreviewExecuteTask = this.verifyPreviewExecuteTask()
-        const smart = server.getJsonDataBySMART(previewTask.SMART)
+        const smart = server.getJsonDataBySMART(previewTask && previewTask.SMART)
 
         /**
          * 含义: 重置操作
@@ -346,7 +346,9 @@ export default class WindowsComponent extends React.Component {
                         onClick={this.initRandomPreviewDetailTask.bind(this)}
                     >随机查看</div>
                     <div className="operat-item hover-item">任务统计</div>
-                    <div className="operat-item hover-item">新增根任务</div>
+                    <div className="operat-item hover-item"
+                        onClick={() => window.open('./edit/index.html')}
+                    >新增根任务</div>
                 </div>
             </div>,
 
