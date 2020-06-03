@@ -103,4 +103,13 @@ export class TaskController {
 
         return await this.service.editTask({ id, title, content, SMART, link, putoff })
     }
+
+    @Post('add')
+    async addTask(@Body() body: any): Promise<Consequencer> {
+        const { parentid, rootid, title, content, SMART, link, putoff } = body
+
+        if (!parentid || !rootid || !title || !content) return consequencer.error('参数有误');
+
+        return await this.service.addTask({ parentid, rootid, title, content, SMART, link, putoff })
+    }
 }

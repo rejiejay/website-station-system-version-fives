@@ -191,6 +191,11 @@ export default class WindowsComponent extends React.Component {
         this.refs[refName].updateJsMind()
     }
 
+    addMindNodeHandle() {
+        const { previewTask } = this.state
+        window.open(`./edit/index.html?rootid=${previewTask.rootid}&parentid=${previewTask.id}`)
+    }
+
     changeMindNodeHandle() {
         toast.show('请选择节点')
         this.isChangeMindNode = true
@@ -453,7 +458,9 @@ export default class WindowsComponent extends React.Component {
                             data-tippy-content={timeTransformers.dateToYYYYmmDDhhMM(new Date(+previewTask.putoff))}
                             onClick={this.timeStampClearHandle.bind(this)}
                         >取消推迟</div>}
-                        <div className="flex-rest flex-center">新增子节点</div>
+                        <div className="flex-rest flex-center"
+                            onClick={this.addMindNodeHandle.bind(this)}
+                        >新增子节点</div>
                         {previewTask && previewTask.parentid !== 'root' && <div className="flex-rest flex-center"
                             onClick={this.changeMindNodeHandle.bind(this)}
                         >修改节点</div>}

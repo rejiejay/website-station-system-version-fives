@@ -151,5 +151,19 @@ export class TaskService {
         return consequencer.error('delete task false');
     }
 
+    async addTask({ parentid, rootid, title, content, SMART, link, putoff }): Promise<Consequencer> {
+        let task = new TaskEntity()
+        task.parentid = parentid
+        task.rootid = rootid
+        task.title = title
+        task.content = content
+        if (SMART) task.SMART = SMART
+        if (link) task.link = link
+        if (putoff) task.putoff = putoff
 
+        task.timestamp = new Date().getTime()
+
+        const result = await this.repository.save(task);
+        return result ? consequencer.success(result) : consequencer.error('add task to repository failure');
+    }
 }

@@ -13,6 +13,8 @@ export default class WindowsComponent extends React.Component {
         super(props)
 
         this.state = {
+            pageStatus: CONST.PAGE_STATUS.DEFAULTS,
+
             title: '',
             content: '',
             /** S= specific 、M= measurable 、A= attainable 、R= relevant 、T= time-bound */
@@ -22,8 +24,9 @@ export default class WindowsComponent extends React.Component {
             putoff: null
         }
 
-        this.status = CONST.PAGE_STATUS.DEFAULTS
         this.id = null
+        this.parentid = null
+        this.rootid = null
         this.data = TASK_CONST.TASK.DEFAULT_ITEM
 
         this.clientHeight = document.body.offsetHeight || document.documentElement.clientHeight || window.innerHeight
@@ -37,11 +40,21 @@ export default class WindowsComponent extends React.Component {
 
     initPageVar() {
         const id = loadPageVar('id')
+        const parentid = loadPageVar('parentid')
+        const rootid = loadPageVar('rootid')
+        let pageStatus = CONST.PAGE_STATUS.DEFAULTS
+
         this.id = id
-        this.status = id ? CONST.PAGE_STATUS.EDIT : CONST.PAGE_STATUS.ADD
 
         if (id) {
+            pageStatus = CONST.PAGE_STATUS.EDIT
             this.initData(id)
+            this.setState({ pageStatus })
+        } else if (parentid && rootid) {
+            pageStatus = CONST.PAGE_STATUS.ADD
+            this.parentid = parentid
+            this.rootid = rootid
+            this.setState({ pageStatus })
         }
     }
 
@@ -122,8 +135,10 @@ export default class WindowsComponent extends React.Component {
     }
 
     verifyEditDiff() {
-        const { status, data } = this
-        if (status !== CONST.PAGE_STATUS.EDIT) return false
+        const { data } = this
+        const { pageStatus } = this.state
+
+        if (pageStatus !== CONST.PAGE_STATUS.EDIT) return false
 
         const { title, content, SMART, link, putoff } = this.state
 
@@ -170,12 +185,27 @@ export default class WindowsComponent extends React.Component {
         })
     }
 
+    addHandle() {
+        const { parentid, rootid } = this
+        const { title, content, SMART, link, putoff } = this.state
+
+        fetch.post({
+            url: 'task/add',
+            body: { parentid, rootid, title, content, SMART, link, putoff }
+        }).then(
+            ({ data }) => window.location.replace(`./index.html?id=${data.id}`),
+            error => { }
+        )
+    }
+
     render() {
         const self = this
-        const { title, content, SMART, link, putoff } = this.state
-        const { clientHeight, status } = this
+        const { title, content, SMART, link, putoff, pageStatus } = this.state
+        const { clientHeight } = this
         const minHeight = clientHeight - 125
         const smart = server.getJsonDataBySMART(SMART)
+
+        if (pageStatus === CONST.PAGE_STATUS.DEFAULTS) return (<div>页面参数有误</div>)
 
         return (
             <div className="windows flex-column-center">
@@ -218,7 +248,7 @@ export default class WindowsComponent extends React.Component {
                             <div className="soft-operate-item flex-center flex-rest"
                                 onClick={this.bindTaskLink.bind(this)}
                             >绑定结论</div>
-                            {status === CONST.PAGE_STATUS.EDIT && self.verifyEditDiff() &&
+                            {pageStatus === CONST.PAGE_STATUS.EDIT && self.verifyEditDiff() &&
                                 <div className="soft-operate-item flex-center flex-rest"
                                     onClick={this.editHandle.bind(this)}
                                 >暂存</div>
@@ -286,22 +316,24 @@ export default class WindowsComponent extends React.Component {
                 </div>
 
                 <div className="windows-operate flex-start">
-                    {status === CONST.PAGE_STATUS.ADD &&
+                    {pageStatus === CONST.PAGE_STATUS.ADD &&
                         <div className="windows-operate-item flex-center flex-rest"
+                            onClick={this.addHandle.bind(this)}
                         >新增</div>
                     }
                     <div className="windows-operate-item flex-center flex-rest"
+                        onClick={() => window.location.href = './../index.html'}
                     >关闭</div>
-                    {status === CONST.PAGE_STATUS.EDIT &&
+                    {pageStatus === CONST.PAGE_STATUS.EDIT &&
                         <div className="windows-operate-item flex-center flex-rest"
                         >完成任务</div>
                     }
-                    {status === CONST.PAGE_STATUS.EDIT && self.verifyEditDiff() &&
+                    {pageStatus === CONST.PAGE_STATUS.EDIT && self.verifyEditDiff() &&
                         <div className="windows-operate-item flex-center flex-rest"
                             onClick={this.editHandle.bind(this)}
                         >暂存</div>
                     }
-                    {status === CONST.PAGE_STATUS.EDIT &&
+                    {pageStatus === CONST.PAGE_STATUS.EDIT &&
                         <div className="windows-operate-item flex-center flex-rest"
                             onClick={this.deleteHandle.bind(this)}
                         >删除</div>

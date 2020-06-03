@@ -32,3 +32,6 @@
 
 - post:/task/edit
 [根据id编辑一条数据](http://localhost:1932/task/edit)
+
+- post:/task/add
+[新增一条数据](http://localhost:1932/task/add)

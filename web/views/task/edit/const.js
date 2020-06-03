@@ -1,6 +1,6 @@
 const CONST = {
     PAGE_STATUS: {
-        DEFAULTS: 'add',
+        DEFAULTS: 'error',
         ADD: 'add',
         EDIT: 'edit'
     }
