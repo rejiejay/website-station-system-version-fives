@@ -1,6 +1,8 @@
+import fetch from './../../../components/async-fetch/fetch.js';
 import { loadPageVar } from './../../../utils/url-handle.js';
 import { confirmPopUp } from './../../../components/confirm-popup.js';
 import timeTransformers from './../../../utils/time-transformers.js';
+import { inputPopUp, inputPopUpDestroy } from './../../../components/input-popup.js';
 
 import CONST from './const.js';
 import TASK_CONST from './../const.js';
@@ -37,6 +39,31 @@ export default class WindowsComponent extends React.Component {
         const id = loadPageVar('id')
         this.id = id
         this.status = id ? CONST.PAGE_STATUS.EDIT : CONST.PAGE_STATUS.ADD
+
+        if (id) {
+            this.initData(id)
+        }
+    }
+
+    initData(id) {
+        const self = this
+
+        fetch.get({
+            url: 'task/id',
+            query: { id }
+        }).then(
+            ({ data }) => {
+                self.setState({
+                    title: data.title,
+                    content: data.content,
+                    SMART: data.SMART,
+                    link: data.link,
+                    putoff: data.putoff
+                })
+                self.data = data
+            },
+            error => { }
+        )
     }
 
     putoffHandle() {
@@ -72,24 +99,40 @@ export default class WindowsComponent extends React.Component {
     }
 
     verifyEditDiff() {
-        const { status } = this
-        if (status !== CONST.PAGE_EDIT_STATUS.EDIT) return false
+        const { status, data } = this
+        if (status !== CONST.PAGE_STATUS.EDIT) return false
 
         const { title, content, SMART, link, putoff } = this.state
-        const data = this.data
 
         let isDiff = false
-        if (title !== data.title) isDiff = true
-        if (content !== data.content) isDiff = true
-        if (SMART !== data.SMART) isDiff = true
-        if (link !== data.link) isDiff = true
-        if (putoff !== data.putoff) isDiff = true
+        if (data && title !== data.title) isDiff = true
+        if (data && content !== data.content) isDiff = true
+        if (data && SMART !== data.SMART) isDiff = true
+        if (data && link !== data.link) isDiff = true
+        if (data && putoff !== data.putoff) isDiff = true
         return isDiff
+    }
+
+    bindTaskLink() {
+        const self = this
+
+        const inputHandle = async link => {
+            self.setState({ link })
+            inputPopUpDestroy()
+        }
+
+        const defaultValue = `./../record/index.html?tag=`
+
+        inputPopUp({
+            title: '请输入绑定任务的链接?',
+            inputHandle,
+            defaultValue
+        })
     }
 
     render() {
         const self = this
-        const { title, content, SMART, putoff } = this.state
+        const { title, content, SMART, link, putoff } = this.state
         const { clientHeight, status } = this
         const minHeight = clientHeight - 125
         const smart = server.getJsonDataBySMART(SMART)
@@ -118,7 +161,10 @@ export default class WindowsComponent extends React.Component {
                     <div className="windows-separation"></div>
 
                     <div className="windows-container-right flex-rest">
-                        <div className="windows-right-putoff"></div>
+                        {putoff && <div className="windows-right-putoff flex-center">推迟的时间: {timeTransformers.dateToYYYYmmDDhhMM(new Date(putoff))}</div>}
+                        {link && <div className="windows-right-link flex-center"
+                            onClick={() => window.open(link)}
+                        >绑定地址: {link}</div>}
                         <div className="soft-operate flex-start">
                             <input readonly type="text"
                                 id="picka-date"
@@ -131,6 +177,9 @@ export default class WindowsComponent extends React.Component {
                             {putoff && <div className="soft-operate-item flex-center flex-rest"
                                 onClick={this.clearPutoffHandle.bind(this)}
                             >取消推迟</div>}
+                            <div className="soft-operate-item flex-center flex-rest"
+                                onClick={this.bindTaskLink.bind(this)}
+                            >绑定结论</div>
                         </div>
 
                         <div className="other-input">
