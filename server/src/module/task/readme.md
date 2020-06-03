@@ -29,3 +29,6 @@
 
 - post:/task/del
 [删除任务](http://localhost:1932/task/del)
+
+- post:/task/edit
+[根据id编辑一条数据](http://localhost:1932/task/edit)

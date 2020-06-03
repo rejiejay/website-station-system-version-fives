@@ -94,4 +94,13 @@ export class TaskController {
 
         return await this.service.delTask(id)
     }
+
+    @Post('edit')
+    async editTask(@Body() body: any): Promise<Consequencer> {
+        const { id, title, content, SMART, link, putoff } = body
+
+        if (!id || !title || !content) return consequencer.error('参数有误');
+
+        return await this.service.editTask({ id, title, content, SMART, link, putoff })
+    }
 }

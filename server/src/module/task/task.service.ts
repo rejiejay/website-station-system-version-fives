@@ -133,4 +133,23 @@ export class TaskService {
         if (result && result.raw && result.raw.warningCount === 0) return consequencer.success();
         return consequencer.error('delete task false');
     }
+
+    async editTask({ id, title, content, SMART, link, putoff }): Promise<Consequencer> {
+        const task = await this.repository.findOne({ id });
+        if (!task) return consequencer.error('This record does not exist');
+
+        let update = JSON.parse(JSON.stringify(task))
+        update.title = title
+        update.content = content
+        update.SMART = SMART ? SMART : null
+        update.link = link ? link : null
+        update.putoff = putoff ? putoff : null
+        update.timestamp = new Date().getTime()
+        const result = await this.repository.update(task, update);
+
+        if (result && result.raw && result.raw.warningCount === 0) return consequencer.success(update);
+        return consequencer.error('delete task false');
+    }
+
+
 }

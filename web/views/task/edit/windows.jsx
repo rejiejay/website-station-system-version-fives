@@ -53,6 +53,7 @@ export default class WindowsComponent extends React.Component {
             query: { id }
         }).then(
             ({ data }) => {
+                self.data = data
                 self.setState({
                     title: data.title,
                     content: data.content,
@@ -60,7 +61,29 @@ export default class WindowsComponent extends React.Component {
                     link: data.link,
                     putoff: data.putoff
                 })
+            },
+            error => { }
+        )
+    }
+
+    editHandle() {
+        const self = this
+        const { id } = this
+        const { title, content, SMART, link, putoff } = this.state
+
+        fetch.post({
+            url: 'task/edit',
+            body: { id, title, content, SMART, link, putoff }
+        }).then(
+            ({ data }) => {
                 self.data = data
+                self.setState({
+                    title: data.title,
+                    content: data.content,
+                    SMART: data.SMART,
+                    link: data.link,
+                    putoff: data.putoff
+                })
             },
             error => { }
         )
@@ -162,15 +185,13 @@ export default class WindowsComponent extends React.Component {
 
                     <div className="windows-container-right flex-rest">
                         {putoff && <div className="windows-right-putoff flex-center">推迟的时间: {timeTransformers.dateToYYYYmmDDhhMM(new Date(putoff))}</div>}
+
                         {link && <div className="windows-right-link flex-center"
                             onClick={() => window.open(link)}
                         >绑定地址: {link}</div>}
+
                         <div className="soft-operate flex-start">
-                            <input readonly type="text"
-                                id="picka-date"
-                                style={{ display: 'none' }}
-                                placeholder="时间?"
-                            />
+                            <input readonly type="text" id="picka-date" style={{ display: 'none' }} placeholder="推迟?" />
                             {!putoff && <div className="soft-operate-item flex-center flex-rest"
                                 onClick={this.putoffHandle.bind(this)}
                             >推迟?</div>}
@@ -180,6 +201,11 @@ export default class WindowsComponent extends React.Component {
                             <div className="soft-operate-item flex-center flex-rest"
                                 onClick={this.bindTaskLink.bind(this)}
                             >绑定结论</div>
+                            {status === CONST.PAGE_STATUS.EDIT && self.verifyEditDiff() &&
+                                <div className="soft-operate-item flex-center flex-rest"
+                                    onClick={this.editHandle.bind(this)}
+                                >暂存</div>
+                            }
                         </div>
 
                         <div className="other-input">
@@ -243,19 +269,24 @@ export default class WindowsComponent extends React.Component {
                 </div>
 
                 <div className="windows-operate flex-start">
+                    {status === CONST.PAGE_STATUS.ADD &&
+                        <div className="windows-operate-item flex-center flex-rest"
+                        >新增</div>
+                    }
                     <div className="windows-operate-item flex-center flex-rest"
                     >关闭</div>
+                    {status === CONST.PAGE_STATUS.EDIT &&
+                        <div className="windows-operate-item flex-center flex-rest"
+                        >完成任务</div>
+                    }
                     {status === CONST.PAGE_STATUS.EDIT && self.verifyEditDiff() &&
                         <div className="windows-operate-item flex-center flex-rest"
+                            onClick={this.editHandle.bind(this)}
                         >暂存</div>
                     }
                     {status === CONST.PAGE_STATUS.EDIT &&
                         <div className="windows-operate-item flex-center flex-rest"
                         >删除</div>
-                    }
-                    {status === CONST.PAGE_STATUS.ADD &&
-                        <div className="windows-operate-item flex-center flex-rest"
-                        >新增</div>
                     }
                 </div>
             </div>
