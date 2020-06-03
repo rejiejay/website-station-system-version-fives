@@ -153,6 +153,23 @@ export default class WindowsComponent extends React.Component {
         })
     }
 
+    deleteHandle() {
+        const self = this
+
+        const handle = () => fetch.post({
+            url: 'task/del',
+            body: { id: self.id }
+        }).then(
+            ({ data }) => window.location.href = './../index.html',
+            error => { }
+        )
+
+        confirmPopUp({
+            title: '你确定要删除任务吗?',
+            succeedHandle: handle
+        })
+    }
+
     render() {
         const self = this
         const { title, content, SMART, link, putoff } = this.state
@@ -286,6 +303,7 @@ export default class WindowsComponent extends React.Component {
                     }
                     {status === CONST.PAGE_STATUS.EDIT &&
                         <div className="windows-operate-item flex-center flex-rest"
+                            onClick={this.deleteHandle.bind(this)}
                         >删除</div>
                     }
                 </div>
