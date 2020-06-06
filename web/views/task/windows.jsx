@@ -441,7 +441,9 @@ export default class WindowsComponent extends React.Component {
                     </div>
                     <div className="detail-operate flex-start-center noselect">
                         {!isPreviewExecuteTask && <div className="flex-rest flex-center">执行</div>}
-                        <div className="flex-rest flex-center">完成</div>
+                        <div className="flex-rest flex-center"
+                            onClick={this.accomplishTask.bind(this)}
+                        >完成</div>
                         {previewTask && !previewTask.link && <div className="flex-rest flex-center"
                             onClick={this.bindTaskLink.bind(this)}
                         >绑定结论</div>}

@@ -215,6 +215,23 @@ export default class WindowsComponent extends React.Component {
         }
     }
 
+    accomplishTask() {
+        const { id } = this
+
+        const handle = () => fetch.post({
+            url: 'task/accomplish',
+            body: { id }
+        }).then(
+            ({ data }) => window.location.href = './../index.html',
+            error => { }
+        )
+
+        confirmPopUp({
+            title: '你确定要完成这条数据吗?',
+            succeedHandle: handle
+        })
+    }
+
     render() {
         const self = this
         const { title, content, SMART, link, putoff, pageStatus } = this.state
@@ -343,6 +360,7 @@ export default class WindowsComponent extends React.Component {
                     >关闭</div>
                     {pageStatus === CONST.PAGE_STATUS.EDIT &&
                         <div className="windows-operate-item flex-center flex-rest"
+                            onClick={this.accomplishTask.bind(this)}
                         >完成任务</div>
                     }
                     {pageStatus === CONST.PAGE_STATUS.EDIT && self.verifyEditDiff() &&
