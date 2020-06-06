@@ -17,13 +17,13 @@ export default class WindowsComponent extends React.Component {
             /** 含义:过滤; 作用:使用输入的过滤名称来过滤任务 */
             filter: CONST.FILTER.DEFAULT,
 
-            rootTaskList: CONST.TASK.DEFAULT_LIST,
             taskMindList: CONST.TASK.DEFAULT_LIST,
 
             executeTask: CONST.TASK.DEFAULT_ITEM,
             previewTask: CONST.TASK.DEFAULT_ITEM,
         }
 
+        this.rootTaskList = CONST.TASK.DEFAULT_LIST
         this.isChangeMindNode = false
         this.clientHeight = document.body.offsetHeight || document.documentElement.clientHeight || window.innerHeight
         this.clientWidth = document.body.offsetWidth || document.documentElement.clientWidth || window.innerWidth
@@ -43,12 +43,11 @@ export default class WindowsComponent extends React.Component {
             url: 'task/list/root',
             query: {}
         }).then(
-            ({ data }) => self.setState(
-                { rootTaskList: data },
-                self.initTaskMindList
-            ),
+            ({ data }) => self.rootTaskList = data,
             error => { }
         )
+
+        await self.initTaskMindList()
     }
 
     async initExecuteDetailTask() {
@@ -103,7 +102,7 @@ export default class WindowsComponent extends React.Component {
     }
 
     async initTaskMindList() {
-        const { rootTaskList } = this.state
+        const { rootTaskList } = this
         let taskMindList = []
         const getTaskMindBy = async rootTask => {
             let taskMindItem = CONST.MIND_FORMAT
@@ -209,7 +208,10 @@ export default class WindowsComponent extends React.Component {
             url: 'task/accomplish',
             body: { id: previewTask.id }
         }).then(
-            ({ data }) => self.initRandomPreviewDetailTask(),
+            ({ data }) => {
+                self.updateTaskMindList()
+                self.initRandomPreviewDetailTask()
+            },
             error => { }
         )
 
@@ -292,6 +294,18 @@ export default class WindowsComponent extends React.Component {
         })
     }
 
+    async updateTaskMindList() {
+        const self = this
+        const { filter } = this.state
+        await this.initRootTaskList()
+
+        this.state.taskMindList.filter(
+            mind => filter ? mind.meta.name.includes(filter) : true
+        ).map(
+            (task, key) => self.refs[`mind_${task.meta.name}_${key}`].updateJsMind()
+        )
+    }
+
     delMindNodeHandle() {
         const self = this
         const { previewTask } = this.state
@@ -300,7 +314,10 @@ export default class WindowsComponent extends React.Component {
             url: 'task/del',
             body: { id: previewTask.id }
         }).then(
-            ({ data }) => self.initRandomPreviewDetailTask(),
+            ({ data }) => {
+                self.updateTaskMindList()
+                self.initRandomPreviewDetailTask()
+            },
             error => { }
         )
 
