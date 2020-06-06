@@ -55,6 +55,11 @@ export default class WindowsComponent extends React.Component {
             this.parentid = parentid
             this.rootid = rootid
             this.setState({ pageStatus })
+        } else if (parentid && !rootid) {
+            pageStatus = CONST.PAGE_STATUS.ADD_ROOT
+            this.parentid = parentid
+            this.rootid = rootid
+            this.setState({ pageStatus })
         }
     }
 
@@ -187,15 +192,27 @@ export default class WindowsComponent extends React.Component {
 
     addHandle() {
         const { parentid, rootid } = this
-        const { title, content, SMART, link, putoff } = this.state
+        const { title, content, SMART, link, putoff, pageStatus } = this.state
 
-        fetch.post({
-            url: 'task/add',
-            body: { parentid, rootid, title, content, SMART, link, putoff }
-        }).then(
-            ({ data }) => window.location.replace(`./index.html?id=${data.id}`),
-            error => { }
-        )
+        if (pageStatus === CONST.PAGE_STATUS.ADD) {
+            fetch.post({
+                url: 'task/add',
+                body: { parentid, rootid, title, content, SMART, link, putoff }
+            }).then(
+                ({ data }) => window.location.replace(`./index.html?id=${data.id}`),
+                error => { }
+            )
+        }
+
+        if (pageStatus === CONST.PAGE_STATUS.ADD_ROOT) {
+            fetch.post({
+                url: 'task/add/root',
+                body: { title, content, SMART, link, putoff }
+            }).then(
+                ({ data }) => window.location.replace(`./index.html?id=${data.id}`),
+                error => { }
+            )
+        }
     }
 
     render() {
@@ -316,10 +333,10 @@ export default class WindowsComponent extends React.Component {
                 </div>
 
                 <div className="windows-operate flex-start">
-                    {pageStatus === CONST.PAGE_STATUS.ADD &&
+                    {pageStatus !== CONST.PAGE_STATUS.EDIT &&
                         <div className="windows-operate-item flex-center flex-rest"
                             onClick={this.addHandle.bind(this)}
-                        >新增</div>
+                        >新增{pageStatus === CONST.PAGE_STATUS.ADD_ROOT ? '根' : ''}</div>
                     }
                     <div className="windows-operate-item flex-center flex-rest"
                         onClick={() => window.location.href = './../index.html'}

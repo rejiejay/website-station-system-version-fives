@@ -128,6 +128,12 @@ export class TaskService {
     async delTask(id): Promise<Consequencer> {
         const task = await this.repository.findOne({ id });
         if (!task) return consequencer.error('This record does not exist');
+
+        /** 含义: 判断是否存在子节点 */
+        const childResult = await this.repository.query(`select * from task_entity where parentid="${id}" AND complete IS NULL;`);
+        if (!childResult || childResult instanceof Array === false) return consequencer.error('sql incorrect query');
+        if (childResult.length > 0) return consequencer.error('不能删除拥有子节点的任务');
+
         const result = await this.repository.delete(task);
 
         if (result && result.raw && result.raw.warningCount === 0) return consequencer.success();
@@ -153,6 +159,8 @@ export class TaskService {
 
     async addTask({ parentid, rootid, title, content, SMART, link, putoff }): Promise<Consequencer> {
         let task = new TaskEntity()
+        const nowTime = new Date().getTime()
+        task.id = nowTime
         task.parentid = parentid
         task.rootid = rootid
         task.title = title
@@ -161,9 +169,27 @@ export class TaskService {
         if (link) task.link = link
         if (putoff) task.putoff = putoff
 
-        task.timestamp = new Date().getTime()
+        task.timestamp = nowTime
 
         const result = await this.repository.save(task);
         return result ? consequencer.success(result) : consequencer.error('add task to repository failure');
+    }
+
+    async addRootTask({ title, content, SMART, link, putoff }): Promise<Consequencer> {
+        let task = new TaskEntity()
+        const nowTime = new Date().getTime()
+        task.id = nowTime
+        task.parentid = 'root'
+        task.rootid = nowTime
+        task.title = title
+        task.content = content
+        if (SMART) task.SMART = SMART
+        if (link) task.link = link
+        if (putoff) task.putoff = putoff
+
+        task.timestamp = nowTime
+
+        const result = await this.repository.save(task);
+        return result ? consequencer.success(result) : consequencer.error('add root task to repository failure');
     }
 }

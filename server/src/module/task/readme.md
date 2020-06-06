@@ -35,3 +35,6 @@
 
 - post:/task/add
 [新增一条数据](http://localhost:1932/task/add)
+
+- post:/task/add/root
+[新增根数据](http://localhost:1932/task/add/root)

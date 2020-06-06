@@ -349,7 +349,7 @@ export default class WindowsComponent extends React.Component {
                     >随机查看</div>
                     <div className="operat-item hover-item">任务统计</div>
                     <div className="operat-item hover-item"
-                        onClick={() => window.open('./edit/index.html')}
+                        onClick={() => window.open('./edit/index.html?parentid=root')}
                     >新增根任务</div>
                 </div>
             </div>,
@@ -378,7 +378,7 @@ export default class WindowsComponent extends React.Component {
                         <div className="item-title flex-start-center">
                             <div className="flex-rest">{previewTask ? previewTask.title : '标题'}</div>
                             <div className="dont-want-todo noselect" data-tippy-content="点击查看详情"
-                                onClick={() => window.open('./start-up-assist.index.html')}
+                                onClick={() => window.open('./start-up-assist/index.html')}
                             >不想做怎么办?</div>
                         </div>
 
