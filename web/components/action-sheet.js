@@ -15,6 +15,8 @@ const props = {
 }
 
 export const actionSheetPopUp = ({ title, options, handle }) => new Promise(function(resolve, reject) {
+    const clientHeight = document.body.offsetHeight || document.documentElement.clientHeight || window.innerHeight
+
     /** 目标: 防止重复调用 */
     if (document.getElementById('rejiejay-action-sheet-popup')) return false;
 
@@ -26,7 +28,7 @@ export const actionSheetPopUp = ({ title, options, handle }) => new Promise(func
 
     const node_content = `
         <div id='rejiejay-action-sheet-popup-mask'></div>
-        <div class='action-sheet-container'>
+        <div class='action-sheet-container' style="max-height: ${Math.floor(clientHeight / 2)}px;">
             <div class='action-sheet-title flex-center'>${title || 'please select item'}</div>
             <div class='action-sheet-selector'>${selector}</div>
         </div>
