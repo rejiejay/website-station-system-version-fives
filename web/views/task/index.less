@@ -219,3 +219,118 @@ body {
         font-size : 14px;
     }
 }
+
+.mobile-header {
+    position     : fixed;
+    width        : 100%;
+    background   : #fff;
+    border-bottom: 1px solid #ddd;
+    z-index      : 1;
+
+    .header-filter {
+        height       : 25px;
+        border-bottom: 1px solid #ddd;
+
+        .header-filter-separation {
+            width       : 65px;
+            height      : 25px;
+            border-left : 1px solid #ddd;
+            border-right: 1px solid #ddd;
+        }
+    }
+
+    .header-operating {
+        height: 45px;
+    }
+
+    .left-operating,
+    .right-operating {
+        padding: 0px 15px;
+    }
+
+    .header-operating-description {
+        text-overflow: ellipsis;
+        white-space  : nowrap;
+        overflow     : hidden;
+    }
+}
+
+.mobile-content {
+    padding-top   : 87px;
+    padding-bottom: 15px;
+
+    .mobile-container {
+        background: #fff;
+    }
+
+    .item-putoff {
+        height          : 35px;
+        border-bottom   : 1px solid #fff;
+        color           : #fff;
+        background-color: #ff4d4f;
+    }
+
+    .item-title {
+        height       : 45px;
+        padding      : 0px 15px;
+        border-bottom: 1px solid #ddd;
+
+        .dont-want-todo {
+            font-size: 12px;
+            color    : @black2;
+            cursor   : pointer;
+        }
+    }
+
+    .item-content {
+        padding: 15px 15px 0px 15px;
+
+        .item-content-title {
+            font-size: 12px;
+            color    : @black3;
+
+            .item-content-title {
+                height: 32px;
+            }
+
+            .item-content-tip {
+                color : @black1;
+                cursor: pointer;
+            }
+        }
+
+        .item-content-description {
+            padding-top   : 5px;
+            padding-bottom: 10px;
+        }
+
+        .item-content-main {
+            font-size     : 18px;
+            color         : @black1;
+            padding-bottom: 35px;
+        }
+
+        .item-content-link {
+            padding-top   : 10px;
+            padding-bottom: 15px;
+
+            .flex-center {
+                height          : 45px;
+                color           : #fff;
+                background-color: #40a9ff;
+                cursor          : pointer;
+            }
+        }
+    }
+}
+
+.mobile-operate {
+    .mobile-operate-item {
+        border-bottom: 1px solid #ddd;
+    }
+
+    .operate-item-container {
+        height    : 45px;
+        background: #fff;
+    }
+}
