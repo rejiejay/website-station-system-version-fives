@@ -1,12 +1,12 @@
 import login from './../../components/login.js';
 import fetch from './../../components/async-fetch/fetch.js';
-import { dropDownSelectPopup } from './../../components/drop-down-select-popup.js';
 import { confirmPopUp } from './../../components/confirm-popup.js';
 import toast from './../../components/toast.js';
 import constHandle from './../../utils/const-handle.js';
 import { queryToUrl, loadPageVar } from './../../utils/url-handle.js';
 import timeTransformers from './../../utils/time-transformers.js';
 import { arrayDuplicateByKey } from './../../utils/array-handle.js';
+import { actionSheetPopUp } from './../../components/action-sheet.js';
 
 import CONST from './const.js';
 import BASE_CONST from './../const.js';
@@ -180,10 +180,10 @@ export default class MobileComponent extends React.Component {
             toast.show()
         }
 
-        dropDownSelectPopup({
-            list: [{ label: '所有', value: '' }].concat(tags.map(tag => ({ label: tag, value: tag }))),
-            handle,
-            mustSelect: false
+        actionSheetPopUp({
+            title: '请选择标签',
+            options: [{ label: '所有', value: '' }].concat(tags.map(tag => ({ label: tag, value: tag }))),
+            handle
         })
     }
 
@@ -198,14 +198,14 @@ export default class MobileComponent extends React.Component {
             toast.show()
         }
 
-        dropDownSelectPopup({
-            list: constHandle.toDownSelectFormat({
+        actionSheetPopUp({
+            title: '请选择数据类型',
+            options: constHandle.toDownSelectFormat({
                 CONST: CONST.DATA_TYPE,
                 labelName: 'label',
                 valueName: 'value'
             }),
-            handle,
-            mustSelect: false
+            handle
         })
     }
 
@@ -220,14 +220,14 @@ export default class MobileComponent extends React.Component {
             toast.show()
         }
 
-        dropDownSelectPopup({
-            list: constHandle.toDownSelectFormat({
+        actionSheetPopUp({
+            title: '请选择排序方式',
+            options: constHandle.toDownSelectFormat({
                 CONST: CONST.SORT,
                 labelName: 'label',
                 valueName: 'value'
             }),
-            handle,
-            mustSelect: false
+            handle
         })
     }
 
@@ -277,14 +277,14 @@ export default class MobileComponent extends React.Component {
             window.location.href = `./edit/index.html${queryToUrl(sort, tag, type)}`
         }
 
-        dropDownSelectPopup({
-            list: constHandle.toDownSelectFormat({
+        actionSheetPopUp({
+            title: '请选择操作项目',
+            options: constHandle.toDownSelectFormat({
                 CONST: CONST.MOBILE_HEADER_DOWN_SELECT,
                 labelName: 'label',
                 valueName: 'value'
             }),
-            handle,
-            mustSelect: false
+            handle
         })
     }
 

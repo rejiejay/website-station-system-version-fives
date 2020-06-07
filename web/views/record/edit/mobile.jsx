@@ -1,11 +1,11 @@
 import fetch from './../../../components/async-fetch/fetch.js';
-import { dropDownSelectPopup } from './../../../components/drop-down-select-popup.js';
 import toast from './../../../components/toast.js'
 import { confirmPopUp } from './../../../components/confirm-popup.js';
 import constHandle from './../../../utils/const-handle.js';
 import { queryToUrl, loadPageVar, parseQueryString } from './../../../utils/url-handle.js';
 import { arrayRemoveItemByValue } from './../../../utils/array-handle.js';
 import timeTransformers from './../../../utils/time-transformers.js';
+import { actionSheetPopUp } from './../../../components/action-sheet.js';
 
 import CONST from './const.js';
 import RECORD_CONST from './../const.js';
@@ -172,14 +172,14 @@ export default class MobileComponent extends React.Component {
     showDataTypeSelected() {
         const self = this
 
-        dropDownSelectPopup({
-            list: constHandle.toDownSelectFormat({
+        actionSheetPopUp({
+            title: '请选择数据类型',
+            options: constHandle.toDownSelectFormat({
                 CONST: CONST.DATA_TYPE,
                 labelName: 'label',
                 valueName: 'value'
             }),
-            handle: ({ value, label }) => self.setState({ type: value }),
-            mustSelect: false
+            handle: ({ value, label }) => self.setState({ type: value })
         })
     }
 
@@ -195,10 +195,10 @@ export default class MobileComponent extends React.Component {
             toast.show()
         }
 
-        dropDownSelectPopup({
-            list: [{ label: '所有', value: '' }].concat(tags.map(tag => ({ label: tag, value: tag }))),
-            handle,
-            mustSelect: false
+        actionSheetPopUp({
+            title: '请选择标签',
+            options: [{ label: '所有', value: '' }].concat(tags.map(tag => ({ label: tag, value: tag }))),
+            handle
         })
     }
 

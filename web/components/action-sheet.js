@@ -48,7 +48,7 @@ export const actionSheetPopUp = ({ title, options, handle }) => new Promise(func
         }
     }
 
-    document.getElementById('ejiejay-action-sheet-popup-mask').onclick = function() {
+    document.getElementById('rejiejay-action-sheet-popup-mask').onclick = function() {
         actionSheetPopUpUpDestroy()
         reject()
     }
