@@ -167,12 +167,7 @@ export default class MobileComponent extends React.Component {
                 url: 'task/bind/link',
                 body: { id, link }
             }).then(
-                ({ data }) => {
-                    self.setState({ link })
-                    self.executeTask.link = link
-                    self.storageTask.link = link
-                    server.setStorageTask(executeTask)
-                },
+                () => self.updateExecuteTask({ key: 'link', value: link }),
                 error => { }
             )
 
@@ -185,6 +180,63 @@ export default class MobileComponent extends React.Component {
             title: '请输入绑定任务的链接?',
             inputHandle,
             defaultValue
+        })
+    }
+
+    updateExecuteTask({ key, value }) {
+        let state = this.state
+        state[key] = value
+        this.setState(state)
+        this.executeTask[key] = value
+        this.storageTask[key] = value
+        server.setStorageTask(this.executeTask)
+    }
+
+    timeStampHandle() {
+        const self = this
+        const { id } = this.state
+        const nowYear = new Date().getFullYear()
+
+        const handle = putoff => {
+            fetch.post({
+                url: 'task/set/putoff',
+                body: { id, putoff }
+            }).then(
+                () => self.updateExecuteTask({ key: 'putoff', value: putoff }),
+                error => { }
+            )
+        }
+
+        const datepicker = new Rolldate({
+            el: '#picka-date',
+            format: 'YYYY-MM-DD hh:mm',
+            beginYear: nowYear - 10,
+            endYear: nowYear + 10,
+            lang: { title: '当时时间?' },
+            confirm: function confirm(date) {
+                const timestamp = timeTransformers.YYYYmmDDhhMMToTimestamp(date)
+                handle(timestamp)
+            }
+        })
+
+        datepicker.show()
+    }
+
+    timeStampClearHandle() {
+        const self = this
+        const { id } = this.state
+
+        const handle = () => fetch.post({
+            url: 'task/clear/putoff',
+            body: { id }
+        }).then(
+            () => self.updateExecuteTask({ key: 'putoff', value: null }),
+            error => { }
+        )
+
+        confirmPopUp({
+            title: '你确定要取消推迟吗?',
+            succeedHandle: handle
         })
     }
 
@@ -334,11 +386,15 @@ export default class MobileComponent extends React.Component {
                         style={{ display: 'none' }}
                         placeholder="时间?"
                     />,
-                    putoff && <div className="mobile-operate-item">
-                        <div className="operate-item-container flex-center">推迟</div>
-                    </div>,
                     !putoff && <div className="mobile-operate-item">
-                        <div className="operate-item-container flex-center">取消推迟</div>
+                        <div className="operate-item-container flex-center"
+                            onClick={this.timeStampHandle.bind(this)}
+                        >推迟</div>
+                    </div>,
+                    putoff && <div className="mobile-operate-item">
+                        <div className="operate-item-container flex-center"
+                            onClick={this.timeStampClearHandle.bind(this)}
+                        >取消推迟</div>
                     </div>,
                     <div className="mobile-operate-item">
                         <div className="operate-item-container flex-center">删除</div>
