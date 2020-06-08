@@ -240,6 +240,24 @@ export default class MobileComponent extends React.Component {
         })
     }
 
+    deleteTaskHandle() {
+        const self = this
+        const { id } = this.state
+
+        const handle = () => fetch.post({
+            url: 'task/del',
+            body: { id }
+        }).then(
+            () => self.initRandomTask(),
+            error => { }
+        )
+
+        confirmPopUp({
+            title: '你确定要删除任务吗?',
+            succeedHandle: handle
+        })
+    }
+
     render() {
         const self = this
         const { clientHeight } = this
@@ -397,7 +415,9 @@ export default class MobileComponent extends React.Component {
                         >取消推迟</div>
                     </div>,
                     <div className="mobile-operate-item">
-                        <div className="operate-item-container flex-center">删除</div>
+                        <div className="operate-item-container flex-center"
+                            onClick={this.deleteTaskHandle.bind(this)}
+                        >删除</div>
                     </div>
                 ]}
             </div>
