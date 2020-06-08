@@ -1,6 +1,9 @@
 import fetch from './../../components/async-fetch/fetch.js';
 import login from './../../components/login.js';
 import { actionSheetPopUp } from './../../components/action-sheet.js';
+import toast from './../../components/toast.js';
+import { inputPopUp, inputPopUpDestroy } from './../../components/input-popup.js';
+import { confirmPopUp } from './../../components/confirm-popup.js';
 import timeTransformers from './../../utils/time-transformers.js';
 
 import CONST from './const.js';
@@ -20,6 +23,7 @@ export default class MobileComponent extends React.Component {
             putoff: null
         }
 
+        this.executeTask = null
         this.storageTask = null
 
         this.clientHeight = document.body.offsetHeight || document.documentElement.clientHeight || window.innerHeight
@@ -35,9 +39,11 @@ export default class MobileComponent extends React.Component {
         const storageTask = await server.getStorageTask()
 
         if (storageTask) {
-            this.storageTask = storageTask
+            this.storageTask = JSON.parse(JSON.stringify(storageTask))
+            this.executeTask = JSON.parse(JSON.stringify(storageTask))
             await this.initRootName(storageTask.rootid)
             return this.setState({
+                id: storageTask.id,
                 title: storageTask.title,
                 content: storageTask.content,
                 SMART: storageTask.SMART,
@@ -72,8 +78,10 @@ export default class MobileComponent extends React.Component {
             error => { }
         )
 
+        this.executeTask = JSON.parse(JSON.stringify(task))
         await this.initRootName(task.rootid)
         this.setState({
+            id: task.id,
             title: task.title,
             content: task.content,
             SMART: task.SMART,
@@ -100,12 +108,58 @@ export default class MobileComponent extends React.Component {
         })
     }
 
+    verifyTaskInExecute() {
+        const { storageTask } = this
+        const { id } = this.state
+        if (!id || !storageTask || !storageTask.id) return false
+        if (storageTask.id !== id) return false
+        return true
+    }
+
+    async toExecuteTaskHandle() {
+        const self = this
+        const { executeTask } = this
+
+        const handle = async () => {
+            await self.initRootName(executeTask.rootid)
+            server.setStorageTask(executeTask)
+            self.storageTask = JSON.parse(JSON.stringify(executeTask))
+            self.setState({
+                id: executeTask.id,
+                title: executeTask.title,
+                content: executeTask.content,
+                SMART: executeTask.SMART,
+                link: executeTask.link,
+                putoff: executeTask.putoff
+            })
+        }
+
+        confirmPopUp({
+            title: '你确定要执行这个任务吗?',
+            succeedHandle: handle
+        })
+    }
+
+    async backExecuteTaskHandle() {
+        const { storageTask } = this
+        await this.initRootName(storageTask.rootid)
+        this.setState({
+            id: storageTask.id,
+            title: storageTask.title,
+            content: storageTask.content,
+            SMART: storageTask.SMART,
+            link: storageTask.link,
+            putoff: storageTask.putoff
+        })
+    }
+
     render() {
         const self = this
         const { clientHeight } = this
         const { rootName, title, content, SMART, link, putoff } = this.state
         const smart = server.getJsonDataBySMART(SMART)
         const minHeight = clientHeight - 147
+        const isTaskExecute = this.verifyTaskInExecute()
 
         return [
             <div className="mobile-header noselect">
@@ -114,7 +168,9 @@ export default class MobileComponent extends React.Component {
                         <div className="header-filter-des flex-rest flex-center">关联</div>
                     </div>
                     <div className="header-filter-separation"></div>
-                    <div className="header-filter-des flex-rest flex-start-center">
+                    <div className="header-filter-des flex-rest flex-start-center"
+                        onClick={self.initRandomTask.bind(self)}
+                    >
                         <div className="header-filter-des flex-rest flex-center">随机</div>
                     </div>
                 </div>
@@ -207,33 +263,49 @@ export default class MobileComponent extends React.Component {
             </div>,
 
             <div className="mobile-operate">
-                <div className="mobile-operate-item">
-                    <div className="operate-item-container flex-center"
-                        onClick={() => window.location.href = `./edit/index.html?id=${id}`}
-                    >编辑</div>
-                </div>
-                <div className="mobile-operate-item">
-                    <div className="operate-item-container flex-center"
-                        onClick={self.accomplishTask.bind(self)}
-                    >完成</div>
-                </div>
-                <div className="mobile-operate-item">
-                    <div className="operate-item-container flex-center">绑定结论</div>
-                </div>
-                <input readonly type="text"
-                    id="picka-date"
-                    style={{ display: 'none' }}
-                    placeholder="时间?"
-                />
-                {putoff && <div className="mobile-operate-item">
-                    <div className="operate-item-container flex-center">推迟</div>
-                </div>}
-                {!putoff && <div className="mobile-operate-item">
-                    <div className="operate-item-container flex-center">取消推迟</div>
-                </div>}
-                <div className="mobile-operate-item">
-                    <div className="operate-item-container flex-center">删除</div>
-                </div>
+                {!isTaskExecute && [
+                    <div className="mobile-operate-item">
+                        <div className="operate-item-container flex-center"
+                            style={{ backgroundColor: '#1890ff', color: '#fff' }}
+                            onClick={self.toExecuteTaskHandle.bind(self)}
+                        >执行</div>
+                    </div>,
+                    <div className="mobile-operate-item">
+                        <div className="operate-item-container flex-center"
+                            onClick={self.backExecuteTaskHandle.bind(self)}
+                        >返回</div>
+                    </div>
+                ]}
+
+                {isTaskExecute && [
+                    <div className="mobile-operate-item">
+                        <div className="operate-item-container flex-center"
+                            onClick={() => window.location.href = `./edit/index.html?id=${id}`}
+                        >编辑</div>
+                    </div>,
+                    <div className="mobile-operate-item">
+                        <div className="operate-item-container flex-center"
+                            onClick={self.accomplishTask.bind(self)}
+                        >完成</div>
+                    </div>,
+                    <div className="mobile-operate-item">
+                        <div className="operate-item-container flex-center">绑定结论</div>
+                    </div>,
+                    <input readonly type="text"
+                        id="picka-date"
+                        style={{ display: 'none' }}
+                        placeholder="时间?"
+                    />,
+                    putoff && <div className="mobile-operate-item">
+                        <div className="operate-item-container flex-center">推迟</div>
+                    </div>,
+                    !putoff && <div className="mobile-operate-item">
+                        <div className="operate-item-container flex-center">取消推迟</div>
+                    </div>,
+                    <div className="mobile-operate-item">
+                        <div className="operate-item-container flex-center">删除</div>
+                    </div>
+                ]}
             </div>
         ]
     }

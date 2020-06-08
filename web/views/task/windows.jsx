@@ -493,10 +493,10 @@ export default class WindowsComponent extends React.Component {
                             onClick={this.addMindNodeHandle.bind(this)}
                         >新增子节点</div>
                         {previewTask && previewTask.parentid !== 'root' && <div className="flex-rest flex-center"
-                            onClick={() => window.open(`./edit/index.html?id=${previewTask.id}`)}
+                            onClick={self.changeMindNodeHandle.bind(self)}
                         >修改节点</div>}
                         <div className="flex-rest flex-center"
-                            onClick={this.editTaskHandle.bind(this)}
+                            onClick={() => window.open(`./edit/index.html?id=${previewTask.id}`)}
                         >编辑</div>
                         <div className="flex-rest flex-center"
                             onClick={this.delMindNodeHandle.bind(this)}
