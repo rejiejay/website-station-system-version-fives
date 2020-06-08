@@ -1,3 +1,4 @@
+import fetch from './../../components/async-fetch/fetch.js';
 import login from './../../components/login.js';
 import { actionSheetPopUp } from './../../components/action-sheet.js';
 import timeTransformers from './../../utils/time-transformers.js';
@@ -24,9 +25,48 @@ export default class MobileComponent extends React.Component {
 
     async componentDidMount() {
         await login()
+        await this.initExecuteDetailTask()
+    }
+
+    async initExecuteDetailTask() {
+        let task = null
+        const storageTask = await server.getStorageTask()
+
+        if (storageTask) {
+            task = storageTask
+        } else {
+            await fetch.get({
+                url: 'task/random',
+                query: {}
+            }).then(
+                ({ data }) => task = data,
+                error => { }
+            )
+        }
+        await this.initRootName(task.rootid)
+        this.setState({
+            title: task.title,
+            content: task.content,
+            SMART: task.SMART,
+            link: task.link,
+            putoff: task.putoff,
+        })
+    }
+
+    async initRootName(rootId) {
+        const self = this
+
+        await fetch.get({
+            url: 'task/id',
+            query: { id: rootId }
+        }).then(
+            ({ data }) => self.setState({ rootName: data.title }),
+            error => { }
+        )
     }
 
     render() {
+        const self = this
         const { clientHeight } = this
         const { rootName, title, content, SMART, link, putoff } = this.state
         const smart = server.getJsonDataBySMART(SMART)

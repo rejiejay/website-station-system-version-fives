@@ -54,7 +54,7 @@ export default class WindowsComponent extends React.Component {
         const task = await server.getStorageTask()
 
         if (task) {
-            this.setState({ executeTask: data, previewTask: data })
+            this.setState({ executeTask: task, previewTask: task })
         } else {
             const executeTask = await this.initPreviewDetailTask()
             this.setState({ executeTask })
@@ -140,10 +140,10 @@ export default class WindowsComponent extends React.Component {
         this.setState({ taskMindList })
     }
 
-    verifyPreviewExecuteTask() {
+    verifyTaskInExecute() {
         const { executeTask, previewTask } = this.state
         if (!previewTask || !executeTask || !previewTask.id || !executeTask.id) return false
-        if (executeTask.id !== executeTask.id) return false
+        if (executeTask.id !== previewTask.id) return false
         return true
     }
 
@@ -332,13 +332,28 @@ export default class WindowsComponent extends React.Component {
         window.open(`./edit/index.html?id=${previewTask.id}`)
     }
 
+    toExecuteTaskHandle() {
+        const self = this
+        const { previewTask } = this.state
+
+        const handle = () => {
+            self.setState({ executeTask: JSON.parse(JSON.stringify(previewTask)) })
+            server.setStorageTask(previewTask)
+        }
+
+        confirmPopUp({
+            title: '你确定要执行这个任务吗?',
+            succeedHandle: handle
+        })
+    }
+
     render() {
         const self = this
         const { clientHeight, isChangeMindNode } = this
         const { filter, executeTask, taskMindList, previewTask } = this.state
         const minContentHeight = clientHeight - 185
         const taskMindHeight = clientHeight / 4 * 3; /** 显示3/4 */
-        const isPreviewExecuteTask = this.verifyPreviewExecuteTask()
+        const isTaskExecute = this.verifyTaskInExecute()
         const smart = server.getJsonDataBySMART(previewTask && previewTask.SMART)
 
         /**
@@ -358,7 +373,7 @@ export default class WindowsComponent extends React.Component {
                 <div className="center flex-rest"></div>
 
                 <div className="right-operating flex-start-center">
-                    {!isPreviewExecuteTask && <div className="operat-item hover-item"
+                    {!isTaskExecute && <div className="operat-item hover-item"
                         onClick={() => self.setState({ previewTask: JSON.parse(JSON.stringify(executeTask)) })}
                     >查看当前正在执行的任务</div>}
                     <div className="operat-item hover-item"
@@ -457,7 +472,9 @@ export default class WindowsComponent extends React.Component {
                         </div>}
                     </div>
                     <div className="detail-operate flex-start-center noselect">
-                        {!isPreviewExecuteTask && <div className="flex-rest flex-center">执行</div>}
+                        {!isTaskExecute && <div className="flex-rest flex-center"
+                            onClick={self.toExecuteTaskHandle.bind(self)}
+                        >执行</div>}
                         <div className="flex-rest flex-center"
                             onClick={this.accomplishTask.bind(this)}
                         >完成</div>

@@ -12,7 +12,7 @@ server.getStorageTask = async() => {
         url: 'map/get',
         query: { key: 'progress-task' }
     }).then(
-        ({ data }) => task = data,
+        ({ data: { value } }) => task = value,
         error => {}
     )
 
@@ -23,6 +23,19 @@ server.getStorageTask = async() => {
     if (!taskVerify.isCorrect) return task
 
     return taskVerify.data
+}
+
+/**
+ * 含义: 获取缓存任务
+ */
+server.setStorageTask = async task => {
+    await fetch.post({
+        url: 'map/set',
+        body: { key: 'progress-task', value: JSON.stringify(task) }
+    }).then(
+        () => {},
+        error => {}
+    )
 }
 
 /**
