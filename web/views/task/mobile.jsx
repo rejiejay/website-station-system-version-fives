@@ -20,7 +20,8 @@ export default class MobileComponent extends React.Component {
             content: '',
             SMART: '',
             link: '',
-            putoff: null
+            putoff: null,
+            complete: null
         }
 
         this.executeTask = null
@@ -49,6 +50,7 @@ export default class MobileComponent extends React.Component {
                 SMART: storageTask.SMART,
                 link: storageTask.link,
                 putoff: storageTask.putoff,
+                complete: storageTask.complete
             })
         }
 
@@ -87,6 +89,7 @@ export default class MobileComponent extends React.Component {
             SMART: task.SMART,
             link: task.link,
             putoff: task.putoff,
+            complete: storageTask.complete
         })
     }
 
@@ -130,7 +133,8 @@ export default class MobileComponent extends React.Component {
                 content: executeTask.content,
                 SMART: executeTask.SMART,
                 link: executeTask.link,
-                putoff: executeTask.putoff
+                putoff: executeTask.putoff,
+                complete: storageTask.complete
             })
         }
 
@@ -149,14 +153,45 @@ export default class MobileComponent extends React.Component {
             content: storageTask.content,
             SMART: storageTask.SMART,
             link: storageTask.link,
-            putoff: storageTask.putoff
+            putoff: storageTask.putoff,
+            complete: storageTask.complete
+        })
+    }
+
+    bindTaskLink() {
+        const self = this
+        const { id } = this.state
+
+        const inputHandle = async link => {
+            fetch.post({
+                url: 'task/bind/link',
+                body: { id, link }
+            }).then(
+                ({ data }) => {
+                    self.setState({ link })
+                    self.executeTask.link = link
+                    self.storageTask.link = link
+                    server.setStorageTask(executeTask)
+                },
+                error => { }
+            )
+
+            inputPopUpDestroy()
+        }
+
+        const defaultValue = `./../record/index.html?tag=`
+
+        inputPopUp({
+            title: '请输入绑定任务的链接?',
+            inputHandle,
+            defaultValue
         })
     }
 
     render() {
         const self = this
         const { clientHeight } = this
-        const { rootName, title, content, SMART, link, putoff } = this.state
+        const { rootName, title, content, SMART, link, putoff, complete } = this.state
         const smart = server.getJsonDataBySMART(SMART)
         const minHeight = clientHeight - 147
         const isTaskExecute = this.verifyTaskInExecute()
@@ -195,6 +230,7 @@ export default class MobileComponent extends React.Component {
             <div className="mobile-content">
                 <div className="mobile-container" style={{ minHeight: `${minHeight}px` }}>
                     {putoff && <div className="item-putoff flex-center">推迟的时间: {timeTransformers.dateToYYYYmmDDhhMM(new Date(+putoff))}</div>}
+                    {complete && <div className="item-complete flex-center">任务的时间: {timeTransformers.dateToYYYYmmDDhhMM(new Date(+complete))}</div>}
 
                     <div className="item-title flex-start-center">
                         <div className="flex-rest">{title || '标题'}</div>
@@ -289,7 +325,9 @@ export default class MobileComponent extends React.Component {
                         >完成</div>
                     </div>,
                     <div className="mobile-operate-item">
-                        <div className="operate-item-container flex-center">绑定结论</div>
+                        <div className="operate-item-container flex-center"
+                            onClick={this.bindTaskLink.bind(this)}
+                        >绑定结论</div>
                     </div>,
                     <input readonly type="text"
                         id="picka-date"
