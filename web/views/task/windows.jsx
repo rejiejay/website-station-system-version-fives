@@ -327,11 +327,6 @@ export default class WindowsComponent extends React.Component {
         })
     }
 
-    editTaskHandle() {
-        const { previewTask } = this.state
-        window.open(`./edit/index.html?id=${previewTask.id}`)
-    }
-
     toExecuteTaskHandle() {
         const self = this
         const { previewTask } = this.state
@@ -498,7 +493,7 @@ export default class WindowsComponent extends React.Component {
                             onClick={this.addMindNodeHandle.bind(this)}
                         >新增子节点</div>
                         {previewTask && previewTask.parentid !== 'root' && <div className="flex-rest flex-center"
-                            onClick={this.changeMindNodeHandle.bind(this)}
+                            onClick={() => window.open(`./edit/index.html?id=${previewTask.id}`)}
                         >修改节点</div>}
                         <div className="flex-rest flex-center"
                             onClick={this.editTaskHandle.bind(this)}

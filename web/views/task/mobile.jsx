@@ -12,12 +12,15 @@ export default class MobileComponent extends React.Component {
 
         this.state = {
             rootName: '',
+            id: null,
             title: '',
             content: '',
             SMART: '',
             link: '',
             putoff: null
         }
+
+        this.storageTask = null
 
         this.clientHeight = document.body.offsetHeight || document.documentElement.clientHeight || window.innerHeight
         this.clientWidth = document.body.offsetWidth || document.documentElement.clientWidth || window.innerWidth
@@ -29,28 +32,21 @@ export default class MobileComponent extends React.Component {
     }
 
     async initExecuteDetailTask() {
-        let task = null
         const storageTask = await server.getStorageTask()
 
         if (storageTask) {
-            task = storageTask
-        } else {
-            await fetch.get({
-                url: 'task/random',
-                query: {}
-            }).then(
-                ({ data }) => task = data,
-                error => { }
-            )
+            this.storageTask = storageTask
+            await this.initRootName(storageTask.rootid)
+            return this.setState({
+                title: storageTask.title,
+                content: storageTask.content,
+                SMART: storageTask.SMART,
+                link: storageTask.link,
+                putoff: storageTask.putoff,
+            })
         }
-        await this.initRootName(task.rootid)
-        this.setState({
-            title: task.title,
-            content: task.content,
-            SMART: task.SMART,
-            link: task.link,
-            putoff: task.putoff,
-        })
+
+        await this.initRandomTask()
     }
 
     async initRootName(rootId) {
@@ -63,6 +59,45 @@ export default class MobileComponent extends React.Component {
             ({ data }) => self.setState({ rootName: data.title }),
             error => { }
         )
+    }
+
+    async initRandomTask() {
+        let task = null
+
+        await fetch.get({
+            url: 'task/random',
+            query: {}
+        }).then(
+            ({ data }) => task = data,
+            error => { }
+        )
+
+        await this.initRootName(task.rootid)
+        this.setState({
+            title: task.title,
+            content: task.content,
+            SMART: task.SMART,
+            link: task.link,
+            putoff: task.putoff,
+        })
+    }
+
+    accomplishTask() {
+        const self = this
+        const { id } = this
+
+        const handle = () => fetch.post({
+            url: 'task/accomplish',
+            body: { id }
+        }).then(
+            ({ data }) => self.initRandomTask(),
+            error => { }
+        )
+
+        confirmPopUp({
+            title: '你确定要完成这条数据吗?',
+            succeedHandle: handle
+        })
     }
 
     render() {
@@ -173,10 +208,14 @@ export default class MobileComponent extends React.Component {
 
             <div className="mobile-operate">
                 <div className="mobile-operate-item">
-                    <div className="operate-item-container flex-center">编辑</div>
+                    <div className="operate-item-container flex-center"
+                        onClick={() => window.location.href = `./edit/index.html?id=${id}`}
+                    >编辑</div>
                 </div>
                 <div className="mobile-operate-item">
-                    <div className="operate-item-container flex-center">完成</div>
+                    <div className="operate-item-container flex-center"
+                        onClick={self.accomplishTask.bind(self)}
+                    >完成</div>
                 </div>
                 <div className="mobile-operate-item">
                     <div className="operate-item-container flex-center">绑定结论</div>
