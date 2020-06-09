@@ -9,6 +9,7 @@ import timeTransformers from './../../utils/time-transformers.js';
 import CONST from './const.js';
 import server from './server.js';
 import MobileMindComponent from './mobile-mind.jsx';
+import MobileGuideComponent from './mobile-guide.jsx';
 
 export default class MobileComponent extends React.Component {
     constructor(props) {
@@ -402,7 +403,9 @@ export default class MobileComponent extends React.Component {
                     >{rootName}</div>
 
                     <div className="right-operating flex-start-center">
-                        <div className="operat-item" >
+                        <div className="operat-item"
+                            onClick={() => this.refs.guide.setShow()}
+                        >
                             <svg width="16" height="16" t="1590236984624" class="icon" viewBox="0 0 1024 1024" version="1.1" xmlns="http://www.w3.org/2000/svg" p-id="1134">
                                 <path d="M224 512a32 32 0 1 0-32 32 32 32 0 0 0 32-32z m64 0a96 96 0 1 1-96-96 96 96 0 0 1 96 96zM544 512a32 32 0 1 0-32 32 32 32 0 0 0 32-32z m64 0a96 96 0 1 1-96-96 96 96 0 0 1 96 96zM864 512a32 32 0 1 0-32 32 32 32 0 0 0 32-32z m64 0a96 96 0 1 1-96-96 96 96 0 0 1 96 96z" p-id="1135"></path>
                             </svg>
@@ -539,7 +542,13 @@ export default class MobileComponent extends React.Component {
             <MobileMindComponent
                 ref="mind"
                 rootId={executeTask && executeTask.rootid}
-            ></MobileMindComponent>
+            ></MobileMindComponent>,
+
+            <MobileGuideComponent
+                ref="guide"
+                selectMindNodeHandle={this.selectMindNodeHandle.bind(this)}
+                showNewActionSheet={this.showNewActionSheet.bind(this)}
+            ></MobileGuideComponent>
         ]
     }
 }
