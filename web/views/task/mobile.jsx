@@ -322,7 +322,7 @@ export default class MobileComponent extends React.Component {
         const self = this
         const { executeTask } = this
 
-        const handle = async id => await fetch.post({
+        const mindHandle = async id => await fetch.post({
             url: 'task/modify/parentid',
             body: { oldId: executeTask.id, newId: id }
         }).then(
@@ -489,11 +489,11 @@ export default class MobileComponent extends React.Component {
                             <div className="flex-rest">跟进</div>
                         </div>
                         <div className="item-content-link"
-                            onClick={() => window.open(link)}
+                            onClick={() => window.location.href = link}
                         ><div className="flex-center">点击查看进度</div></div>
                     </div>}
                 </div>
-            </div>,
+            </div >,
 
             <div className="mobile-operate">
                 {!isTaskExecute && [
