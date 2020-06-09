@@ -370,7 +370,7 @@ export default class MobileComponent extends React.Component {
     render() {
         const self = this
         const { clientHeight, executeTask } = this
-        const { rootName, title, content, SMART, link, putoff, complete } = this.state
+        const { rootName, id, title, content, SMART, link, putoff, complete } = this.state
         const smart = server.getJsonDataBySMART(SMART)
         const minHeight = clientHeight - 147
         const isTaskExecute = this.verifyTaskInExecute()

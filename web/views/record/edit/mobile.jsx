@@ -460,7 +460,7 @@ export default class MobileComponent extends React.Component {
                 </div>
             </div>,
 
-            < div style={{ height: clientHeight }}></div >,
+            <div style={{ height: clientHeight }}></div >,
 
             <div class="mobile-operation">
                 <div class="operation-container flex-start-center">
@@ -487,7 +487,7 @@ export default class MobileComponent extends React.Component {
                         onClick={this.closeHandle.bind(this)}
                     >取消</div>
                 </div>
-            </div>,
+            </div>
         ]
     }
 }
