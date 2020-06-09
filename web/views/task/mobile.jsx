@@ -435,41 +435,51 @@ export default class MobileComponent extends React.Component {
                     </div>
 
                     {smart.specific && <div className="item-content">
-                        <div className="item-content-title flex-start-center">
+                        <div className="item-content-title flex-start-center"
+                            onClick={() => toast.show('清楚地说明要达成的行为标准，不明确就没有办法评判、衡量。')}
+                        >
                             <div className="flex-rest">达成任务的具体行为标准?（给未来的自己）</div>
-                            <div className="item-content-tip noselect" data-tippy-content="清楚地说明要达成的行为标准，不明确就没有办法评判、衡量。">Specific</div>
+                            <div className="item-content-tip noselect">Specific</div>
                         </div>
                         <div className="item-content-description">{smart.specific}</div>
                     </div>}
 
                     {smart.measurable && <div className="item-content">
-                        <div className="item-content-title flex-start-center">
+                        <div className="item-content-title flex-start-center"
+                            onClick={() => toast.show('杜绝在目标设置中使用形容词等概念模糊、无法衡量的描述、这对自己非常重要！')}
+                        >
                             <div className="flex-rest">是否可衡量目标的完成度?（给未来的自己）</div>
-                            <div className="item-content-tip noselect" data-tippy-content="杜绝在目标设置中使用形容词等概念模糊、无法衡量的描述、这对自己非常重要！">Measurable</div>
+                            <div className="item-content-tip noselect">Measurable</div>
                         </div>
                         <div className="item-content-description">{smart.measurable}</div>
                     </div>}
 
                     {smart.attainable && <div className="item-content">
-                        <div className="item-content-title flex-start-center">
+                        <div className="item-content-title flex-start-center"
+                            onClick={() => toast.show('要知道长期无法可实现的目标就非常打击积极性')}
+                        >
                             <div className="flex-rest">可实现?并能够被未来的自己所接受?</div>
-                            <div className="item-content-tip noselect" data-tippy-content="要知道长期无法可实现的目标就非常打击积极性">Attainable</div>
+                            <div className="item-content-tip noselect">Attainable</div>
                         </div>
                         <div className="item-content-description">{smart.attainable}</div>
                     </div>}
 
                     {smart.relevant && <div className="item-content">
-                        <div className="item-content-title flex-start-center">
+                        <div className="item-content-title flex-start-center"
+                            onClick={() => toast.show('你想学英语，却让自己看美剧（相关性非常低）')}
+                        >
                             <div className="flex-rest">是否和需求相关联，不要跑题</div>
-                            <div className="item-content-tip noselect" data-tippy-content="你想学英语，却让自己看美剧（相关性非常低）">Relevant</div>
+                            <div className="item-content-tip noselect">Relevant</div>
                         </div>
                         <div className="item-content-description">{smart.relevant}</div>
                     </div>}
 
                     {smart.timeBound && <div className="item-content">
-                        <div className="item-content-title flex-start-center">
+                        <div className="item-content-title flex-start-center"
+                            onClick={() => toast.show('一直学一直学，时间过去了，自己还在原地徘徊、这就没意思了')}
+                        >
                             <div className="flex-rest">{smart.timeBound ? smart.timeBound : '时限性'}</div>
-                            <div className="item-content-tip noselect" data-tippy-content="一直学一直学，时间过去了，自己还在原地徘徊、这就没意思了">Time-bound</div>
+                            <div className="item-content-tip noselect">Time-bound</div>
                         </div>
                         <div className="item-content-description">{smart.timeBound}</div>
                     </div>}

@@ -30,7 +30,6 @@ export default class WindowsComponent extends React.Component {
     }
 
     async componentDidMount() {
-        tippy('[data-tippy-content]');
         await login()
         await this.initRootTaskList()
         await this.initExecuteDetailTask()
@@ -350,6 +349,8 @@ export default class WindowsComponent extends React.Component {
         const taskMindHeight = clientHeight / 4 * 3; /** 显示3/4 */
         const isTaskExecute = this.verifyTaskInExecute()
         const smart = server.getJsonDataBySMART(previewTask && previewTask.SMART)
+
+        setTimeout(() => tippy('[data-tippy-content]'), 500)
 
         /**
          * 含义: 重置操作

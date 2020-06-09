@@ -1,4 +1,5 @@
 import fetch from './../../../components/async-fetch/fetch.js';
+import toast from './../../../components/toast.js';
 import { loadPageVar } from './../../../utils/url-handle.js';
 import { confirmPopUp } from './../../../components/confirm-popup.js';
 import timeTransformers from './../../../utils/time-transformers.js';
@@ -265,7 +266,12 @@ export default class MobileComponent extends React.Component {
                     ></textarea>
                 </div>
 
-                <div class="edit-title">达成任务的具体行为标准?</div>
+                <div class="edit-title flex-start"
+                    onClick={() => toast.show('清楚地说明要达成的行为标准，不明确就没有办法评判、衡量。')}
+                >
+                    <div className="flex-rest">达成任务的具体行为标准?</div>
+                    <div>Tip</div>
+                </div>
                 <div class="edit-input flex-start-center">
                     <input type="text" placeholder="达成任务的具体行为标准"
                         value={smart.specific}
@@ -273,7 +279,12 @@ export default class MobileComponent extends React.Component {
                     />
                 </div>
 
-                <div class="edit-title">是否可衡量目标的完成度?</div>
+                <div class="edit-title flex-start"
+                    onClick={() => toast.show('杜绝在目标设置中使用形容词等概念模糊、无法衡量的描述、这对自己非常重要！')}
+                >
+                    <div className="flex-rest">是否可衡量目标的完成度?</div>
+                    <div>Tip</div>
+                </div>
                 <div class="edit-input flex-start-center">
                     <input type="text" placeholder="是否可衡量目标的完成度"
                         value={smart.measurable}
@@ -281,7 +292,12 @@ export default class MobileComponent extends React.Component {
                     />
                 </div>
 
-                <div class="edit-title">可实现?并能够被未来的自己所接受?</div>
+                <div class="edit-title flex-start"
+                    onClick={() => toast.show('要知道长期无法可实现的目标就非常打击积极性')}
+                >
+                    <div className="flex-rest">可实现?并能够被未来的自己所接受?</div>
+                    <div>Tip</div>
+                </div>
                 <div class="edit-input flex-start-center">
                     <input type="text" placeholder="可实现?并能够被未来的自己所接受?"
                         value={smart.attainable}
@@ -289,7 +305,12 @@ export default class MobileComponent extends React.Component {
                     />
                 </div>
 
-                <div class="edit-title">是否和需求相关联，不要跑题?</div>
+                <div class="edit-title flex-start"
+                    onClick={() => toast.show('你想学英语，却让自己看美剧（相关性非常低）')}
+                >
+                    <div className="flex-rest">是否和需求相关联，不要跑题?</div>
+                    <div>Tip</div>
+                </div>
                 <div class="edit-input flex-start-center">
                     <input type="text" placeholder="是否和需求相关联，不要跑题"
                         value={smart.relevant}
@@ -297,7 +318,12 @@ export default class MobileComponent extends React.Component {
                     />
                 </div>
 
-                <div class="edit-title">时限性?</div>
+                <div class="edit-title flex-start"
+                    onClick={() => toast.show('一直学一直学，时间过去了，自己还在原地徘徊、这就没意思了')}
+                >
+                    <div className="flex-rest">时限性?</div>
+                    <div>Tip</div>
+                </div>
                 <div class="edit-input flex-start-center">
                     <input type="text" placeholder="时限性"
                         value={smart.timeBound}

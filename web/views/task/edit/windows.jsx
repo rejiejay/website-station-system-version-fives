@@ -34,7 +34,6 @@ export default class WindowsComponent extends React.Component {
     }
 
     async componentDidMount() {
-        tippy('[data-tippy-content]');
         this.initPageVar()
     }
 
@@ -238,6 +237,8 @@ export default class WindowsComponent extends React.Component {
         const { clientHeight } = this
         const minHeight = clientHeight - 125
         const smart = server.getJsonDataBySMART(SMART)
+
+        setTimeout(() => tippy('[data-tippy-content]'), 500)
 
         if (pageStatus === CONST.PAGE_STATUS.DEFAULTS) return (<div>页面参数有误</div>)
 
