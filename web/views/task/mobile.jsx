@@ -8,6 +8,7 @@ import timeTransformers from './../../utils/time-transformers.js';
 
 import CONST from './const.js';
 import server from './server.js';
+import MobileMindComponent from './mobile-mind.jsx';
 
 export default class MobileComponent extends React.Component {
     constructor(props) {
@@ -24,6 +25,7 @@ export default class MobileComponent extends React.Component {
             complete: null
         }
 
+        this.rootTaskList = CONST.TASK.DEFAULT_LIST
         this.executeTask = null
         this.storageTask = null
 
@@ -89,7 +91,7 @@ export default class MobileComponent extends React.Component {
             SMART: task.SMART,
             link: task.link,
             putoff: task.putoff,
-            complete: storageTask.complete
+            complete: task.complete
         })
     }
 
@@ -134,7 +136,7 @@ export default class MobileComponent extends React.Component {
                 SMART: executeTask.SMART,
                 link: executeTask.link,
                 putoff: executeTask.putoff,
-                complete: storageTask.complete
+                complete: executeTask.complete
             })
         }
 
@@ -258,9 +260,115 @@ export default class MobileComponent extends React.Component {
         })
     }
 
+    selectMindNodeHandle() {
+        const self = this
+        const { rootTaskList } = this
+
+        const mindHandle = id => fetch.get({
+            url: 'task/id',
+            query: { id }
+        }).then(
+            async ({ data }) => {
+                await self.initRootName(data.rootid)
+                self.setState({
+                    id: data.id,
+                    title: data.title,
+                    content: data.content,
+                    SMART: data.SMART,
+                    link: data.link,
+                    putoff: data.putoff,
+                    complete: data.complete
+                })
+            },
+            error => { }
+        )
+
+        const rootTaskSelectHandle = ({ label, value }) => self.refs.mind.selectNodeByRootId(value)
+            .then(
+                id => mindHandle(id),
+                error => { }
+            )
+
+        const handle = ({ label, value }) => {
+            switch (value) {
+                case 1:
+                    actionSheetPopUp({
+                        title: '请选择根类型',
+                        options: rootTaskList.map(task => ({ label: task.title, value: task.id })),
+                        rootTaskSelectHandle
+                    })
+                    break;
+                case 2:
+                    self.refs.mind.selectNode()
+                        .then(
+                            id => mindHandle(id),
+                            error => { }
+                        )
+                    break;
+                default:
+                    break;
+            }
+        }
+
+        actionSheetPopUp({
+            title: '请选择查看类型',
+            options: [{ label: '根', value: 1 }, { label: '节点', value: 2 }],
+            handle
+        })
+    }
+
+    async relatedMindNodeHandle() {
+        const self = this
+        const { executeTask } = this
+
+        const handle = async id => await fetch.post({
+            url: 'task/modify/parentid',
+            body: { oldId: executeTask.id, newId: id }
+        }).then(
+            ({ data }) => toast.show('修改成功'),
+            error => { }
+        )
+
+        this.refs.mind.selectNode()
+            .then(
+                id => mindHandle(id),
+                error => { }
+            )
+    }
+
+    showNewActionSheet() {
+        const self = this
+        const { executeTask } = this
+        const handle = ({ label, value }) => {
+            switch (value) {
+                case 1:
+                    window.location.href = './edit/index.html?parentid=root'
+                    break;
+                case 2:
+                    self.refs.mind.selectNode()
+                        .then(
+                            id => window.location.href = `./edit/index.html?rootid=${executeTask.rootid}&parentid=${id}`,
+                            error => { }
+                        )
+                    break;
+                case 3:
+                    window.location.href = `./edit/index.html?rootid=${executeTask.rootid}&parentid=${executeTask.id}`
+                    break;
+                default:
+                    break;
+            }
+        }
+
+        actionSheetPopUp({
+            title: '请选择新增类型',
+            options: [{ label: '新增根', value: 1 }, { label: '新增节点', value: 2 }, { label: '新增子节点', value: 3 }],
+            handle
+        })
+    }
+
     render() {
         const self = this
-        const { clientHeight } = this
+        const { clientHeight, executeTask } = this
         const { rootName, title, content, SMART, link, putoff, complete } = this.state
         const smart = server.getJsonDataBySMART(SMART)
         const minHeight = clientHeight - 147
@@ -269,7 +377,9 @@ export default class MobileComponent extends React.Component {
         return [
             <div className="mobile-header noselect">
                 <div className="header-filter flex-start">
-                    <div className="header-filter-des flex-rest flex-start-center">
+                    <div className="header-filter-des flex-rest flex-start-center"
+                        onClick={this.relatedMindNodeHandle.bind(this)}
+                    >
                         <div className="header-filter-des flex-rest flex-center">关联</div>
                     </div>
                     <div className="header-filter-separation"></div>
@@ -282,10 +392,14 @@ export default class MobileComponent extends React.Component {
 
                 <div className="header-operating flex-start-center">
                     <div className="left-operating flex-start-center">
-                        <div className="operat-item hover-item">New</div>
+                        <div className="operat-item hover-item"
+                            onClick={this.showNewActionSheet.bind(this)}
+                        >New</div>
                     </div>
 
-                    <div className="header-operating-description flex-rest flex-center">{rootName}</div>
+                    <div className="header-operating-description flex-rest flex-center"
+                        onClick={this.selectMindNodeHandle.bind(this)}
+                    >{rootName}</div>
 
                     <div className="right-operating flex-start-center">
                         <div className="operat-item" >
@@ -295,7 +409,7 @@ export default class MobileComponent extends React.Component {
                         </div>
                     </div>
                 </div>
-            </div>,
+            </div >,
 
             <div className="mobile-content">
                 <div className="mobile-container" style={{ minHeight: `${minHeight}px` }}>
@@ -420,7 +534,12 @@ export default class MobileComponent extends React.Component {
                         >删除</div>
                     </div>
                 ]}
-            </div>
+            </div>,
+
+            <MobileMindComponent
+                ref="mind"
+                rootId={executeTask && executeTask.rootid}
+            ></MobileMindComponent>
         ]
     }
 }
