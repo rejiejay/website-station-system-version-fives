@@ -5,6 +5,7 @@ import { confirmPopUp } from './../../../components/confirm-popup.js';
 import { inputPopUp, inputPopUpDestroy } from './../../../components/input-popup.js';
 
 import CONST from './const.js';
+import renderConclusion from './windows-conclusion.jsx';
 
 export default class WindowsComponent extends React.Component {
     constructor(props) {
@@ -55,7 +56,7 @@ export default class WindowsComponent extends React.Component {
 
         if (status !== CONST.PAGE_STATUS.EDIT) return this.initRandomHandle()
 
-        await fetch.get({ url: 'mind/get/id', query: { id } }).then(
+        await fetch.get({ url: 'require/get/id', query: { id } }).then(
             ({ data: { childNodes, current, parent } }) => {
                 self.mind = {
                     title: current.title,
@@ -91,7 +92,7 @@ export default class WindowsComponent extends React.Component {
         if (this.verifyEditDiff() === false) return toast.show('没有数据改变')
 
         fetch.post({
-            url: 'mind/edit/id',
+            url: 'require/edit/id',
             body: { id, title, content, timeSpan, view, nature }
         }).then(
             res => {
@@ -138,7 +139,7 @@ export default class WindowsComponent extends React.Component {
     async initRandomHandle() {
         const self = this
 
-        await fetch.get({ url: 'mind/get/random', query: {} }).then(
+        await fetch.get({ url: 'require/get/random', query: {} }).then(
             ({ data: { childNodes, current, parent } }) => {
                 self.id = current.id
                 self.status = CONST.PAGE_STATUS.EDIT
@@ -170,7 +171,7 @@ export default class WindowsComponent extends React.Component {
 
         const inputHandle = async newParentId => {
             await fetch.post({
-                url: 'mind/edit/parent/id',
+                url: 'require/edit/parent/id',
                 body: {
                     newParentId,
                     oldId: id
@@ -203,7 +204,7 @@ export default class WindowsComponent extends React.Component {
 
         const handle = () => {
             fetch.post({
-                url: 'mind/add/parentid',
+                url: 'require/add/parentid',
                 body: { parentid: newParentid, title, content, timeSpan, view, nature }
             }).then(
                 ({ data }) => {
@@ -261,7 +262,7 @@ export default class WindowsComponent extends React.Component {
 
         const handle = () => {
             fetch.post({
-                url: 'mind/del/id',
+                url: 'require/del/id',
                 body: { id }
             }).then(
                 () => self.initRandomHandle(),

@@ -35,7 +35,7 @@ class MainComponent extends React.Component {
             data: CONST.MIND.DEFAULTS
         }
 
-        await fetch.get({ url: 'mind/get/all', query: {} }).then(
+        await fetch.get({ url: 'require/get/all', query: {} }).then(
             ({ data }) => {
                 const root = data.find(element => +element.id === 1);
 
@@ -75,9 +75,12 @@ class MainComponent extends React.Component {
         const self = this
 
         const selectNodeHandle = node => {
+            const { isMobileDevice } = self.state
             const data = self.mindInstan.get_node(node)
 
-            window.location.href = `./detail/index.html?id=${data.id}`
+            const link = `./detail/index.html?id=${data.id}`
+
+            isMobileDevice? window.location.href = link: window.open(link)
         }
 
         this.mindInstan.add_event_listener((type, { evt, node }) => {

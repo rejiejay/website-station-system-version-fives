@@ -22,6 +22,10 @@ const configs = [{
     entry: './views/require',
     output: './build/require'
 }, {
+    route: '/require/detail/index.html',
+    entry: './views/require/detail',
+    output: './build/require/detail'
+}, {
     route: '/task/index.html',
     entry: './views/task',
     output: './build/task'

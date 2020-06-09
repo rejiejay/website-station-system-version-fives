@@ -4,7 +4,6 @@ import { dropDownSelectPopup, dropDownSelectPopupDestroy } from './../../../comp
 import { confirmPopUp } from './../../../components/confirm-popup.js';
 
 import CONST from './const.js';
-import renderConclusion from './windows-conclusion.jsx';
 
 let self = null
 
