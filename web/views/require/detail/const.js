@@ -39,10 +39,10 @@ const CONST = {
     },
 
     MULTI_FUNCTION_BIND_URL_TYPE: {
-        MIND: {
+        RECORD: {
             value: 1,
             label: '绑定结论系统',
-            url: './../record/index.html?tag='
+            url: './../record/index.html'
         },
         TASK: {
             value: 2,

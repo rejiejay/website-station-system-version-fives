@@ -57,8 +57,8 @@ const bindUrlMultiItem = (data, item, index) => {
     }
 
     const dropDownSelectHandle = ({ value, label }) => {
-        if (value === CONST.MULTI_FUNCTION_BIND_URL_TYPE.MIND.value) {
-            popupConfiguration.defaultValue = `${CONST.MULTI_FUNCTION_BIND_URL_TYPE.MIND.url}?id=`
+        if (value === CONST.MULTI_FUNCTION_BIND_URL_TYPE.RECORD.value) {
+            popupConfiguration.defaultValue = `${CONST.MULTI_FUNCTION_BIND_URL_TYPE.RECORD.url}?tag=`
         }
         if (value === CONST.MULTI_FUNCTION_BIND_URL_TYPE.TASK.value) {
             popupConfiguration.defaultValue = `${CONST.MULTI_FUNCTION_BIND_URL_TYPE.TASK.url}?type=task_list&id=`
@@ -76,7 +76,7 @@ const bindUrlMultiItem = (data, item, index) => {
     } else {
         dropDownSelectPopup({
             list: [
-                CONST.MULTI_FUNCTION_BIND_URL_TYPE.MIND,
+                CONST.MULTI_FUNCTION_BIND_URL_TYPE.RECORD,
                 CONST.MULTI_FUNCTION_BIND_URL_TYPE.TASK
             ],
             handle: dropDownSelectHandle,
