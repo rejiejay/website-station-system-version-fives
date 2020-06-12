@@ -104,7 +104,7 @@ export default class WindowsComponent extends React.Component {
         const { rootTaskList } = this
         let taskMindList = []
         const getTaskMindBy = async rootTask => {
-            let taskMindItem = CONST.MIND_FORMAT
+            let taskMindItem = JSON.parse(JSON.stringify(CONST.MIND_FORMAT))
             taskMindItem.meta.name = rootTask.title
             const rootMind = {
                 isroot: true,

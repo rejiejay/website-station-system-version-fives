@@ -113,22 +113,24 @@ export default class WindowsListItemComponent extends React.Component {
 
         return (
             <div className={className} style={{ height: taskMindHeight }}>
-                <div className="operation">
-                    <div className="operation-container flex-start">
-                        <div className="operation-item">
-                            <div className="operation-item-container flex-center noselect"
-                                onClick={this.switchHandle.bind(this)}
-                            >{isShowPutoff ? '影藏' : '显示'}putoff</div>
-                        </div>
-                        <div className="operation-item">
-                            <div className="operation-item-container flex-center noselect"
-                                onClick={() => window.open('./start-up-assist.index.html')}
-                            >不想做怎么办?</div>
+                <div className={`${className}-container`}>
+                    <div className="operation">
+                        <div className="operation-container flex-start">
+                            <div className="operation-item">
+                                <div className="operation-item-container flex-center noselect"
+                                    onClick={this.switchHandle.bind(this)}
+                                >{isShowPutoff ? '影藏' : '显示'}putoff</div>
+                            </div>
+                            <div className="operation-item">
+                                <div className="operation-item-container flex-center noselect"
+                                    onClick={() => window.open('./start-up-assist.index.html')}
+                                >不想做怎么办?</div>
+                            </div>
                         </div>
                     </div>
-                </div>
 
-                <div className="mind" id={jsMindContainerRefer}></div>
+                    <div className="mind" id={jsMindContainerRefer}></div>
+                </div>
             </div>
         )
     }
