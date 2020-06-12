@@ -21,6 +21,8 @@ export default class WindowsComponent extends React.Component {
 
             executeTask: CONST.TASK.DEFAULT_ITEM,
             previewTask: CONST.TASK.DEFAULT_ITEM,
+
+            isScrollDowm: false
         }
 
         this.rootTaskList = CONST.TASK.DEFAULT_LIST
@@ -33,6 +35,7 @@ export default class WindowsComponent extends React.Component {
         await login()
         await this.initRootTaskList()
         await this.initExecuteDetailTask()
+        this.initRightFloat()
     }
 
     async initRootTaskList() {
@@ -137,6 +140,17 @@ export default class WindowsComponent extends React.Component {
         }
 
         this.setState({ taskMindList })
+    }
+
+    initRightFloat() {
+        const self = this
+
+        window.onscroll = function () {
+            const top = document.documentElement.scrollTop
+            const { isScrollDowm } = self.state
+            if (top >= 100 && !isScrollDowm) self.setState({ isScrollDowm: true })
+            if (top < 100 && isScrollDowm) self.setState({ isScrollDowm: false })
+        }
     }
 
     verifyTaskInExecute() {
@@ -344,7 +358,7 @@ export default class WindowsComponent extends React.Component {
     render() {
         const self = this
         const { clientHeight, isChangeMindNode } = this
-        const { filter, executeTask, taskMindList, previewTask } = this.state
+        const { filter, executeTask, taskMindList, previewTask, isScrollDowm } = this.state
         const minContentHeight = clientHeight - 185
         const taskMindHeight = clientHeight / 4 * 3; /** 显示3/4 */
         const isTaskExecute = this.verifyTaskInExecute()
@@ -399,7 +413,8 @@ export default class WindowsComponent extends React.Component {
 
                 <div className="windows-separation"></div>
 
-                <div className="windows-container-right" style={{ minHeight: `${minContentHeight}px` }}>
+                {isScrollDowm && <div style={{ width: '640px' }} ></div>}
+                <div className={isScrollDowm ? 'windows-container-flxed' : "windows-container-right"} style={{ minHeight: `${minContentHeight}px` }}>
                     <div className="item-container">
                         {previewTask && previewTask.putoff && <div className="item-putoff flex-center">推迟的时间: {timeTransformers.dateToYYYYmmDDhhMM(new Date(+previewTask.putoff))}</div>}
 
