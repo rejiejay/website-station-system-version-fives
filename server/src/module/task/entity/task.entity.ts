@@ -16,7 +16,7 @@ export class TaskEntity {
      * 含义: 根标识
      * 目的: 方便SQL查询
      */
-    @Column({ type: 'bigint' })
+    @Column({ type: 'tinytext' })
     rootid: number;
 
     // 标题

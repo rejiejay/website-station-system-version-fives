@@ -29,7 +29,7 @@ cnpm install -d
 ```
 
 # 发布流程
-端口号: src\main.ts:20 ——> 3814  
+端口号: src\main.ts:20 ——> 3815  
 数据库: src\config\mysql.ts ——> 配置信息在有道云上  
 
 之后操作: 参考有道云

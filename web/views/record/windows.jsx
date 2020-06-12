@@ -279,12 +279,18 @@ export default class WindowsComponent extends React.Component {
                 }}</WindowsItemDetailComponent>
             </div>,
 
-            sort === CONST.SORT.TIME.value && <div className="pagination flex-center">
+            sort !== CONST.SORT.RANDOM.value && <div className="pagination flex-center">
                 <PaginationComponent
                     pageNo={pageNo}
                     pageTotal={Math.ceil(count / pageSize)}
                     handle={this.pageNoChangeHandle.bind(this)}
                 ></PaginationComponent>
+            </div>,
+
+            sort === CONST.SORT.RANDOM.value && <div className="random-pagination flex-center">
+                <div className="random-pagination-container flex-center"
+                    onClick={this.initDataByRandom.bind(this)}
+                >随机分页</div>
             </div>,
 
             <div class="copyright-component"><div class="copyright-describe">粤ICP备17119404号 Copyright © Rejiejay曾杰杰</div></div>
