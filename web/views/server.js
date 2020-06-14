@@ -25,6 +25,23 @@ server.getImageAuthorization = ({ resource }) => {
     })
 }
 
+/**
+ * 含义: 将base64转换为文件
+ */
+server.base64toFile = ({ base64, filename }) => {
+    let strSplit = base64.split(',')
+    let mime = strSplit[0].match(/:(.*?);/)[1]
+    let atobString = atob(strSplit[1])
+    let atobLength = atobString.length
+    let atobUint8Array = new Uint8Array(atobLength)
+
+    while (atobLength--) {
+        atobUint8Array[atobLength] = atobString.charCodeAt(atobLength);
+    }
+
+    return new File([atobUint8Array], filename, { type: mime });
+}
+
 server.getServiceStorage = async({ key }) => {
     let storage = false
     await fetch.get({

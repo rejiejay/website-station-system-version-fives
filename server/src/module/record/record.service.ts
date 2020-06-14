@@ -193,7 +193,7 @@ export class RecordService {
         const path = `${CONST.IMAGES.TEMPORARY_RESOURCE}/${new Date().getTime()}.png`;
 
         /** 注意: UI值是经过Base64加密过后的值 */
-        const str = imageBase64String.replace(/^data:image\/\w+;base64,/, '')
+        const str = imageBase64String.replace(/data:image\/.*;base64,/, '')
 
         return await uploadByStr({ str, path, encoding: 'base64' }).then(() => consequencer.success(path), error => consequencer.error(error))
     }

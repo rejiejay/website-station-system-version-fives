@@ -280,7 +280,7 @@ export default class WindowsComponent extends React.Component {
          * 含义: 压缩图片
          */
         lrz(file).then(
-            rst => uploadHandle(rst)
+            ({ base64 }) => uploadHandle(homeServer.base64toFile({ base64, filename: `${nowTimestamp}.png` }))
         ).catch(
             err => toast.show('压缩图片失败')
         )
