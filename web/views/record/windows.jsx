@@ -254,14 +254,18 @@ export default class WindowsComponent extends React.Component {
                 >{{
                     recordNode: [
                         <div className="detail-preview-title">{detail && detail.title}</div>,
-                        <div className="detail-record-content">{detail && detail.content}</div>
+                        <div className="detail-record-content"
+                            dangerouslySetInnerHTML={{ __html: `${detail && detail.content.replace(/\n/g, "<br>")}` }}
+                        ></div>
                     ],
                     diaryNode: [
                         <div className="detail-preview-title">{detail && detail.title}</div>,
                         WindowsItemDetailComponent.detailToDiary(detail).map((diary, key) => diary.description ?
                             <div className="detail-diary-item" key={key}>
                                 <div className="detail-diary-title">{diary.title}</div>
-                                <div className="detail-diary-description">{diary.description}</div>
+                                <div className="detail-diary-description"
+                                    dangerouslySetInnerHTML={{ __html: `${diary.description.replace(/\n/g, "<br>")}` }}
+                                ></div>
                             </div> : ''
                         )
                     ],

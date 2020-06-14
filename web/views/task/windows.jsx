@@ -430,7 +430,9 @@ export default class WindowsComponent extends React.Component {
                                 <div className="flex-rest">任务内容描述</div>
                                 <div className="item-content-tip noselect" data-tippy-content="点击跳转需求系统">为什么要做这个?</div>
                             </div>
-                            <div className="item-content-description item-content-main">{previewTask ? previewTask.content : '内容'}</div>
+                            <div className="item-content-description item-content-main"
+                                dangerouslySetInnerHTML={{ __html: previewTask ? `${previewTask && previewTask.content.replace(/\n/g, "<br>")}` : '内容' }}
+                            ></div>
                         </div>
 
                         {smart.specific && <div className="item-content">
