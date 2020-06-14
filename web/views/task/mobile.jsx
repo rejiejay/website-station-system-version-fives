@@ -17,7 +17,10 @@ export default class MobileComponent extends React.Component {
 
         this.state = {
             rootName: '',
+
             id: null,
+            parentid: '',
+            rootid: '',
             title: '',
             content: '',
             SMART: '',
@@ -61,6 +64,8 @@ export default class MobileComponent extends React.Component {
             await this.initRootName(storageTask.rootid)
             return this.setState({
                 id: storageTask.id,
+                parentid: storageTask.parentid,
+                rootid: storageTask.rootid,
                 title: storageTask.title,
                 content: storageTask.content,
                 SMART: storageTask.SMART,
@@ -80,7 +85,7 @@ export default class MobileComponent extends React.Component {
             url: 'task/id',
             query: { id: rootId }
         }).then(
-            ({ data }) => self.setState({ rootName: data.title }),
+            ({ data }) => self.setState({ rootid: data.rootid, rootName: data.title }),
             error => { }
         )
     }
@@ -100,6 +105,8 @@ export default class MobileComponent extends React.Component {
         await this.initRootName(task.rootid)
         this.setState({
             id: task.id,
+            parentid: task.parentid,
+            rootid: task.rootid,
             title: task.title,
             content: task.content,
             SMART: task.SMART,
@@ -137,21 +144,14 @@ export default class MobileComponent extends React.Component {
 
     async toExecuteTaskHandle() {
         const self = this
-        const { executeTask } = this
+        const { id, parentid, rootid, title, content, SMART, link, putoff, complete } = this.state
 
         const handle = async () => {
-            await self.initRootName(executeTask.rootid)
-            server.setStorageTask(executeTask)
-            self.storageTask = JSON.parse(JSON.stringify(executeTask))
-            self.setState({
-                id: executeTask.id,
-                title: executeTask.title,
-                content: executeTask.content,
-                SMART: executeTask.SMART,
-                link: executeTask.link,
-                putoff: executeTask.putoff,
-                complete: executeTask.complete
-            })
+            const storageTask = JSON.parse(JSON.stringify({ id, parentid, rootid, title, content, SMART, link, putoff, complete }))
+            server.setStorageTask(storageTask)
+            self.executeTask = JSON.parse(JSON.stringify(storageTask))
+            self.storageTask = JSON.parse(JSON.stringify(storageTask))
+            await self.initRootName(rootid)
         }
 
         confirmPopUp({
@@ -165,6 +165,8 @@ export default class MobileComponent extends React.Component {
         await this.initRootName(storageTask.rootid)
         this.setState({
             id: storageTask.id,
+            parentid: storageTask.parentid,
+            rootid: storageTask.rootid,
             title: storageTask.title,
             content: storageTask.content,
             SMART: storageTask.SMART,
@@ -286,6 +288,8 @@ export default class MobileComponent extends React.Component {
                 await self.initRootName(data.rootid)
                 self.setState({
                     id: data.id,
+                    parentid: data.parentid,
+                    rootid: data.rootid,
                     title: data.title,
                     content: data.content,
                     SMART: data.SMART,
