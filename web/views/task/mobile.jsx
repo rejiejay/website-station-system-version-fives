@@ -36,7 +36,20 @@ export default class MobileComponent extends React.Component {
 
     async componentDidMount() {
         await login()
+        await this.initRootTaskList()
         await this.initExecuteDetailTask()
+    }
+
+    async initRootTaskList() {
+        const self = this
+
+        await fetch.get({
+            url: 'task/list/root',
+            query: {}
+        }).then(
+            ({ data }) => self.rootTaskList = data,
+            error => { }
+        )
     }
 
     async initExecuteDetailTask() {
@@ -293,11 +306,14 @@ export default class MobileComponent extends React.Component {
         const handle = ({ label, value }) => {
             switch (value) {
                 case 1:
-                    actionSheetPopUp({
-                        title: '请选择根类型',
-                        options: rootTaskList.map(task => ({ label: task.title, value: task.id })),
-                        rootTaskSelectHandle
-                    })
+                    setTimeout(
+                        () => actionSheetPopUp({
+                            title: '请选择根类型',
+                            options: rootTaskList.map(task => ({ label: task.title, value: task.id })),
+                            handle: rootTaskSelectHandle
+                        }),
+                        200
+                    )
                     break;
                 case 2:
                     self.refs.mind.selectNode()
