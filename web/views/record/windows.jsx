@@ -8,6 +8,7 @@ import { queryToUrl, loadPageVar } from './../../utils/url-handle.js';
 
 import CONST from './const.js';
 import server from './server.js';
+import BASE_CONST from './../const.js';
 import WindowsItemDetailComponent from './windows-item-detail.jsx';
 
 export default class WindowsComponent extends React.Component {
@@ -177,6 +178,8 @@ export default class WindowsComponent extends React.Component {
         window.open(`./edit/index.html${queryToUrl(query)}`)
     }
 
+    showBigImageHandle = imageUrl => previewImage.start({ urls: [imageUrl], current: imageUrl })
+
     render() {
         const self = this
         const { clientHeight } = this
@@ -269,6 +272,22 @@ export default class WindowsComponent extends React.Component {
                             </div> : ''
                         )
                     ],
+                    images: (detail && detail.images && detail.images.length > 0) ? (
+                        <div className="list-image">
+                            <div className="list-image-title">图片列表</div>
+                            <div className="list-image-container">
+                                {server.getImageArray({ imageArrayString: detail.images }).map((image, key) => (
+                                    <div className="list-image-item" key={key}>
+                                        <div className="image-item-container flex-center"
+                                            onClick={() => self.showBigImageHandle(`${BASE_CONST.TENCENT_OSS_RESOURCE}/${image}`)}
+                                        >
+                                            <img alt="image" src={`${BASE_CONST.TENCENT_OSS_RESOURCE}/${image}`} ></img>
+                                        </div>
+                                    </div>
+                                ))}
+                            </div>
+                        </div>
+                    ) : '',
                     operateNode: [
                         <div className="flex-rest flex-center"
                             onClick={() => self.refs.itemDetail.initByRandom()}

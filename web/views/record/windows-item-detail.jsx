@@ -79,6 +79,8 @@ export default class WindowsItemDetailComponent extends React.Component {
                         {data.type === CONST.DATA_TYPE.DIARY.value && children.diaryNode}
                     </div>}
 
+                    {children.images}
+
                     <div className="detail-operate flex-start-center noselect">
                         {children.operateNode}
                     </div>
