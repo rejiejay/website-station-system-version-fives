@@ -274,7 +274,7 @@ export default class MobileComponent extends React.Component {
             if (value === CONST.MOBILE_HEADER_DOWN_SELECT.ADD_RECORD.value) type = CONST.DATA_TYPE.RECORD.value
             if (value === CONST.MOBILE_HEADER_DOWN_SELECT.ADD_DIARY.value) type = CONST.DATA_TYPE.DIARY.value
 
-            window.location.href = `./edit/index.html${queryToUrl(sort, tag, type)}`
+            window.location.href = `./edit/index.html${queryToUrl({ sort, tag, type })}`
         }
 
         actionSheetPopUp({
