@@ -449,7 +449,9 @@ export default class MobileComponent extends React.Component {
                     <div className="item-content">
                         <div className="item-content-title flex-start-center">
                             <div className="flex-rest">任务内容描述</div>
-                            <div className="item-content-tip noselect" data-tippy-content="点击跳转需求系统">为什么要做这个?</div>
+                            <div className="item-content-tip noselect" data-tippy-content="点击跳转需求系统"
+                                onClick={() => window.location.href = './../require.html'}
+                            >为什么要做这个?</div>
                         </div>
                         <div className="item-content-description item-content-main">{content || '内容'}</div>
                     </div>

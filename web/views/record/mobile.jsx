@@ -131,7 +131,7 @@ export default class MobileComponent extends React.Component {
         }).then(
             ({ data }) => {
                 /** 是否新增, 通过 pageNo 判断 */
-                if (list.length > 0 && pageNo > 1 && count > 1) return self.setState({ list: arrayDuplicateByKey(list.concat(data), 'id') })
+                if (list.length > 0 && pageNo > 1) return self.setState({ list: arrayDuplicateByKey(list.concat(data), 'id') })
 
                 self.setState({ list: data })
             },

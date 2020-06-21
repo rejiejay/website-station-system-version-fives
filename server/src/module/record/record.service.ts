@@ -127,7 +127,11 @@ export class RecordService {
         let record = new RecordEntity()
         record.title = title
         record.content = content
-        if (tag) record.tag = tag
+        if (tag && tag != 'null') {
+            record.tag = tag
+        } else {
+            record.tag = 'all'
+        }
         record.type = type ? type : 0
         if (images) record.images = images
 
