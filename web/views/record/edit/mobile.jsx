@@ -6,6 +6,7 @@ import { queryToUrl, loadPageVar, parseQueryString } from './../../../utils/url-
 import { arrayRemoveItemByValue } from './../../../utils/array-handle.js';
 import timeTransformers from './../../../utils/time-transformers.js';
 import { actionSheetPopUp } from './../../../components/action-sheet.js';
+import { inputPopUp, inputPopUpDestroy } from './../../../components/input-popup.js';
 
 import CONST from './const.js';
 import RECORD_CONST from './../const.js';
@@ -187,17 +188,26 @@ export default class MobileComponent extends React.Component {
         const self = this
         const { tags } = this.state
 
+        const inputHandle = tag => {
+            self.setState({ tag })
+
+            inputPopUpDestroy()
+        }
+
         const handle = ({ value, label }) => {
+            if (value === 'add') return inputPopUp({
+                title: '请输入新增标签?',
+                inputHandle,
+                mustInput: false
+            })
+
             self.setState({ tag: value })
-            const { sort, type, minTimestamp, maxTimestamp } = self.state
-            let query = { sort, tag: value, type, minTimestamp, maxTimestamp }
-            window.location.replace(`./index.html${queryToUrl(query)}`)
             toast.show()
         }
 
         actionSheetPopUp({
             title: '请选择标签',
-            options: [{ label: '所有', value: '' }].concat(tags.map(tag => ({ label: tag, value: tag }))),
+            options: [{ label: '所有', value: '' }, { label: '新增', value: 'add' }].concat(tags.map(tag => ({ label: tag, value: tag }))),
             handle
         })
     }
