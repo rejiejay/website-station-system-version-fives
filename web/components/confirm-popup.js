@@ -5,7 +5,7 @@ export const confirmPopUpDestroy = () => {
     if (confirm) document.body.removeChild(confirm);
 }
 
-export const confirmPopUp = ({title, succeedHandle}) => new Promise(function (resolve, reject) {
+export const confirmPopUp = ({ title, succeedHandle }) => new Promise(function(resolve, reject) {
     /** 目标: 防止重复调用 */
     if (document.getElementById('rejiejay-confirm-popup')) return false;
 
@@ -27,18 +27,18 @@ export const confirmPopUp = ({title, succeedHandle}) => new Promise(function (re
     node.innerHTML = node_content;
     document.body.appendChild(node);
 
-    document.getElementById('rejiejay-confirm-popup-operate-yes').onclick = function () {
+    document.getElementById('rejiejay-confirm-popup-operate-yes').onclick = function() {
         succeedHandle ? succeedHandle() : null;
         confirmPopUpDestroy()
         resolve()
     }
 
-    document.getElementById('rejiejay-confirm-popup-operate-no').onclick = function () {
+    document.getElementById('rejiejay-confirm-popup-operate-no').onclick = function() {
         confirmPopUpDestroy()
         reject()
     }
 
-    document.getElementById('ejiejay-confirm-popup-mask').onclick = function () {
+    document.getElementById('ejiejay-confirm-popup-mask').onclick = function() {
         confirmPopUpDestroy()
         reject()
     }

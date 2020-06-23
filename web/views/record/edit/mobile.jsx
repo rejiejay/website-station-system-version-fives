@@ -202,7 +202,6 @@ export default class MobileComponent extends React.Component {
             })
 
             self.setState({ tag: value })
-            toast.show()
         }
 
         actionSheetPopUp({
