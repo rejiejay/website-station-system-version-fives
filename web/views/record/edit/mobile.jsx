@@ -49,12 +49,17 @@ export default class MobileComponent extends React.Component {
     }
 
     initCallbackPageVar() {
-        const callbackQuery = parseQueryString()
+        let callbackQuery = parseQueryString()
 
         let state = {}
         if (callbackQuery.tag) state.tag = callbackQuery.tag
         if (callbackQuery.type) state.type = +callbackQuery.type
         this.setState(state)
+
+        /**
+         * 问题： 新增的情况下, 会携带type，这个是不必要的
+         */
+        if (!loadPageVar('id')) delete callbackQuery.type
 
         this.callbackUrl = queryToUrl(callbackQuery)
     }
