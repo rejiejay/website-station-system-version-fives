@@ -215,7 +215,7 @@ export default class WindowsComponent extends React.Component {
 
     accomplishTask() {
         const self = this
-        const { previewTask } = this.props
+        const { previewTask } = this.state
 
         const handle = () => fetch.post({
             url: 'task/accomplish',
