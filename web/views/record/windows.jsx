@@ -289,6 +289,7 @@ export default class WindowsComponent extends React.Component {
                         </div>
                     ) : '',
                     operateNode: [
+                        <div className="flex-rest flex-center">{detail && detail.tag}</div>,
                         <div className="flex-rest flex-center"
                             onClick={() => self.refs.itemDetail.initByRandom()}
                         >随机查看</div>,
