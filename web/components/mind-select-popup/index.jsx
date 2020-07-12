@@ -1,4 +1,5 @@
 import CONST from './const.js';
+import deviceDiffer from './../../utils/device-differ.js'
 
 class MindSelectPopupComponent extends React.Component {
     constructor(props) {
@@ -9,8 +10,10 @@ class MindSelectPopupComponent extends React.Component {
 
         this.mindData
         this.mindInstan
+        this.isMobileDevice = deviceDiffer()
 
         this.clientHeight = document.body.offsetHeight || document.documentElement.clientHeight || window.innerHeight
+        this.clientWidth = document.body.offsetWidth || document.documentElement.clientWidth || window.innerWidth
     }
 
     componentDidMount() {
@@ -24,9 +27,21 @@ class MindSelectPopupComponent extends React.Component {
 
     renderContainerStyle() {
         const { isFullScreen } = this.state
-        const { clientHeight } = this
+        const { clientHeight, clientWidth, isMobileDevice } = this
 
-        if (isFullScreen) return { height: `${clientHeight}px` }
+        /** 非移动端显示全屏 */
+        if (!isMobileDevice) return { height: `${clientHeight}px` }
+
+        if (isFullScreen) return {
+            position: 'absolute',
+            transform: 'rotate(90deg)',
+            transformOrigin: '50% 50%',
+            height: clientWidth,
+            width: clientHeight,
+            top: (clientHeight - clientWidth) / 2,
+            left: 0 - (clientHeight - clientWidth) / 2
+        }
+
         return { maxHeight: `${Math.floor(clientHeight / 2)}px` }
     }
 
@@ -61,7 +76,8 @@ class MindSelectPopupComponent extends React.Component {
         const { isFullScreen } = this.state
 
         return [
-            <div className="popup-mask"></div>,
+            !isFullScreen && <div className="popup-mask"></div>,
+
             <div className="popup-container" style={this.renderContainerStyle.call(this)}>
                 {!isFullScreen && <div className="popup-container-title flex-start">
                     <div className="flex-rest flex-center">{title ? title : '请选择'}</div>
