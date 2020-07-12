@@ -7,14 +7,19 @@ class MindSelectPopupComponent extends React.Component {
             isFullScreen: false
         }
 
+        this.mindData
+        this.mindInstan
+
         this.clientHeight = document.body.offsetHeight || document.documentElement.clientHeight || window.innerHeight
     }
 
     componentDidMount() {
+        this.initMind()
     }
 
     switchFullScreen() {
-        this.setState({ isFullScreen: true })
+        const self = this
+        this.setState({ isFullScreen: true }, self.initMind)
     }
 
     renderContainerStyle() {
@@ -23,6 +28,32 @@ class MindSelectPopupComponent extends React.Component {
 
         if (isFullScreen) return { height: `${clientHeight}px` }
         return { maxHeight: `${Math.floor(clientHeight / 2)}px` }
+    }
+
+    renderJsMindStyle() {
+        const { isFullScreen } = this.state
+        const { clientHeight } = this
+
+        if (isFullScreen) return { height: `${clientHeight}px` }
+        return { height: `${Math.floor(clientHeight / 2)}px` }
+    }
+
+    initMind() {
+        document.getElementById('jsmind_container').innerHTML = ''
+
+        this.mindData = {
+            meta: { name: "jsMind", author: "hizzgdev@163.com", version: "0.4.6" },
+            format: "node_array",
+            data: CONST.MIND.DEMO
+        }
+
+        this.mindInstan = new jsMind({
+            container: 'jsmind_container',
+            editable: true,
+            theme: CONST.THEME.PRIMARY
+        })
+
+        this.mindInstan.show(this.mindData);
     }
 
     render() {
@@ -42,6 +73,8 @@ class MindSelectPopupComponent extends React.Component {
                         </svg>
                     </div>
                 </div>}
+
+                <div className="mind" id="jsmind_container" style={this.renderJsMindStyle.call(this)}></div>
             </div>
         ]
     }
