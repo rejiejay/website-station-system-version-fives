@@ -1,4 +1,5 @@
 import login from './../components/login.js';
+import { mindSelectPopup } from './../components/mind-select-popup/index.jsx';
 
 import CONST from './const.js';
 
@@ -11,6 +12,12 @@ export default class MobileComponent extends React.Component {
     }
 
     async componentDidMount() {
+        // mindSelectPopup({
+        //     title: '1',
+        //     handle: () => {
+        //         console.log('1', 1)
+        //     }
+        // })
         await login()
     }
 

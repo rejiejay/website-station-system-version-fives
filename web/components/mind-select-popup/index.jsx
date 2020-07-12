@@ -3,23 +3,45 @@ import CONST from './const.js';
 class MindSelectPopupComponent extends React.Component {
     constructor(props) {
         super(props)
-        this.state = {}
+        this.state = {
+            isFullScreen: false
+        }
+
+        this.clientHeight = document.body.offsetHeight || document.documentElement.clientHeight || window.innerHeight
     }
 
     componentDidMount() {
     }
 
+    switchFullScreen() {
+    }
+
+    renderContainerStyle() {
+        const { isFullScreen } = this.state
+        const { clientHeight } = this
+
+        if (isFullScreen) return { height: `${clientHeight}px` }
+        return { maxHeight: `${Math.floor(clientHeight / 2)}px` }
+    }
+
     render() {
-        return (
-            <div className="drop-down-select-component flex-center"
-                id={`tippy${componentReferId}`}
-                onClick={this.initSelectTooltip.bind(this)}
-            >{children ? children : name}</div>
-        )
+        const { title, handle } = this.props
+
+        return [
+            <div className="popup-mask"></div>,
+            <div className="popup-container" style={this.renderContainerStyle.call(this)}>
+                <div className="popup-container-title flex-start">
+                    <div className="flex-rest flex-center">{title ? title : '请选择'}</div>
+                    <div className="full-screen-icon">
+                        
+                    </div>
+                </div>
+            </div>
+        ]
     }
 }
 
-const mindSelectPopup = ({ }) => {
+export const mindSelectPopup = ({ title, handle }) => {
     /** 目标: 防止重复调用 */
     if (document.getElementById(CONST.ID)) return false;
 
@@ -29,10 +51,13 @@ const mindSelectPopup = ({ }) => {
     node.setAttribute('id', CONST.ID);
     document.body.appendChild(node);
 
-    ReactDOM.render(<MindSelectPopupComponent />, document.getElementById(CONST.ID));
+    ReactDOM.render(<MindSelectPopupComponent
+        title={title}
+        handle={handle}
+    />, document.getElementById(CONST.ID));
 }
 
-const mindSelectPopupDestroy = () => {
+export const mindSelectPopupDestroy = () => {
     const popup = document.getElementById(CONST.ID)
     if (popup) document.body.removeChild(popup)
 }
