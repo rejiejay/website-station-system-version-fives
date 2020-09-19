@@ -11,6 +11,7 @@ import { actionSheetPopUp } from './../../components/action-sheet.js';
 import CONST from './const.js';
 import BASE_CONST from './../const.js';
 import server from './server.js';
+import { initSort, updateSort } from './utils.js';
 
 export default class MobileComponent extends React.Component {
     constructor(props) {
@@ -51,7 +52,7 @@ export default class MobileComponent extends React.Component {
 
     async initData() {
         const id = loadPageVar('id')
-        const sort = loadPageVar('sort')
+        const sort = initSort()
         const tag = loadPageVar('tag')
         const type = loadPageVar('type')
         const search = loadPageVar('search')
@@ -213,6 +214,7 @@ export default class MobileComponent extends React.Component {
         const self = this
 
         const handle = ({ value, label }) => {
+            updateSort({ sort: value })
             self.setState({ sort: value })
             const { tag, type, minTimestamp, maxTimestamp } = self.state
             let query = { sort: value, tag, type, minTimestamp, maxTimestamp }

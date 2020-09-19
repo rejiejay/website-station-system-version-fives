@@ -49,4 +49,5 @@ localStorage['website-station-system-password']
 
 sessionStorage['WebSS-record-${JSON.stringify({ tag, type, minTimestamp, maxTimestamp })}']  
 localStorage['website-station-system-record-tags']  
+localStorage['website-station-system-record-sort']  
 localStorage['website-station-system-record-statistics-time']
