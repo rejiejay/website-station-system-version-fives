@@ -1,0 +1,35 @@
+requestCorrelation = () => {
+    target = 'to correlation request and record'
+    reason = 'about communication and thinking love life happiness'
+    
+    add_record = trigger = {
+        position: record_tag_btn,
+        action: () => {
+            popout(requset_mind)
+            fetch.record
+        }
+    }
+    
+    request_jump = () => {
+        add_btn_for_jump_should_be_ok
+    }
+}
+
+MultipleSelect_For_Tag = () => {
+    target = 'to exclude some record'
+
+    server = action = () => {
+        handleArrayString()
+        updateDBget()
+    }
+
+    UI = aciton = () => {
+        popout(MultipleSelect)
+
+        MultipleSelect = {
+            top: 'Normal Multiple Checkbox Select',
+            botton: 'dele Checkbox Select',
+            SelectCache: 'save select to localStorage'
+        }
+    }
+}
