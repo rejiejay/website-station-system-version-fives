@@ -10,7 +10,8 @@ class MainComponent extends React.Component {
         super(props)
 
         this.state = {
-            isMobileDevice: deviceDiffer()
+            isMobileDevice: deviceDiffer(),
+            isSwitchFullScreen: false
         }
 
         this.mindData
@@ -80,7 +81,7 @@ class MainComponent extends React.Component {
 
             const link = `./detail/index.html?id=${data.id}`
 
-            isMobileDevice? window.location.href = link: window.open(link)
+            isMobileDevice ? window.location.href = link : window.open(link)
         }
 
         this.mindInstan.add_event_listener((type, { evt, node }) => {
@@ -156,10 +157,10 @@ class MainComponent extends React.Component {
     }
 
     renderHorizontalStyle() {
-        const { isMobileDevice } = this.state
+        const { isSwitchFullScreen } = this.state
         const { clientHeight, clientWidth } = this
 
-        return isMobileDevice ? {
+        return isSwitchFullScreen ? {
             position: 'absolute',
             transform: 'rotate(90deg)',
             transformOrigin: '50% 50%',
@@ -174,12 +175,25 @@ class MainComponent extends React.Component {
             }
     }
 
+    switchFullScreenHandle() {
+        const { isSwitchFullScreen } = this.state
+        this.setState({ isSwitchFullScreen: !isSwitchFullScreen })
+    }
+
     render() {
+        const { isMobileDevice } = this.state
 
         return (
             <div className="horizontal-transform" style={this.renderHorizontalStyle.call(this)}>
                 <div className="operation">
                     <div className="operation-container flex-start">
+                        {isMobileDevice && 
+                            <div className="operation-item">
+                                <div className="operation-item-container flex-center noselect"
+                                    onClick={this.switchFullScreenHandle.bind(this)}
+                                >全屏</div>
+                            </div>
+                        }
                         <div className="operation-item">
                             <div className="operation-item-container flex-center noselect"
                                 onClick={this.expandAllHandle.bind(this)}
