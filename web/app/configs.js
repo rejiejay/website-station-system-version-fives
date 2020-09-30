@@ -37,6 +37,10 @@ const configs = [{
     route: '/task/edit/index.html',
     entry: './views/task/edit',
     output: './build/task/edit'
+}, {
+    route: '/new-task-follow-up/index.html',
+    entry: './views/new-task-follow-up',
+    output: './build/new-task-follow-up'
 }]
 
 export default configs
