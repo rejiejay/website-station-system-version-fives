@@ -1,0 +1,172 @@
+@black1: #303133;
+@black2: #606266;
+@black3: #909399;
+@black4: #C0C4CC;
+
+.react-basic-modal {
+    position        : fixed;
+    width           : 100%;
+    height          : 100%;
+    top             : 0px;
+    left            : 0px;
+    z-index         : 99;
+    background-color: rgba(0, 0, 0, 0.38);
+
+    display: -webkit-box;
+    display: -moz-box;
+    display: -ms-flexbox;
+    display: -webkit-flex;
+    display: flex;
+
+    -webkit-box-align  : center;
+    -moz-box-align     : center;
+    -ms-flex-align     : center;
+    -webkit-align-items: center;
+    align-items        : center;
+
+    -webkit-box-pack       : center;
+    -moz-box-pack          : center;
+    -ms-flex-pack          : center;
+    -webkit-justify-content: center;
+
+    .basic-modal-mask {
+        position: absolute;
+        top     : 0px;
+        left    : 0px;
+        width   : 100%;
+        height  : 100%;
+        opacity : 0;
+    }
+
+    .basic-modal-container {
+        position      : relative;
+        background    : #fff;
+        min-width     : 120px;
+        min-height    : 60px;
+        display       : -webkit-box;
+        display       : -moz-box;
+        display       : -ms-flexbox;
+        display       : -webkit-flex;
+        display       : flex;
+        flex-direction: column;
+    }
+
+    .basic-modal-close {
+        position   : absolute;
+        top        : 6px;
+        right      : 6px;
+        width      : 24px;
+        height     : 24px;
+        font-size  : 24px;
+        color      : @black2;
+        font-weight: bold;
+        cursor     : pointer;
+    }
+
+    .basic-modal-children {
+        position        : relative;
+        padding         : 35px 15px 15px 15px;
+        -webkit-box-flex: 1;
+        -ms-flex        : 1;
+        flex            : 1;
+    }
+
+    .basic-modal-footer {
+        border-top    : 1px solid #ddd;
+        display       : -webkit-box;
+        display       : -moz-box;
+        display       : -ms-flexbox;
+        display       : -webkit-flex;
+        display       : flex;
+        flex-direction: row;
+
+        >div {
+            -webkit-box-flex: 1;
+            -ms-flex        : 1;
+            flex            : 1;
+            border-left     : 1px solid #ddd;
+        }
+
+        >div:only-child {
+            border-left: none;
+        }
+
+        .footer-button-container {
+            text-align : center;
+            height     : 45px;
+            min-width  : 120px;
+            line-height: 45px;
+            cursor     : pointer;
+        }
+    }
+}
+
+.react-basic-checkbox {
+    .checkbox-container {
+        cursor: pointer;
+    }
+
+    .checkbox-name {
+        border     : 1px solid #ddd;
+        line-height: 32px;
+        padding    : 0px 15px;
+    }
+
+    .checkbox-name-select {
+        color     : #fff;
+        background: rgb(121, 182, 242);
+    }
+
+    .checkbox-disable {
+        line-height: 32px;
+        width      : 23px;
+        text-align : center;
+        border     : 1px solid #ddd;
+    }
+
+    .checkbox-disable-effect,
+    .checkbox-name-disable {
+        color     : #fff;
+        background: @black3;
+        border    : 1px solid @black3;
+    }
+
+    .checkbox-disable {
+        border-left: none;
+    }
+}
+
+
+.multiple-select {
+    .multiple-select-fast {
+        padding-bottom: 15px;
+    }
+
+    .multiple-select-list {
+        width         : 320px;
+        overflow      : hidden;
+        padding-bottom: 15px;
+
+        .react-basic-checkbox {
+            float  : left;
+            padding: 7.5px
+        }
+    }
+
+    .multiple-select-result {
+        border-top : 1px solid #ddd;
+        padding-top: 15px;
+        overflow   : hidden;
+
+        .multiple-result-container {
+            float  : left;
+            padding: 7.5px
+        }
+
+        .multiple-result-item {
+            border     : 1px solid #ddd;
+            line-height: 32px;
+            padding    : 0px 15px;
+        }
+    }
+}
