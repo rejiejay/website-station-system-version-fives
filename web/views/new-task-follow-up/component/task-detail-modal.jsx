@@ -21,6 +21,7 @@ export default class TaskDetailModal extends React.Component {
                         { name: '删除', fun: () => {} },
                         { name: '完成', fun: () => {} },
                         { name: '暂存', fun: () => {} },
+                        { name: '新增子节点', fun: () => {} },
                         { name: '取消', fun: () => {} },
                     ]}
                 />

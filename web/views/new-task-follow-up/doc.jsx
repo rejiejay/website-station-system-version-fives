@@ -64,11 +64,15 @@ TaskDetailModal = () => {
     step = {
         'open system': 'first step',
         'select mind': {
-            'if have target': () => {
+            'if not target': () => {
                 'add target' = 'todo'
                 'refresh mind list'
             },
-            'if not target': () => {},
+            'if have target': () => {
+                strp3
+            },
         },
+        'add': 'for add',
+        'add deep 2': {}
     }
 }
