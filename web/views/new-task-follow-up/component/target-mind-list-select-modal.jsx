@@ -1,6 +1,7 @@
 import inputPopUp from './../../../components/input-popup.jsx';
 
 import Server from './../server.js';
+import utils from './../utils.js';
 
 export default class TargetMindListSelectModal extends React.Component {
     constructor(props) {
@@ -8,6 +9,12 @@ export default class TargetMindListSelectModal extends React.Component {
         this.state = {
             taskMindListData: []
         }
+
+        this.todayGroupTaskRootId
+    }
+
+    async componentDidMount() {
+        this.todayGroupTaskRootId = await utils.getTodayGroupTaskRootId()
     }
 
     async show() { }
@@ -24,6 +31,7 @@ export default class TargetMindListSelectModal extends React.Component {
     }
 
     render() {
+        const { todayGroupTaskRootId } = this
         const { taskMindListData } = this.state
         const { addHandle, switchShow, isShowPutOff, switchShowPutOff } = this.props
         const { Modal, PutOffButton, TaskMindItem, ListOperation } = this.props.children
@@ -39,6 +47,7 @@ export default class TargetMindListSelectModal extends React.Component {
                 >新增Mind</div>
                 <div className="task-mind-item">{taskMindListData.map((mind, key) =>
                     <TaskMindItem key={key}
+                        isHighlight={mind.rooId === todayGroupTaskRootId}
                         click={() => switchShow({ showTaskWay: 'mindDetailSelect', groupId: mind.rooId })}
                         data={mind}
                     />

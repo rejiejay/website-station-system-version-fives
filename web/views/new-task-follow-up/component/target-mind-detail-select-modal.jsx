@@ -34,7 +34,7 @@ export default class TargetMindDetailSelectModal extends React.Component {
 
     async addTaskHandle(taskId) {
         const { addHandle } = this.props
-        const addInstance = await addHandle(taskId)
+        const addInstance = await addHandle({ taskParentId: taskId })
         if (addInstance.result === 1) return this.initTaskMind()
         // other result is cancel
     }

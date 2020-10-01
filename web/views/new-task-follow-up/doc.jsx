@@ -76,3 +76,12 @@ TaskDetailModal = () => {
         'add deep 2': {}
     }
 }
+
+'场景3' = () => {
+    step = {
+        'open system': 'first step',
+        'select today mind': 'for target',
+        'add': 'for add',
+        'add deep 2': {}
+    }
+}

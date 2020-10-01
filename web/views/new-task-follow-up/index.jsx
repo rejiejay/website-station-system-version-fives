@@ -64,9 +64,11 @@ export default class TaskFollowUpLayout extends React.Component {
     switchShowPutOffHandle() { }
 
     /**
-     * @param {object} task for server error handle reget
+     * For just add mind depth 1
+     * @param {object} reGetTask for server error handle reget
+     * @param {number} taskParentId For add mind depth
      */
-    async addHandle(reGetTask) {
+    async addHandle({ reGetTask, taskParentId }) {
         const { showTaskWay, mindTargetGroupTaskRootId } = this
 
         /**
@@ -81,9 +83,12 @@ export default class TaskFollowUpLayout extends React.Component {
         }
         const task = reGetTask ? reGetTask : this.newTaskInstance.data
 
-        const taskRootId = utils.isAddTaskToday(showTaskWay) ? todayGroupTaskRootId : mindTargetGroupTaskRootId
+        if (!taskParentId) {
+            const groupTaskRootId = utils.isAddTaskToday(showTaskWay) ? todayGroupTaskRootId : mindTargetGroupTaskRootId
+            taskParentId = groupTaskRootId
+        }
 
-        const fetchInstance = await Server.addTask({ task, taskRootId })
+        const fetchInstance = await Server.addTask({ task, taskParentId })
         // if (fetchInstance.result !== 1) return reGetConfirm(fetchtInstance.message, () => this.addHandle(task))
     }
 

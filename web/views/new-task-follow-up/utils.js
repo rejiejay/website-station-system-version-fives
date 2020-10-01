@@ -26,7 +26,8 @@ const utils = {
         return allTaskList
     },
     getPutOffStorage: () => {},
-    getTodayGroupTaskRootId: () => {},
+    // for persistence, because today just need get one time
+    getTodayGroupTaskRootId: async() => {},
     isAddTaskToday: showTaskWay => {},
 }
 
