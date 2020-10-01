@@ -11,6 +11,7 @@ import TipModal from './component/tip-modal.jsx';
 import StatisticsModal from './component/statistics-modal.jsx';
 
 import CONST from './const.js';
+import Server from './server.js';
 import utils from './utils.js';
 
 // layout for summary code structure (meaning is no 2 Level depth. eg: Layout -> List -> Item -> otherComponent)
@@ -53,14 +54,36 @@ export default class TaskFollowUpLayout extends React.Component {
         }
     }
 
-    switchShowTaskWayHandle(showTaskWay, groupId) {
+    switchShowTaskWayHandle({ showTaskWay, groupId }) {
         utils.storageShowTaskWay({ showTaskWay, groupId, self: this })
         this.recoverShowTaskWay()
     }
 
     switchSortHandle() { }
     switchShowPutOffHandle() { }
-    addHandle() { }
+
+    /**
+     * @param {object} task for server error handle reget
+     */
+    addHandle(task) {
+        const { showTaskWay, mindTargetGroupTaskRootId } = this
+
+        /**
+         * not handle error, because it must need successs, otherwise need reget handle
+         * for persistence, because today just need get one time
+         */ 
+        const todayGroupTaskRootId = await utils.getTodayGroupTaskRootId()
+        
+        const newTaskInstance = await this.taskDetailModalRef.current.showAdd()
+        if (fetchInstance.result !== 1) return
+        const task = newTaskInstance.data
+
+        const taskRootId = utils.isAddTaskToday(showTaskWay) ? todayGroupTaskRootId : mindTargetGroupTaskRootId
+
+        const fetchInstance = await Server.addTask({ task, taskRootId })
+        // if (fetchInstance.result !== 1) return reGetConfirm(fetchtInstance.message, () => this.addHandle(task))
+    }
+
     editHandle() { }
 
     render() {
@@ -83,32 +106,32 @@ export default class TaskFollowUpLayout extends React.Component {
             >{{ TaskListItem, PutOffButton }}</TaskList>,
 
             // Modal for persistence showTaskWay, prevent reload task list
-            <TaskDetailModal ref={taskDetailModalRef} >{{
-                Modal,
-            }}</TaskDetailModal>,
+            <TaskDetailModal ref={taskDetailModalRef} >{{ Modal }}</TaskDetailModal>,
 
             // for select target group task, 
             // Modal: not need prevent reload task list. but other funciton may need prevent reload. so need use Modal
             <TargetMindListSelectModal ref={targetMindListSelectModalRef}
                 switchShow={this.switchShowTaskWayHandle.bind(this)} // for switch show task way and localStorage
+                addHandle={this.addHandle.bind(this)}
                 // （Medium）
                 isShowPutOff={isShowPutOff} // for switch view PutOff task
                 switchShowPutOff={this.switchShowPutOffHandle.bind(this)} // for localStorage
-            >{{ TaskMindItem, PutOffButton }}</TargetMindListSelectModal>,
+            >{{ Modal, TaskMindItem, PutOffButton }}</TargetMindListSelectModal>,
 
             // Modal: for persistence showTaskWay, prevent reload other funciton
             <TargetMindDetailSelectModal ref={targetMindDetailSelectModalRef}
                 switchShow={this.switchShowTaskWayHandle.bind(this)} // for switch show task way and localStorage
+                addHandle={this.addHandle.bind(this)}
                 // （Medium）
                 isShowPutOff={isShowPutOff} // for switch view PutOff task
                 switchShowPutOff={this.switchShowPutOffHandle.bind(this)} // for localStorage
-            >{{ TaskMindItem, PutOffButton }}</TargetMindDetailSelectModal>,
+            >{{ Modal, TaskMindItem, PutOffButton }}</TargetMindDetailSelectModal>,
 
             // （UnImportant）for tip how to do
-            <TipModal ref={tipModalRef} />,
+            <TipModal ref={tipModalRef} >{{ Modal }}</TipModal>,
 
             // （UnImportant）for view Completed tasks
-            <StatisticsModal ref={statisticsModalRef} />
+            <StatisticsModal ref={statisticsModalRef} >{{ Modal }}</StatisticsModal>
         ]
     }
 }

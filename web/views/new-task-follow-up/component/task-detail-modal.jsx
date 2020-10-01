@@ -34,7 +34,7 @@ class InputComponent extends React.Component {
     }
 
     render() {
-        return <div className="task-detail-modal">
+        return <div className="detail-input-item">
         </div>
     }
 }

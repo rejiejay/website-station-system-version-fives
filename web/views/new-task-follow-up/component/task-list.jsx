@@ -41,7 +41,9 @@ export default class TaskList extends React.Component {
                 />
             )}</div>
             <div className="task-list-operation">
-                <div className="operation-mind" onClick={switchShow}>思维导图</div>
+                <div className="operation-mind" onClick={switchShow}
+                    onClick={() => switchShow({ showTaskWay: 'listMind' })}
+                >思维导图</div>
                 <div className="operation-sort" onClick={switchSortHandle}>{sort}</div>
                 <div className="operation-add" onClick={addHandle}>add</div>
             </div>

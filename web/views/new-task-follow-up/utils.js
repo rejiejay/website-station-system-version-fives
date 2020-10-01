@@ -26,6 +26,8 @@ const utils = {
         return allTaskList
     },
     getPutOffStorage: () => {},
+    getTodayGroupTaskRootId: () => {},
+    isAddTaskToday: showTaskWay => {},
 }
 
 export default utils

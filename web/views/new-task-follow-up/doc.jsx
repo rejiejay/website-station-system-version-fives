@@ -34,3 +34,35 @@ TaskDetailModal = () => {
         aa: 'bb',
     }
 }
+
+'场景1' = () => {
+    step = {
+        '1': 'open system',
+        'click-add': () => {
+            inAllList = {
+                add_today,
+                'switch mind': 'for select group mind and add_to_group'
+            }
+            inGroupList = {
+                add_to_group,
+                'switch back all list': 'for add all today'
+            }
+            inAllMind = {
+                add_today,
+                'switch group mind': 'for add_to_group'
+            }
+            inGroupMind = {
+                add_to_group,
+                'switch back group list': 'for add_to_group',
+                'switch back all mind': 'for add_to_group'
+            }
+        },
+    }
+}
+
+'场景2' = () => {
+    step = {
+        'open system': 'first step',
+        'select mind': 'first step',
+    }
+}
