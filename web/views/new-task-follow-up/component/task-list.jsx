@@ -29,7 +29,7 @@ export default class TaskList extends React.Component {
     render() {
         const { isShow, pageStatus, allTaskList, groupTaskList } = this.state
         const { sort, switchSortHandle, isShowPutOff, switchShowPutOff, editHandle, addHandle, switchShow } = this.props
-        const { TaskListItem, PutOffButton } = this.props.children
+        const { TaskListItem, PutOffButton, ListOperation } = this.props.children
         const taskListData = utils.getTaskRenderList({ pageStatus, allTaskList, groupTaskList, isShowPutOff })
 
         return <div className="task-list" style={utils.renderTaskListStyle(isShow)}>
@@ -40,13 +40,15 @@ export default class TaskList extends React.Component {
                     data={task}
                 />
             )}</div>
-            <div className="task-list-operation">
-                <div className="operation-mind" onClick={switchShow}
-                    onClick={() => switchShow({ showTaskWay: 'listMind' })}
-                >思维导图</div>
-                <div className="operation-sort" onClick={switchSortHandle}>{sort}</div>
-                <div className="operation-add" onClick={addHandle}>add</div>
-            </div>
+            <ListOperation
+                leftButtonFun={() => switchShow({ showTaskWay: 'listAll' })}
+                leftButtonDes={pageStatus === 'showGroup' && '任务列表'}
+                rightOperation={[
+                    { name: '思维导图', fun: () => switchShow({ showTaskWay: 'listMind' }) },
+                    { name: sort, fun: switchSortHandle },
+                    { name: 'add', fun: addHandle }
+                ]}
+            />
         </div>
     }
 }

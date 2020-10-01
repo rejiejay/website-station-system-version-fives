@@ -1,15 +1,17 @@
 export default class TargetMindDetailSelectModal extends React.Component {
     constructor(props) {
         super(props)
-        this.state = { }
+        this.state = {
+            mind: null
+        }
     }
 
     async show() { }
 
     render() {
-        const { taskMindListData } = this.state
+        const { mind } = this.state
         const { editHandle, addHandle, switchShow, isShowPutOff, switchShowPutOff } = this.props
-        const { Modal, PutOffButton, TaskMindItem } = this.props.children
+        const { Modal, PutOffButton, TaskMindItem, ListOperation } = this.props.children
 
         return <Modal
             visible
@@ -18,20 +20,19 @@ export default class TargetMindDetailSelectModal extends React.Component {
             <div className="target-mind-list-select-modal">
                 <PutOffButton status={isShowPutOff} handle={switchShowPutOff} />
                 <div className="task-mind-item">
-                    <TaskMindItem key={key}
+                    <TaskMindItem
                         edit={editHandle}
                         data={mind}
                     />
                 </div>
-                <div className="task-mind-operation">
-                    <div className="operation-mind"
-                        onClick={() => switchShow({ showTaskWay: 'listAll' })}
-                    >任务列表</div>
-                    <div className="operation-mind"
-                        onClick={() => switchShow({ showTaskWay: 'listMind' })}
-                    >思维列表</div>
-                    <div className="operation-add" onClick={addHandle}>add</div>
-                </div>
+                <ListOperation
+                    leftButtonFun={() => switchShow({ showTaskWay: 'listMind' })}
+                    leftButtonDes={'思维列表'}
+                    rightOperation={[
+                        { name: '任务列表', fun: () => switchShow({ showTaskWay: 'listAll' }) },
+                        { name: 'add', fun: addHandle }
+                    ]}
+                />
             </div>
         </Modal>
     }

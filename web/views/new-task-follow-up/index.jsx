@@ -9,6 +9,7 @@ import TaskMindItem from './component/task-mind-item.jsx';
 import TargetMindDetailSelectModal from './component/target-mind-detail-select-modal.jsx';
 import TipModal from './component/tip-modal.jsx';
 import StatisticsModal from './component/statistics-modal.jsx';
+import ListOperation from './component/list-operation.jsx';
 
 import CONST from './const.js';
 import Server from './server.js';
@@ -20,7 +21,7 @@ export default class TaskFollowUpLayout extends React.Component {
         super(props)
         this.state = {
             listSort: utils.getListSortStorage({ defaultValue: CONST.LIST_SORT.DEFAULT }), // for localStorage
-            isShowPutOff: utils.getPutOffStorage({ defaultValue: false }) // for localStorage
+            isShowPutOff: utils.getPutOffStorage({ defaultValue: false }), // for localStorage
         }
 
         this.showTaskWay = utils.getShowTaskWayStorage({ defaultValue: CONST.SHOW_TASK_WAY.DEFAULT }) // for persistence show task
@@ -65,18 +66,20 @@ export default class TaskFollowUpLayout extends React.Component {
     /**
      * @param {object} task for server error handle reget
      */
-    addHandle(task) {
+    async addHandle(reGetTask) {
         const { showTaskWay, mindTargetGroupTaskRootId } = this
 
         /**
          * not handle error, because it must need successs, otherwise need reget handle
          * for persistence, because today just need get one time
-         */ 
+         */
         const todayGroupTaskRootId = await utils.getTodayGroupTaskRootId()
-        
-        const newTaskInstance = await this.taskDetailModalRef.current.showAdd()
-        if (fetchInstance.result !== 1) return
-        const task = newTaskInstance.data
+
+        if (!reGetTask) {
+            this.newTaskInstance = await this.taskDetailModalRef.current.showAdd()
+            if (this.newTaskInstance.result !== 1) return
+        }
+        const task = reGetTask ? reGetTask : this.newTaskInstance.data
 
         const taskRootId = utils.isAddTaskToday(showTaskWay) ? todayGroupTaskRootId : mindTargetGroupTaskRootId
 
@@ -103,10 +106,10 @@ export default class TaskFollowUpLayout extends React.Component {
                 // （UnImportant）
                 showTip={() => tipModalRef.current.show()}
                 showStatistics={() => statisticsModalRef.current.show()}
-            >{{ TaskListItem, PutOffButton }}</TaskList>,
+            >{{ TaskListItem, PutOffButton, ListOperation }}</TaskList>,
 
             // Modal for persistence showTaskWay, prevent reload task list
-            <TaskDetailModal ref={taskDetailModalRef} >{{ Modal }}</TaskDetailModal>,
+            <TaskDetailModal ref={taskDetailModalRef} >{{ Modal, ListOperation }}</TaskDetailModal>,
 
             // for select target group task, 
             // Modal: not need prevent reload task list. but other funciton may need prevent reload. so need use Modal
@@ -116,7 +119,7 @@ export default class TaskFollowUpLayout extends React.Component {
                 // （Medium）
                 isShowPutOff={isShowPutOff} // for switch view PutOff task
                 switchShowPutOff={this.switchShowPutOffHandle.bind(this)} // for localStorage
-            >{{ Modal, TaskMindItem, PutOffButton }}</TargetMindListSelectModal>,
+            >{{ Modal, TaskMindItem, PutOffButton, ListOperation }}</TargetMindListSelectModal>,
 
             // Modal: for persistence showTaskWay, prevent reload other funciton
             <TargetMindDetailSelectModal ref={targetMindDetailSelectModalRef}
@@ -125,7 +128,7 @@ export default class TaskFollowUpLayout extends React.Component {
                 // （Medium）
                 isShowPutOff={isShowPutOff} // for switch view PutOff task
                 switchShowPutOff={this.switchShowPutOffHandle.bind(this)} // for localStorage
-            >{{ Modal, TaskMindItem, PutOffButton }}</TargetMindDetailSelectModal>,
+            >{{ Modal, TaskMindItem, PutOffButton, ListOperation }}</TargetMindDetailSelectModal>,
 
             // （UnImportant）for tip how to do
             <TipModal ref={tipModalRef} >{{ Modal }}</TipModal>,

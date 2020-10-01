@@ -5,7 +5,7 @@ export default class TaskDetailModal extends React.Component {
     }
 
     render() {
-        const { Modal } = this.props.children
+        const { Modal, ListOperation } = this.props.children
 
         return <Modal
             visible
@@ -15,13 +15,15 @@ export default class TaskDetailModal extends React.Component {
                 <div className="task-detail-input">
                     <InputComponent></InputComponent>
                 </div>
-                <div className="task-detail-operate">
-                    <div className="task-operate-button">推迟</div>
-                    <div className="task-operate-button">删除</div>
-                    <div className="task-operate-button">完成</div>
-                    <div className="task-operate-button">暂存</div>
-                    <div className="task-operate-button">取消</div>
-                </div>
+                <ListOperation 
+                    rightOperation={[
+                        { name: '推迟', fun: () => {} },
+                        { name: '删除', fun: () => {} },
+                        { name: '完成', fun: () => {} },
+                        { name: '暂存', fun: () => {} },
+                        { name: '取消', fun: () => {} },
+                    ]}
+                />
             </div>
         </Modal>
     }

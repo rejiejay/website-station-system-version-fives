@@ -11,7 +11,7 @@ export default class TargetMindListSelectModal extends React.Component {
     render() {
         const { taskMindListData } = this.state
         const { addHandle, switchShow, isShowPutOff, switchShowPutOff } = this.props
-        const { Modal, PutOffButton, TaskMindItem } = this.props.children
+        const { Modal, PutOffButton, TaskMindItem, ListOperation } = this.props.children
 
         return <Modal
             visible
@@ -25,12 +25,11 @@ export default class TargetMindListSelectModal extends React.Component {
                         data={mind}
                     />
                 )}</div>
-                <div className="task-mind-operation">
-                    <div className="operation-mind"
-                        onClick={() => switchShow({ showTaskWay: 'listAll' })}
-                    >任务列表</div>
-                    <div className="operation-add" onClick={addHandle}>add</div>
-                </div>
+                <ListOperation
+                    leftButtonFun={() => switchShow({ showTaskWay: 'listAll' })}
+                    leftButtonDes={'任务列表'}
+                    rightOperation={[ { name: 'add', fun: addHandle } ]}
+                />
             </div>
         </Modal>
     

@@ -63,6 +63,12 @@ TaskDetailModal = () => {
 '场景2' = () => {
     step = {
         'open system': 'first step',
-        'select mind': 'first step',
+        'select mind': {
+            'if have target': () => {
+                'add target' = 'todo'
+                'refresh mind list'
+            },
+            'if not target': () => {},
+        },
     }
 }
