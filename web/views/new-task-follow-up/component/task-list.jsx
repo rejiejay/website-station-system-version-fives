@@ -24,9 +24,11 @@ export default class TaskList extends React.Component {
         this.setState(state)
     }
 
+    async showGroup(groupTaskRootId) { }
+
     render() {
         const { isShow, pageStatus, allTaskList, groupTaskList } = this.state
-        const { sort, switchSortHandle, isShowPutOff, switchShowPutOff, editHandle, addHandle } = this.props
+        const { sort, switchSortHandle, isShowPutOff, switchShowPutOff, editHandle, addHandle, switchShow } = this.props
         const { TaskListItem, PutOffButton } = this.props.children
         const taskListData = utils.getTaskRenderList({ pageStatus, allTaskList, groupTaskList, isShowPutOff })
 
@@ -39,6 +41,7 @@ export default class TaskList extends React.Component {
                 />
             )}</div>
             <div className="task-list-operation">
+                <div className="operation-mind" onClick={switchShow}>思维导图</div>
                 <div className="operation-sort" onClick={switchSortHandle}>{sort}</div>
                 <div className="operation-add" onClick={addHandle}>add</div>
             </div>

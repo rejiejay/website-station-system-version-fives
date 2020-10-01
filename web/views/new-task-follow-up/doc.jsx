@@ -28,3 +28,9 @@ TaskList_requirement = () => {
         item: 'for view item'
     }
 }
+
+TaskDetailModal = () => {
+    config = {
+        aa: 'bb',
+    }
+}

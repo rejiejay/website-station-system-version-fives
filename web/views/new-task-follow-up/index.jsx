@@ -1,3 +1,5 @@
+import Modal from './../../components/modal.jsx';
+
 import TaskList from './component/task-list.jsx';
 import TaskListItem from './component/task-list-item.jsx';
 import PutOffButton from './component/put-off-button.jsx';
@@ -81,7 +83,9 @@ export default class TaskFollowUpLayout extends React.Component {
             >{{ TaskListItem, PutOffButton }}</TaskList>,
 
             // Modal for persistence showTaskWay, prevent reload task list
-            <TaskDetailModal ref={taskDetailModalRef} ></TaskDetailModal>,
+            <TaskDetailModal ref={taskDetailModalRef} >{{
+                Modal,
+            }}</TaskDetailModal>,
 
             // for select target group task, 
             // Modal: not need prevent reload task list. but other funciton may need prevent reload. so need use Modal
