@@ -42,121 +42,12 @@ add_scene = () => {
 }
 
 view_scene = () => {
-    scene_one = '突然想到自己要做什么?因为手头上有事情,所以临时记忆'
-    scene_two = '将来要做什么?因为十分有意义,记忆下来,以后认真完成'
-    scene_three = '今天要做什么?因为害怕忘记,临时记忆'
+    scene_one = '想看看今天要做些什么?因为突然间闲下来了.'
+    scene_two = '想看看刚刚在做什么?因为突然被打断了.'
+    scene_three = '想看看以后有什么计划?因为想计划今天的任务'
 }
 
 modify_scene = () => {
-    scene_one = '突然想到自己要做什么?因为手头上有事情,所以临时记忆'
-    scene_two = '将来要做什么?因为十分有意义,记忆下来,以后认真完成'
-    scene_three = '今天要做什么?因为害怕忘记,临时记忆'
-}
-
-'场景1' = () => {
-    step = {
-        '1': 'open system',
-        'click-add': () => {
-            inAllList = {
-                add_today,
-                'switch mind': 'for select group mind and add_to_group'
-            }
-            inGroupList = {
-                add_to_group,
-                'switch back all list': 'for add all today'
-            }
-            inAllMind = {
-                add_today,
-                'switch group mind': 'for add_to_group'
-            }
-            inGroupMind = {
-                add_to_group,
-                'switch back group list': 'for add_to_group',
-                'switch back all mind': 'for add_to_group'
-            }
-        },
-    }
-}
-
-'场景2' = () => {
-    step = {
-        'open system': 'first step',
-        'select mind': {
-            'if not target': () => {
-                'add target' = 'todo'
-                'refresh mind list'
-            },
-            'if have target': () => {
-                strp3
-            },
-        },
-        'add': 'for add',
-        'add deep 2': {}
-    }
-}
-
-'场景3' = () => {
-    step = {
-        'open system': 'first step',
-        'select today mind': 'for target',
-        'add': 'for add',
-        'add deep 2': {}
-    }
-}
-
-'浏览-场景1' = () => {
-    step = {
-        'open system': 'first step',
-        'select today mind': 'for target',
-        'select item': 'for view',
-        'operating': {
-            'dele': 'ok',
-            'add': 'ok',
-            'accomplish': 'ok',
-            'change': 'step5',
-        },
-        'onchange button': 'for change',
-        'open this mind detail': {
-            'is my target mind': 'for change',
-            'is not my target mind': 'shwitch other mind',
-        },
-        'shwitch other mind': 'for change',
-        'select ming': 'back step6',
-    }
-}
-
-'浏览-场景2' = () => {
-    step = {
-        'open system': 'first step',
-        'select all list': 'for target',
-        'select sort': 'for top view',
-        'operating': {
-            'top': 'ok',
-        },
-    }
-}
-
-'浏览-场景3' = () => {
-    step = {
-        'open system': 'first step',
-        'select all mind': 'for target',
-        'select mind': 'for view',
-        'operating': 'to 浏览-场景1 step5'
-    }
-}
-
-
-'整理-场景1' = () => {
-    'is same as 浏览-场景1'
-}
-
-'整理-场景2' = () => {
-    step = {
-        'open system': 'first step',
-        'select all list': 'for target',
-        'select sort': 'for top view',
-        'operating': {
-            'top': 'ok',
-        },
-    }
+    scene_one = '想整理一下今天的任务, 因为刚刚完成了很多'
+    scene_two = '想整理一下以后的任务, 因为今天完成了很多任务,而很多任务是临时规划的'
 }
