@@ -18,6 +18,17 @@ const CONST = {
         HIDEN: 'hiden',
         SHOW_ALL: 'showAll',
         SHOW_GROUP: 'showGroup',
+    },
+
+    TASK_DETAIL_STATUS: {
+        DEFAULT: 'hiden',
+        ADD: 'add',
+        EDIT: 'edit',
+    },
+
+    TASK: {
+        DEFAULT: {}, // todo
+        DEMO: {}
     }
 }
 

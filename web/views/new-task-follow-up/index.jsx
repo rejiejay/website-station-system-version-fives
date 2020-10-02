@@ -1,4 +1,5 @@
 import Modal from './../../components/modal.jsx';
+import consequencer from './../../utils/consequencer.js'
 
 import TaskList from './component/task-list.jsx';
 import TaskListItem from './component/task-list-item.jsx';
@@ -26,6 +27,9 @@ export default class TaskFollowUpLayout extends React.Component {
 
         this.showTaskWay = utils.getShowTaskWayStorage({ defaultValue: CONST.SHOW_TASK_WAY.DEFAULT }) // for persistence show task
         this.mindTargetGroupTaskRootId = utils.getMTGTRidStorage() // for recover show list target group todo task
+
+        this.changeNodeResolve = null
+        this.changeNodeTaskId = null
 
         utils.initLayoutRef(this)
     }
@@ -92,7 +96,25 @@ export default class TaskFollowUpLayout extends React.Component {
         // if (fetchInstance.result !== 1) return reGetConfirm(fetchtInstance.message, () => this.addHandle(task))
     }
 
-    editHandle() { }
+    async editHandle({ task }) {
+        const { changeNodeResolve } = this
+        if (changeNodeResolve) {
+            const fetchInstance = await Server.changeTaskNode({ taskId: this.changeNodeTaskId, taskParentId: task.id })
+            // if (fetchInstance.result !== 1) return reGetConfirm(fetchtInstance.message, () => this.editHandle({ task }))
+            changeNodeResolve(consequencer.success())
+            this.changeNodeResolve = null
+            this.changeNodeTaskId = null
+            return
+        }
+        this.editTaskInstance = await this.taskDetailModalRef.current.showEdit({ task })
+    }
+
+    changeNodeHandle(taskId) {
+        const self = this
+        this.recoverShowTaskWay()
+        this.changeNodeTaskId = taskId
+        return new Promise(resolve => self.changeNodeResolve = resolve)
+    }
 
     render() {
         const { listSort, isShowPutOff } = this.state
@@ -114,7 +136,9 @@ export default class TaskFollowUpLayout extends React.Component {
             >{{ TaskListItem, PutOffButton, ListOperation }}</TaskList>,
 
             // Modal for persistence showTaskWay, prevent reload task list
-            <TaskDetailModal ref={taskDetailModalRef} >{{ Modal, ListOperation }}</TaskDetailModal>,
+            <TaskDetailModal ref={taskDetailModalRef}
+                changeNodeHandle={this.changeNodeHandle.bind(this)}
+            >{{ Modal, ListOperation }}</TaskDetailModal>,
 
             // for select target group task, 
             // Modal: not need prevent reload task list. but other funciton may need prevent reload. so need use Modal

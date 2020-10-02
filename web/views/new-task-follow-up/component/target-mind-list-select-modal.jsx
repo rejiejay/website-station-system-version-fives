@@ -1,4 +1,4 @@
-import inputPopUp from './../../../components/input-popup.jsx';
+import { inputPopUp } from './../../../components/input-popup.js';
 
 import Server from './../server.js';
 import utils from './../utils.js';

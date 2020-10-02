@@ -41,7 +41,7 @@ export default class TaskList extends React.Component {
                 />
             )}</div>
             <ListOperation
-                leftButtonFun={() => switchShow({ showTaskWay: 'listAll' })}
+                leftButtonFun={utils.getTaskListLeftOperation(pageStatus, () => switchShow({ showTaskWay: 'listAll' }))}
                 leftButtonDes={pageStatus === 'showGroup' && '任务列表'}
                 rightOperation={[
                     { name: '思维导图', fun: () => switchShow({ showTaskWay: 'listMind' }) },

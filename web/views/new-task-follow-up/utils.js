@@ -29,6 +29,10 @@ const utils = {
     // for persistence, because today just need get one time
     getTodayGroupTaskRootId: async() => {},
     isAddTaskToday: showTaskWay => {},
+    getTaskListLeftOperation: (pageStatus, leftButtonFun) => {
+        if (pageStatus === 'showGroup') return leftButtonFun
+        return false
+    }
 }
 
 export default utils
