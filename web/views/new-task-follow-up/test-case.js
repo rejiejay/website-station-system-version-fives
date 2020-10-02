@@ -7,7 +7,7 @@ const config = {
 const group1 = () => {
     target = '突然想到自己要做什么?因为手头上有事情,所以临时记忆'
     case1 = {
-        'open system': 'first step',
+        'open system': 'first step', // todo
         'select today mind': 'for target',
         'select item': 'for view',
         'operating': {

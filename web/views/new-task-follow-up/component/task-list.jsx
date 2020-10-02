@@ -1,12 +1,29 @@
 import CONST from './../const.js';
 import utils from './../utils.js';
 
+// For UI Dev && Will Del
+const fakeDataTaskList = [
+    {
+        id: 1,
+        parentid: 'root',
+        rootid: '12312',
+        title: 'biapoti',
+        content: 'neir onhg',
+        SMART: '', /** S= specific 、M= measurable 、A= attainable 、R= relevant 、T= time-bound */
+        timestamp: 1590495644334,
+        putoff: 1590495644334,
+    },
+    { id: 2, parentid: 'root', rootid: '12312', title: '12312312321', content: 'ne123123123ir onhg', SMART: '', timestamp: 1590495644334, putoff: 1590495644334 },
+    { id: 1123, parentid: 'root', rootid: 'fasfasf ', title: '123asdasd12312321', content: 'ne123123123ir onhg', SMART: '', timestamp: 1590495644334, putoff: 1590495644334 },
+    { id: 3, parentid: 'root', rootid: '123adas', title: 'dasdasdasdasd', content: 'ne123123123ir onhg', SMART: '', timestamp: 1590495644334, putoff: 1590495644334 },
+]
+
 export default class TaskList extends React.Component {
     constructor(props) {
         super(props)
         this.state = {
             pageStatus: CONST.TASK_LIST_STATUS.DEFAULT, // for control page show, because hiden; show all; show group
-            allTaskList: [], // for persistence all list, because have group list
+            allTaskList: fakeDataTaskList, // for persistence all list, because have group list
             allTaskPageNo: 1,
             allTaskCount: 0,
             groupTaskList: [], // for all group list, no Pagination, just show all
@@ -34,12 +51,12 @@ export default class TaskList extends React.Component {
 
         return <div className="task-list" style={utils.renderTaskListStyle(isShow)}>
             <PutOffButton status={isShowPutOff} handle={switchShowPutOff} />
-            <div className="task-list-item">{taskListData.map((task, key) =>
+            {taskListData.map((task, key) =>
                 <TaskListItem key={key}
                     edit={editHandle}
                     data={task}
-                />
-            )}</div>
+                >{{ ListOperation }}</TaskListItem>
+            )}
             <ListOperation
                 leftButtonFun={utils.getTaskListLeftOperation(pageStatus, () => switchShow({ showTaskWay: 'listAll' }))}
                 leftButtonDes={pageStatus === 'showGroup' && '任务列表'}
