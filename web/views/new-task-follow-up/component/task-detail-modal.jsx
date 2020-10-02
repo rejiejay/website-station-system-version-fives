@@ -37,7 +37,7 @@ export default class TaskDetailModal extends React.Component {
         const { Modal, ListOperation } = this.props.children
 
         return <Modal
-            visible
+            visible={pageStatus !== 'hiden'}
             maskClosable={false}
         >
             <div className="task-detail-modal">

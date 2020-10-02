@@ -1,3 +1,5 @@
+import uiStorage from './../../components/ui-storage/index';
+
 const utils = {
     initLayoutRef: self => {
         self.taskListRef = React.createRef()
@@ -9,7 +11,11 @@ const utils = {
     },
 
     getShowTaskWayStorage: ({ defaultValue }) => {},
-    getListSortStorage: ({ defaultValue }) => {},
+    getListSortStorage: ({ defaultValue }) => {
+        const sort = uiStorage.getTaskListSort()
+        if (sort) return sort
+        return defaultValue
+    },
     getMTGTRidStorage: () => {},
     storageShowTaskWay: ({ showTaskWay, groupId, self }) => {},
     renderTaskListStyle: isShow => ({ display: isShow ? 'block' : 'none' }),

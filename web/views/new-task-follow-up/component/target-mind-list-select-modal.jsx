@@ -7,6 +7,7 @@ export default class TargetMindListSelectModal extends React.Component {
     constructor(props) {
         super(props)
         this.state = {
+            visible: false,
             taskMindListData: []
         }
 
@@ -32,12 +33,12 @@ export default class TargetMindListSelectModal extends React.Component {
 
     render() {
         const { todayGroupTaskRootId } = this
-        const { taskMindListData } = this.state
+        const { taskMindListData, visible } = this.state
         const { addHandle, switchShow, isShowPutOff, switchShowPutOff } = this.props
         const { Modal, PutOffButton, TaskMindItem, ListOperation } = this.props.children
 
         return <Modal
-            visible
+            visible={visible}
             maskClosable={false}
         >
             <div className="target-mind-list-select-modal">
