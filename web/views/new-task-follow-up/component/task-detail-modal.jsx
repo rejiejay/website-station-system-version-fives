@@ -19,6 +19,7 @@ export default class TaskDetailModal extends React.Component {
                     rightOperation={[
                         { name: '推迟', fun: () => {} },
                         { name: '删除', fun: () => {} },
+                        { name: '置顶Top', fun: () => {} },
                         { name: '完成', fun: () => {} },
                         { name: '暂存', fun: () => {} },
                         { name: '新增子节点', fun: () => {} },
