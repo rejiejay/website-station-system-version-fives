@@ -4,8 +4,20 @@ const getValue = key => {
     return false
 }
 
+const config = {
+    taskListSort: 'task-list-sort',
+    showTaskWay: 'task-layout-show-task-way',
+    mindTargetGroupTaskRootId: 'task-layout-mind-target-group-task-root-id',
+}
+
 const uiStorage = {
-    getTaskListSort: () => getValue('task-list-sort')
+    getTaskListSort: () => getValue(config.taskListSort),
+    getShowTaskWay: () => getValue(config.showTaskWay),
+    getMTGTRid: () => getValue(config.mindTargetGroupTaskRootId),
+    setShowTaskWay: ({ showTaskWay, groupId }) => {
+        window.localStorage[config.showTaskWay] = showTaskWay
+        window.localStorage[config.mindTargetGroupTaskRootId] = groupId
+    },
 }
 
 export default uiStorage

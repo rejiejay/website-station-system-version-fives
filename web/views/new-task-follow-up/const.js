@@ -26,6 +26,11 @@ const CONST = {
         EDIT: 'edit',
     },
 
+    TASK_LIST: {
+        DEFAULT: [], // todo
+        // FORMAT: this.TASK.DEMO
+    },
+
     TASK: {
         DEFAULT: {}, // todo
         DEMO: {}

@@ -18,7 +18,9 @@ export default class TargetMindListSelectModal extends React.Component {
         this.todayGroupTaskRootId = await utils.getTodayGroupTaskRootId()
     }
 
-    async show() { }
+    async show() {
+        this.setState({ visible: true })
+    }
 
     async addNewRootMind(reGetRootMindName) {
         const { taskMindListData } = this.state

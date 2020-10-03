@@ -10,23 +10,27 @@ const utils = {
         self.statisticsModalRef = React.createRef()
     },
 
-    getShowTaskWayStorage: ({ defaultValue }) => {},
+    getShowTaskWayStorage: ({ defaultValue }) => {
+        const showTaskWay = uiStorage.getShowTaskWay()
+        if (showTaskWay) return showTaskWay
+        return defaultValue
+    },
     getListSortStorage: ({ defaultValue }) => {
         const sort = uiStorage.getTaskListSort()
         if (sort) return sort
         return defaultValue
     },
-    getMTGTRidStorage: () => {},
-    storageShowTaskWay: ({ showTaskWay, groupId, self }) => {},
-    renderTaskListStyle: isShow => ({ display: isShow ? 'block' : 'none' }),
-    getTaskListShowAllData: slef => {
-        const { allTaskList } = slef.state
-        const isInitAllTask = allTaskList.length > 0
-        return {
-            isInitAllTask,
-            state: { isShow: true }
-        }
+    getMTGTRidStorage: () => {
+        const mindTargetGroupTaskRootId = uiStorage.getMTGTRid()
+        if (mindTargetGroupTaskRootId) return mindTargetGroupTaskRootId
+        return null
     },
+    storageShowTaskWay: ({ showTaskWay, groupId, self }) => {
+        self.showTaskWay = showTaskWay
+        self.mindTargetGroupTaskRootId = groupId
+        uiStorage.setShowTaskWay({ showTaskWay, groupId })
+    },
+    renderTaskListStyle: isShow => ({ display: isShow ? 'block' : 'none' }),
     getTaskRenderList: ({ pageStatus, allTaskList, groupTaskList, isShowPutOff }) => {
         if (pageStatus === 'showGroup') return groupTaskList
         return allTaskList

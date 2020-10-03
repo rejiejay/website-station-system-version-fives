@@ -40,7 +40,6 @@ export default class TaskFollowUpLayout extends React.Component {
 
     recoverShowTaskWay() { // for recover show task way
         const { showTaskWay, mindTargetGroupTaskRootId } = this
-
         switch (showTaskWay) {
             case CONST.SHOW_TASK_WAY.LIST_ALL:
                 this.taskListRef.current.showAll()
