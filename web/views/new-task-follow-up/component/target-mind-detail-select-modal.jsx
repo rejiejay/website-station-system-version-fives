@@ -47,24 +47,23 @@ export default class TargetMindDetailSelectModal extends React.Component {
         return <Modal
             visible={visible}
             isFullScreen={true}
-        >
-            <div className="target-mind-list-select-modal">
-                <PutOffButton status={isShowPutOff} handle={switchShowPutOff} />
-                <div className="task-mind-item">
-                    <TaskMindItem
-                        edit={this.editTaskHandle.bind(this)}
-                        data={mind}
-                    />
-                </div>
-                <ListOperation
-                    leftButtonFun={() => switchShow({ showTaskWay: 'listMind' })}
-                    leftButtonDes={'思维列表'}
-                    rightOperation={[
-                        { name: '任务列表', fun: () => switchShow({ showTaskWay: 'listAll' }) },
-                        { name: 'add', fun: () => this.addTaskHandle.call(this) }
-                    ]}
+            modalName='target-mind-detail-select-modal'
+        >{[
+            <PutOffButton status={isShowPutOff} handle={switchShowPutOff} />,
+            <div className="task-mind-item">
+                <TaskMindItem
+                    edit={this.editTaskHandle.bind(this)}
+                    data={mind}
                 />
-            </div>
-        </Modal>
+            </div>,
+            <ListOperation
+                leftButtonFun={() => switchShow({ showTaskWay: 'listMind' })}
+                leftButtonDes={'思维列表'}
+                rightOperation={[
+                    { name: '任务列表', fun: () => switchShow({ showTaskWay: 'listAll' }) },
+                    { name: 'add', fun: () => this.addTaskHandle.call(this) }
+                ]}
+            />,
+        ]}</Modal>
     }
 }

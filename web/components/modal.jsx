@@ -1,9 +1,9 @@
-const Modal = ({ visible, isFullScreen, maskClosable, closHandle, confirmHandle, cancelHandle, children }) => {
+const Modal = ({ visible, isFullScreen, modalName, maskClosable, closHandle, confirmHandle, cancelHandle, children }) => {
     if (!visible) return <></>
 
     const { haveCloseIcon, haveConfirm, haveCancel, haveFooter } = utils.judgment({ confirmHandle, cancelHandle, closHandle })
 
-    return <div className="react-basic-modal">
+    return <div className={`react-basic-modal ${modalName || ''}`}>
         {!isFullScreen && <div className="basic-modal-mask" onClick={() => utils.runCloseFun({ maskClosable, closHandle })}></div>}
         <div className="basic-modal-container" style={utils.renderStyle(isFullScreen)}>
             <div className="basic-modal-children">

@@ -17,6 +17,18 @@ body {
     font-size       : 14px;
     color           : @black2;
     background-color: #f1f1f1;
+
+    .task-list,
+    // 列表 task-list.jsx
+    .list-item,
+    // 列表一个项 task-list-item.jsx
+    .task-operation,
+    // 公用底部按钮 list-operation.jsx
+    .target-mind-list-select-modal // 思维导图列表 target-mind-list-select-modal.jsx
+
+        {
+        color: @black2;
+    }
 }
 
 .task-list {
@@ -29,12 +41,12 @@ body {
     padding-bottom: 25px;
 
     .task-item-container {
-        position     : relative;
-        height       : 100%;
+        position      : relative;
+        height        : 100%;
         padding-bottom: 45px;
-        background   : #fff;
-        border-top   : 1px solid #ddd;
-        border-bottom: 1px solid #ddd;
+        background    : #fff;
+        border-top    : 1px solid #ddd;
+        border-bottom : 1px solid #ddd;
     }
 
     .list-item-title {
@@ -78,5 +90,18 @@ body {
 
     .operation-right-button {
         border-left: 1px solid #ddd;
+    }
+}
+
+.target-mind-list-select-modal {
+    .basic-modal-container {
+        background-color: #f1f1f1;
+    }
+
+    .target-mind-add {
+        border-bottom   : 1px solid #ddd;
+        line-height     : 45px;
+        text-align      : center;
+        background-color: #fff;
     }
 }

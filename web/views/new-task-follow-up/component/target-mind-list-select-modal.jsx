@@ -42,26 +42,25 @@ export default class TargetMindListSelectModal extends React.Component {
         return <Modal
             visible={visible}
             isFullScreen={true}
-        >
-            <div className="target-mind-list-select-modal">
-                <PutOffButton status={isShowPutOff} handle={switchShowPutOff} />
-                <div className="target-mind-add"
-                    onClick={this.addNewRootMind.bind(this)}
-                >新增Mind</div>
-                <div className="task-mind-item">{taskMindListData.map((mind, key) =>
-                    <TaskMindItem key={key}
-                        isHighlight={mind.rooId === todayGroupTaskRootId}
-                        click={() => switchShow({ showTaskWay: 'mindDetailSelect', groupId: mind.rooId })}
-                        data={mind}
-                    />
-                )}</div>
-                <ListOperation
-                    leftButtonFun={() => switchShow({ showTaskWay: 'listAll' })}
-                    leftButtonDes={'任务列表'}
-                    rightOperation={[{ name: 'add', fun: addHandle }]}
+            modalName='target-mind-list-select-modal'
+        >{[
+            <PutOffButton status={isShowPutOff} handle={switchShowPutOff} />,
+            <div className="target-mind-add"
+                onClick={this.addNewRootMind.bind(this)}
+            >新增Mind</div>,
+            <div className="task-mind-item">{taskMindListData.map((mind, key) =>
+                <TaskMindItem key={key}
+                    isHighlight={mind.rooId === todayGroupTaskRootId}
+                    click={() => switchShow({ showTaskWay: 'mindDetailSelect', groupId: mind.rooId })}
+                    data={mind}
                 />
-            </div>
-        </Modal>
+            )}</div>,
+            <ListOperation
+                leftButtonFun={() => switchShow({ showTaskWay: 'listAll' })}
+                leftButtonDes={'任务列表'}
+                rightOperation={[{ name: 'add', fun: addHandle }]}
+            />
+        ]}</Modal>
 
     }
 }
