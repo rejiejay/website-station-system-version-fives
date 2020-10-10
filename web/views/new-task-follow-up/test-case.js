@@ -7,8 +7,12 @@ const config = {
 const group1 = () => {
     target = '突然想到自己要做什么?因为手头上有事情,所以临时记忆'
     case1 = {
-        'open system': 'first step',
-        'select today mind': 'for target', // todo
+        'open system': 'first step', // ok
+        'select today mind': { // todo
+            target: 'for view',
+            aciton: { click_导图, switchShowTaskWayHandle, targetMindListSelectModalRef },
+            todo: { Modal_ToComponents, isFullScreen }
+        },
         'select item': 'for view',
         'operating': {
             'dele': 'ok',

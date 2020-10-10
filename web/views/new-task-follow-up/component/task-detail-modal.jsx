@@ -38,7 +38,7 @@ export default class TaskDetailModal extends React.Component {
 
         return <Modal
             visible={pageStatus !== 'hiden'}
-            maskClosable={false}
+            isFullScreen={true}
         >
             <div className="task-detail-modal">
                 <div className="task-detail-input">

@@ -46,7 +46,7 @@ export default class TargetMindDetailSelectModal extends React.Component {
 
         return <Modal
             visible={visible}
-            maskClosable={false}
+            isFullScreen={true}
         >
             <div className="target-mind-list-select-modal">
                 <PutOffButton status={isShowPutOff} handle={switchShowPutOff} />
