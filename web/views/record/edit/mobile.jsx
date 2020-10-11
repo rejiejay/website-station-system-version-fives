@@ -1,6 +1,6 @@
 import fetch from './../../../components/async-fetch/fetch.js';
 import toast from './../../../components/toast.js'
-import { confirmPopUp } from './../../../components/confirm-popup.js';
+import { confirmPopUp } from './../../../components/confirm-popup/index.js';
 import constHandle from './../../../utils/const-handle.js';
 import { queryToUrl, loadPageVar, parseQueryString } from './../../../utils/url-handle.js';
 import { arrayRemoveItemByValue } from './../../../utils/array-handle.js';

@@ -1,6 +1,6 @@
 import login from './../../components/login.js';
 import fetch from './../../components/async-fetch/fetch.js';
-import { confirmPopUp } from './../../components/confirm-popup.js';
+import { confirmPopUp } from './../../components/confirm-popup/index.js';
 import toast from './../../components/toast.js';
 import constHandle from './../../utils/const-handle.js';
 import { queryToUrl, loadPageVar } from './../../utils/url-handle.js';
