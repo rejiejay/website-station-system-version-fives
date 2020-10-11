@@ -1,4 +1,4 @@
-import consequencer from './../utils/consequencer.js';
+import consequencer from './../../utils/consequencer.js';
 
 export const confirmPopUpDestroy = () => {
     const confirm = document.getElementById('rejiejay-confirm-popup')

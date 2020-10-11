@@ -19,9 +19,15 @@ export default class TargetMindListSelectModal extends React.Component {
     }
 
     async show() {
+        if (this.state.taskMindListData.length <= 0) await this.initTaskMindListData()
         this.setState({ visible: true })
     }
 
+    async initTaskMindListData() {
+        const taskMindListData = await Server.getTaskMindList() // must success
+        this.setState({ taskMindListData })
+    }
+ 
     async addNewRootMind(reGetRootMindName) {
         const { taskMindListData } = this.state
 

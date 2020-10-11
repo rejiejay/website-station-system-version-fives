@@ -10,9 +10,10 @@ const group1 = () => {
         'open system': 'first step', // ok
         'select today mind': { // todo
             target: 'for view',
-            aciton: { click_导图, switchShowTaskWayHandle, targetMindListSelectModalRef },
-            todo: { Modal_ToComponents, isFullScreen, targetmindadd },
-            NotDo: { touchmovePrevent } // will do later
+            aciton: { click_导图, switchShowTaskWayHandle, targetMindListSelectModalRef, TargetMindListSelectModal },
+            done: { Modal_ToComponents, isFullScreen, targetmindadd, reGetConfirm },
+            todo: { initTaskMindListData, TaskMindItem, },
+            DoLater: { touchmovePrevent } // will do later
         },
         'select item': 'for view',
         'operating': {
