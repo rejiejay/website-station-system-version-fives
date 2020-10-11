@@ -11,7 +11,7 @@ const group1 = () => {
         'select today mind': { // todo
             target: 'for view',
             aciton: { click_导图, switchShowTaskWayHandle, targetMindListSelectModalRef, TargetMindListSelectModal },
-            done: { Modal_ToComponents, isFullScreen, targetmindadd, reGetConfirm },
+            done: { ModalStyleOnly, Modal_ToComponents, isFullScreen, targetmindadd, reGetConfirm },
             todo: { initTaskMindListData, TaskMindItem, },
             DoLater: { touchmovePrevent } // will do later
         },

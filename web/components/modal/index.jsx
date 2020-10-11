@@ -1,11 +1,16 @@
+import style from './style.jsx';
+
 const Modal = ({ visible, isFullScreen, modalName, maskClosable, closHandle, confirmHandle, cancelHandle, children }) => {
     if (!visible) return <></>
 
     const { haveCloseIcon, haveConfirm, haveCancel, haveFooter } = utils.judgment({ confirmHandle, cancelHandle, closHandle })
 
-    return <div className={`react-basic-modal ${modalName || ''}`}>
-        {!isFullScreen && <div className="basic-modal-mask" onClick={() => utils.runCloseFun({ maskClosable, closHandle })}></div>}
-        <div className="basic-modal-container" style={utils.renderStyle(isFullScreen)}>
+    return <div className={`react-basic-modal ${modalName || ''}`} style={style.modal()}>
+        {!isFullScreen && <div className="basic-modal-mask" 
+            style={style.mask}
+            onClick={() => utils.runCloseFun({ maskClosable, closHandle })}
+        />}
+        <div className="basic-modal-container" style={style.container(isFullScreen)}>
             <div className="basic-modal-children">
                 {children}
             </div>
@@ -49,16 +54,6 @@ function runCloseFun({ maskClosable, closHandle }) {
     if (maskClosable && this.unNilFun(closHandle)) closHandle()
 }
 
-function renderStyle(isFullScreen) {
-    if (isFullScreen) return {
-        width: '100%',
-        height: '100%',
-    }
-    return {
-        minWidth: '160px',
-        minHeight: '120px',
-    }
-}
 
 const utils = {
     unNilFun: fun => fun && typeof fun === 'function',
@@ -66,8 +61,6 @@ const utils = {
     runCloseFun,
 
     judgment,
-
-    renderStyle,
 }
 
 export default Modal
