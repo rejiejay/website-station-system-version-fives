@@ -6,33 +6,33 @@ const Modal = ({ visible, isFullScreen, modalName, maskClosable, closHandle, con
     const { haveCloseIcon, haveConfirm, haveCancel, haveFooter } = utils.judgment({ confirmHandle, cancelHandle, closHandle })
 
     return <div className={`react-basic-modal ${modalName || ''}`} style={style.modal()}>
-        {!isFullScreen && <div className="basic-modal-mask" 
+        {!isFullScreen && <div className="basic-modal-mask"
             style={style.mask}
             onClick={() => utils.runCloseFun({ maskClosable, closHandle })}
         />}
         <div className="basic-modal-container" style={style.container(isFullScreen)}>
-            <div className="basic-modal-children">
+            <div className="basic-modal-children" style={style.children}>
                 {children}
+                {haveFooter && <div style={{ height: '45px' }}></div>}
             </div>
-            {haveCloseIcon && <div className="basic-modal-close" onClick={closHandle} >X</div>}
-            {haveFooter && <div className="basic-modal-footer">
-                {haveConfirm && <ButtonFooter key="confirm" className="modal-footer-confirm" click={confirmHandle}>确认</ButtonFooter>}
-                {haveCancel && <ButtonFooter key="cancel" className="modal-footer-cancel" click={cancelHandle}>取消</ButtonFooter>}
+            {haveCloseIcon && <div className="basic-modal-close"
+                style={style.close}
+                onClick={closHandle}
+            >X</div>}
+            {haveFooter && <div className="basic-modal-footer flex-start" style={style.footer}>
+                {haveConfirm && <ButtonFooter key="confirm" className="modal-footer-confirm flex-rest flex-center"
+                    click={confirmHandle}
+                >确认</ButtonFooter>}
+                {haveCancel && <ButtonFooter key="cancel" className="modal-footer-cancel flex-rest flex-center"
+                    click={cancelHandle}
+                >取消</ButtonFooter>}
             </div>}
         </div>
     </div>
 }
 
-// for Reserved, because Not Test-Case effect
-const BasicFooter = () => [
-    <div style={{ height: `${45}px` }} />,
-    <div className="basic-modal-footer">
-        <div className="modal-footer-confirm">取消</div>
-        <div className="modal-footer-cancel">确认</div>
-    </div>
-]
-
 const ButtonFooter = ({ className, click, children }) => <div className={className}
+    style={style.footerButton}
     onClick={click}
 >
     <div className="footer-button-container">{children}</div>

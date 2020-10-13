@@ -11,19 +11,17 @@ export default class TemporaryStorage {
     }
 
     checkIsExpiration() {
-        const { storage, expirationTimestamp } = this
-        if (!storage) return true
+        if (!this.storage) return true
         const nowTimestamp = new Date().getTime()
-        if (nowTimestamp >= expirationTimestamp) return true
+        if (nowTimestamp >= this.expirationTimestamp) return true
         return false
     }
 
     get() {
-        const { reGetFun, checkIsExpiration, initNextExpirationTimestamp } = this
-        const isExpiration = checkIsExpiration()
+        const isExpiration = this.checkIsExpiration()
         if (isExpiration) {
-            initNextExpirationTimestamp()
-            this.storage = reGetFun()
+            this.initNextExpirationTimestamp()
+            this.storage = this.reGetFun()
         }
 
         return this.storage

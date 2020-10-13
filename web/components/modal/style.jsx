@@ -1,4 +1,5 @@
 import basicFlex from './../../css/jsx-style/basic-flex.jsx';
+import client from './../../css/jsx-style/client.jsx';
 
 const modal = (zIndex = 99) => ({
     ...basicFlex.center,
@@ -24,7 +25,7 @@ const container = isFullScreen => {
     const base = {
         position: 'relative',
         backgroundColor: '#fff',
-        overflow: 'auto'
+        wordWrap: 'break-word'
     }
 
     if (isFullScreen) return {
@@ -34,15 +35,49 @@ const container = isFullScreen => {
     }
     return {
         ...base,
-        minWidth: '160px',
-        minHeight: '120px'
+        height: client.heightPercentagePx(0.7),
+        width: client.widthPercentagePx(0.7),
     }
+}
+
+const children = {
+    position: 'relative',
+    width: '100%',
+    height: '100%',
+    overflow: 'hidden scroll'
+}
+
+const close = {
+    position: 'absolute',
+    backgroundColor: '#fff',
+    width: '15px',
+    height: '15px',
+    top: '0px',
+    right: '0px',
+}
+
+const footer = {
+    position: 'absolute',
+    width: '100%',
+    height: '45px',
+    left: '0px',
+    bottom: '0px',
+    borderTop: '1px solid #ddd',
+    backgroundColor: '#fff',
+}
+
+const footerButton = {
+    lineHeight: '45px',
 }
 
 const style = {
     modal,
     mask,
-    container
+    container,
+    children,
+    close,
+    footer,
+    footerButton
 }
 
 export default style
