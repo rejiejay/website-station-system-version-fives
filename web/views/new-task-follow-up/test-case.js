@@ -1,3 +1,64 @@
+list = {
+    all,
+    sort_random,
+    sort_time,
+    bigItem,
+    smallItem,
+    time_category: {
+        today,
+        onlyOneMindLevel,
+        CommonlyUsedTime,
+        range
+    },
+    mind_category: {
+        customize,
+        fastZoomLevelBack,
+        example_love
+    },
+}
+
+mind = {
+    all: all_Mind_category,
+    onlyShowOneLevel,
+    UnfoldLevel,
+    ZoomLevel,
+    fastZoomLevelBack,
+    Selected,
+    mind_category: {
+        customize,
+        example_love
+    },
+    time_category: {
+        today,
+        CommonlyUsedTime,
+        range
+    },
+}
+
+
+target_find = {
+    testCase_today: { all, mind, time_category, Selected },
+    testCase_CommonlyUsedTime: {},
+    testCase_rangeTime: { all, mind, time_category, Selected, fastZoomLevel, range },
+    testCase_mindCategory: { all, mind, ZoomLevel },
+}
+
+target_add = {
+    testCase_todayAdd,
+    testCase_mindUncategorized,
+}
+
+target_edit = {
+    testCase_RefreshTime,
+    testCase_RefreshMind,
+}
+
+target_operate = {
+    testCase_TimeCategoryMove,
+    testCase_MindCategoryMove,
+}
+
+
 const config = {
     group1_2_3: 'for add scene one/two/three',
     group4_5_6: 'for view scene one/two/three',
@@ -12,7 +73,7 @@ const group1 = () => {
             target: 'for view',
             aciton: { click_导图, switchShowTaskWayHandle, targetMindListSelectModalRef, TargetMindListSelectModal },
             done: { ModalStyleOnly, Modal_ToComponents, isFullScreen, targetmindadd, reGetConfirm },
-            todo: { initTaskMindListData, TaskMindItem, },
+            todo: { AlertPopup, initTaskMindListData, TaskMindItem, },
             DoLater: { touchmovePrevent } // will do later
         },
         'select item': 'for view',

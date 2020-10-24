@@ -1,4 +1,4 @@
-import Modal from './../../components/modal.jsx';
+import Modal from './../../components/modal/index.jsx';
 import consequencer from './../../utils/consequencer.js'
 
 import TaskList from './component/task-list.jsx';
