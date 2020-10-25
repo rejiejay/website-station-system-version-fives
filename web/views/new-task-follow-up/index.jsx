@@ -1,8 +1,7 @@
 import Modal from './../../components/modal/index.jsx';
 import consequencer from './../../utils/consequencer.js'
 
-import TaskList from './component/task-list.jsx';
-import TaskListItem from './component/task-list-item.jsx';
+import TaskList, { TaskListItem } from './component/task-list.jsx';
 import PutOffButton from './component/put-off-button.jsx';
 import TaskDetailModal from './component/task-detail-modal.jsx';
 import TargetMindListSelectModal from './component/target-mind-list-select-modal.jsx';

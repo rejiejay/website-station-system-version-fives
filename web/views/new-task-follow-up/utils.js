@@ -33,15 +33,6 @@ function storageShowTaskWay({ showTaskWay, groupId, self }) {
     uiStorage.setShowTaskWay({ showTaskWay, groupId })
 }
 
-function getTaskRenderList({ pageStatus, allTaskList, groupTaskList, isShowPutOff }) {
-    if (pageStatus === 'showGroup') return groupTaskList
-    return allTaskList
-}
-
-function getTaskListLeftOperation(pageStatus, leftButtonFun) {
-    if (pageStatus === 'showGroup') return leftButtonFun
-    return false
-}
 
 const utils = {
     initLayoutRef,
@@ -54,18 +45,12 @@ const utils = {
 
     storageShowTaskWay,
 
-    renderTaskListStyle: isShow => ({ display: isShow ? 'block' : 'none' }),
-
-    getTaskRenderList,
-
     getPutOffStorage: () => {},
 
     // for persistence, because today just need get one time
     getTodayGroupTaskRootId: async() => {},
 
     isAddTaskToday: showTaskWay => {},
-
-    getTaskListLeftOperation
 }
 
 export default utils

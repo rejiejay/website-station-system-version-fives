@@ -1,6 +1,6 @@
 import Server from './../server.js';
 import CONST from './../const.js';
-import utils from './../utils.js';
+import OperationBarFixedBottom from './../../../components/operation-bar/fixed-bottom.jsx';
 
 export default class TaskList extends React.Component {
     constructor(props) {
@@ -40,15 +40,82 @@ export default class TaskList extends React.Component {
                     data={task}
                 >{{ ListOperation }}</TaskListItem>
             )}
-            <ListOperation
-                leftButtonFun={utils.getTaskListLeftOperation(pageStatus, () => switchShow({ showTaskWay: 'listAll' }))}
-                leftButtonDes={pageStatus === 'showGroup' && '任务列表'}
-                rightOperation={[
-                    { name: '导图', fun: () => switchShow({ showTaskWay: 'mindTargetSelect' }) },
-                    { name: sort, fun: switchSortHandle },
-                    { name: '新增', fun: addHandle }
+            <OperationBarFixedBottom
+                leftButtonArray={[
+                    {
+                        description: pageStatus === 'showGroup' && '任务列表',
+                        fun: utils.getTaskListLeftOperation(pageStatus, () => switchShow({ showTaskWay: 'listAll' })),
+                        style: {}
+                    }
+                ]}
+                rightButtonArray={[
+                    {
+                        description: '导图',
+                        fun: () => switchShow({ showTaskWay: 'mindTargetSelect' }),
+                        style: {}
+                    }, {
+                        description: sort,
+                        fun: switchSortHandle,
+                        style: {}
+                    }, {
+                        description: '新增',
+                        fun: addHandle,
+                        style: {}
+                    }
                 ]}
             />
         </div>
+    }
+}
+
+export class TaskListItem extends React.Component {
+    constructor(props) {
+        super(props)
+        this.state = {}
+
+        this.clientHeight = document.body.offsetHeight || document.documentElement.clientHeight || window.innerHeight
+    }
+
+    render() {
+        const { data } = this.props
+        const { ListOperation } = this.props.children
+        const { clientHeight } = this
+        const style = { minHeight: `${clientHeight - 125}px` }
+
+        return <ListItemContainer
+            style={style}
+            title={data.title}
+        >
+            <ListItemContent key="content" text={data.content} />
+            <ListOperation
+                isAbsolute
+                rightOperation={[
+                    { name: '编辑', fun: () => { } }
+                ]}
+            />
+        </ListItemContainer>
+    }
+}
+
+const ListItemContainer = ({ style, title, children }) => <div className="task-list-item list-item">
+    <div className="task-item-container" style={style}>
+        <div className="list-item-title">{title}</div>
+        {children}
+    </div>
+</div>
+
+const ListItemContent = ({ text }) => <div className="list-item-content" dangerouslySetInnerHTML={{ __html: !!text && typeof text === 'string' ? text.replace(/\n/g, "<br>") : '' }}></div>
+
+const utils = {
+    getTaskRenderList: function getTaskRenderList({ pageStatus, allTaskList, groupTaskList, isShowPutOff }) {
+        if (pageStatus === 'showGroup') return groupTaskList
+        return allTaskList
+    },
+
+    renderTaskListStyle: isShow => ({ display: isShow ? 'block' : 'none' }),
+
+    getTaskListLeftOperation: function getTaskListLeftOperation(pageStatus, leftButtonFun) {
+        if (pageStatus === 'showGroup') return leftButtonFun
+        return false
     }
 }
