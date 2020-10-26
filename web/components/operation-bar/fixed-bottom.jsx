@@ -17,7 +17,8 @@ export default class OperationBarFixedBottom extends React.Component {
 
         return <div className="operation-bar-fixed-bottom flex-start-center" style={style.main}>
             {leftButtonArray.map((button, key) =>
-                <div key={key}
+                <div className="flex-center" key={key}
+                    style={style.leftItem}
                     onClick={button.fun}
                 >{button.description}</div>)
             }
@@ -25,8 +26,8 @@ export default class OperationBarFixedBottom extends React.Component {
             <div className="flex-rest" />
 
             <div className="operation-right flex-start-center">{rightButtonArray.map((button, key) =>
-                <div key={key}
-                    style={style.item}
+                <div className="flex-center" key={key}
+                    style={style.rightItem}
                     onClick={button.fun}
                 >{button.description}</div>)
             }</div>
@@ -43,10 +44,18 @@ const style = {
         width: '100%',
         borderTop: '1px solid #ddd',
         background: '#fff',
+        fontSize: '12px'
     },
 
-    item: {
+    leftItem: {
+        padding: '0px 7.5px',
+        height: '25px',
+        borderRight: '1px solid #ddd',
+    },
+
+    rightItem: {
+        padding: '0px 7.5px',
+        height: '25px',
         borderLeft: '1px solid #ddd',
-        padding: '0px 15px',
     }
 }

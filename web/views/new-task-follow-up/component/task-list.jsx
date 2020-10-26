@@ -43,24 +43,20 @@ export default class TaskList extends React.Component {
             <OperationBarFixedBottom
                 leftButtonArray={[
                     {
-                        description: pageStatus === 'showGroup' && '任务列表',
-                        fun: utils.getTaskListLeftOperation(pageStatus, () => switchShow({ showTaskWay: 'listAll' })),
-                        style: {}
+                        description: '任务列表',
+                        fun: utils.getTaskListLeftOperation(pageStatus, () => switchShow({ showTaskWay: 'listAll' }))
                     }
                 ]}
                 rightButtonArray={[
                     {
                         description: '导图',
-                        fun: () => switchShow({ showTaskWay: 'mindTargetSelect' }),
-                        style: {}
+                        fun: () => switchShow({ showTaskWay: 'mindTargetSelect' })
                     }, {
                         description: sort,
-                        fun: switchSortHandle,
-                        style: {}
+                        fun: switchSortHandle
                     }, {
                         description: '新增',
-                        fun: addHandle,
-                        style: {}
+                        fun: addHandle
                     }
                 ]}
             />
