@@ -1,50 +1,51 @@
 import Server from './../server.js';
 import CONST from './../const.js';
 import OperationBarFixedBottom from './../../../components/operation-bar/fixed-bottom.jsx';
+import ListOperation from './list-operation.jsx';
 
-export default class TaskList extends React.Component {
+export default class TaskListLayout extends React.Component {
     constructor(props) {
         super(props)
         this.state = {
-            pageStatus: CONST.TASK_LIST_STATUS.DEFAULT, // for control page show, because hiden; show all; show group
+            isBigItem: true,
+            /**
+             * all time group
+             */
+            pageStatus: CONST.TASK_LIST_STATUS.DEFAULT,
+
             allTaskList: CONST.TASK_LIST.DEFAULT, // for persistence all list, because have group list
-            allTaskPageNo: 1,
-            allTaskCount: 0,
-            groupTaskList: CONST.TASK_LIST.DEFAULT, // for all group list, no Pagination, just show all
-        }
-    }
 
-    async showAll() {
-        const { allTaskList } = this.state
-        if (allTaskList.length <= 0) {
-            const allTaskList = await Server.getAllTaskList({ pageNo: 1 }) // Not handle Error. it must sucessful
-            const allTaskCount = await Server.getAllTaskCount() // Not handle Error. it must sucessful
-            return this.setState({ allTaskList, allTaskCount, isShow: 'showAll' })
+            randomTaskList: CONST.TASK_LIST.DEFAULT
         }
-        this.setState({ isShow: 'showAll' })
-    }
 
-    async showGroup(groupTaskRootId) { }
+        this.allTaskPageNo = 1
+        this.allTaskCount = 0
+    }
 
     render() {
-        const { isShow, pageStatus, allTaskList, groupTaskList } = this.state
-        const { sort, switchSortHandle, isShowPutOff, switchShowPutOff, editHandle, addHandle, switchShow } = this.props
-        const { TaskListItem, PutOffButton, ListOperation } = this.props.children
-        const taskListData = utils.getTaskRenderList({ pageStatus, allTaskList, groupTaskList, isShowPutOff })
+        const { allTaskCount } = this
+        const { pageStatus, allTaskList, isBigItem } = this.state
+        const {
+            timeCategoryTaskList, groupCategoryTaskList,
+            sort, switchSortHandle, editHandle, addHandle, switchShow
+        } = this.props
 
-        return <div className="task-list" style={utils.renderTaskListStyle(isShow)}>
-            <PutOffButton status={isShowPutOff} handle={switchShowPutOff} />
-            {taskListData.map((task, key) =>
-                <TaskListItem key={key}
-                    edit={editHandle}
-                    data={task}
-                >{{ ListOperation }}</TaskListItem>
-            )}
+        return <div className="task-list">
+            <div className="task-top-operation">{isBigItem ? '切换小列表' : '返回大列表'}</div>
+
+            <TaskList className='task-list-all' key='list-all'
+                isShowStyle={utils.isShowLllTaskList(pageStatus)}
+                listData={allTaskList}
+            >{{
+                TaskListItem,
+                ShowMore: <div className="list-show-more">{allTaskCount - allTaskList.length}</div>
+            }}</TaskList>
+
             <OperationBarFixedBottom
                 leftButtonArray={[
                     {
                         description: '任务列表',
-                        fun: utils.getTaskListLeftOperation(pageStatus, () => switchShow({ showTaskWay: 'listAll' }))
+                        fun: () => { }
                     }
                 ]}
                 rightButtonArray={[
@@ -62,6 +63,40 @@ export default class TaskList extends React.Component {
             />
         </div>
     }
+
+    async showAll() {
+        const { allTaskList } = this.state
+        if (allTaskList.length <= 0) {
+            const allTaskList = await Server.getAllTaskList({ pageNo: 1 }) // Not handle Error. it must sucessful
+            const allTaskCount = await Server.getAllTaskCount() // Not handle Error. it must sucessful
+            return this.setState({ allTaskList, allTaskCount, isShow: 'showAll' })
+        }
+        this.setState({ isShow: 'showAll' })
+    }
+
+    async showGroup(groupTaskRootId) { }
+}
+
+export class TaskList extends React.Component {
+    constructor(props) {
+        super(props)
+        this.state = {}
+    }
+
+    render() {
+        const { className, isShowStyle, listData, editHandle } = this.props
+        const { ShowMore } = this.props.children
+
+        return <div className={className} style={isShowStyle}>
+            {listData.map((task, key) =>
+                <TaskListItem key={key}
+                    edit={editHandle}
+                    data={task}
+                />
+            )}
+            {ShowMore}
+        </div>
+    }
 }
 
 export class TaskListItem extends React.Component {
@@ -74,7 +109,6 @@ export class TaskListItem extends React.Component {
 
     render() {
         const { data } = this.props
-        const { ListOperation } = this.props.children
         const { clientHeight } = this
         const style = { minHeight: `${clientHeight - 125}px` }
 
@@ -103,12 +137,12 @@ const ListItemContainer = ({ style, title, children }) => <div className="task-l
 const ListItemContent = ({ text }) => <div className="list-item-content" dangerouslySetInnerHTML={{ __html: !!text && typeof text === 'string' ? text.replace(/\n/g, "<br>") : '' }}></div>
 
 const utils = {
+    isShowLllTaskList: pageStatus => ({}),
+
     getTaskRenderList: function getTaskRenderList({ pageStatus, allTaskList, groupTaskList, isShowPutOff }) {
         if (pageStatus === 'showGroup') return groupTaskList
         return allTaskList
     },
-
-    renderTaskListStyle: isShow => ({ display: isShow ? 'block' : 'none' }),
 
     getTaskListLeftOperation: function getTaskListLeftOperation(pageStatus, leftButtonFun) {
         if (pageStatus === 'showGroup') return leftButtonFun
