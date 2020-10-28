@@ -3,7 +3,30 @@ import CONST from './../const.js';
 import OperationBarFixedBottom from './../../../components/operation-bar/fixed-bottom.jsx';
 import ListOperation from './list-operation.jsx';
 
-export default class TaskListLayout extends React.Component {
+class Utils extends React.Component {
+    constructor(props) {
+        super(props)
+    }
+
+    switchItemSize() {
+        const { isBigItem } = this.state
+        this.setState({ isBigItem: !isBigItem })
+    }
+
+    async showAll() {
+        const { allTaskList } = this.state
+        if (allTaskList.length <= 0) {
+            const allTaskList = await Server.getAllTaskList({ pageNo: 1 }) // Not handle Error. it must sucessful
+            const allTaskCount = await Server.getAllTaskCount() // Not handle Error. it must sucessful
+            return this.setState({ allTaskList, allTaskCount, isShow: 'showAll' })
+        }
+        this.setState({ isShow: 'showAll' })
+    }
+
+    async showGroup(groupTaskRootId) { }
+}
+
+export default class TaskListLayout extends Utils {
     constructor(props) {
         super(props)
         this.state = {
@@ -31,9 +54,13 @@ export default class TaskListLayout extends React.Component {
         } = this.props
 
         return <div className="task-list">
-            <div className="task-top-operation">{isBigItem ? '切换小列表' : '返回大列表'}</div>
+
+            <div className="task-top-operation flex-center"
+                onClick={this.switchItemSize.bind(this)}
+            >{isBigItem ? '切换小列表' : '返回大列表'}</div>
 
             <TaskList className='task-list-all' key='list-all'
+                isBigItem={isBigItem}
                 isShowStyle={utils.isShowLllTaskList(pageStatus)}
                 listData={allTaskList}
             >{{
@@ -63,18 +90,6 @@ export default class TaskListLayout extends React.Component {
             />
         </div>
     }
-
-    async showAll() {
-        const { allTaskList } = this.state
-        if (allTaskList.length <= 0) {
-            const allTaskList = await Server.getAllTaskList({ pageNo: 1 }) // Not handle Error. it must sucessful
-            const allTaskCount = await Server.getAllTaskCount() // Not handle Error. it must sucessful
-            return this.setState({ allTaskList, allTaskCount, isShow: 'showAll' })
-        }
-        this.setState({ isShow: 'showAll' })
-    }
-
-    async showGroup(groupTaskRootId) { }
 }
 
 export class TaskList extends React.Component {
