@@ -81,7 +81,7 @@ export default class TaskListLayout extends Utils {
 
     render() {
         const { allTaskCount } = this
-        const { pageStatus, allTaskList, isBigItem } = this.state
+        const { allTaskList, isBigItem } = this.state
         const {
             timeCategoryTaskList, groupCategoryTaskList,
             sort, switchSortHandle, editHandle, addHandle, switchShow

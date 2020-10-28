@@ -1,5 +1,6 @@
 import Modal from './../../components/modal/index.jsx';
 import consequencer from './../../utils/consequencer.js'
+import uiStorage from './../../components/ui-storage/index';
 
 import TaskList, { TaskListItem } from './component/task-list.jsx';
 import PutOffButton from './component/put-off-button.jsx';
@@ -15,26 +16,9 @@ import CONST from './const.js';
 import Server from './server.js';
 import utils from './utils.js';
 
-// layout for summary code structure (meaning is no 2 Level depth. eg: Layout -> List -> Item -> otherComponent)
-export default class TaskFollowUpLayout extends React.Component {
+class Utils extends React.Component {
     constructor(props) {
         super(props)
-        this.state = {
-            listSort: utils.getListSortStorage({ defaultValue: CONST.LIST_SORT.DEFAULT }), // for localStorage
-            isShowPutOff: utils.getPutOffStorage({ defaultValue: false }), // for localStorage
-        }
-
-        this.showTaskWay = utils.getShowTaskWayStorage({ defaultValue: CONST.SHOW_TASK_WAY.DEFAULT }) // for persistence show task
-        this.mindTargetGroupTaskRootId = utils.getMTGTRidStorage() // for recover show list target group todo task
-
-        this.changeNodeResolve = null
-        this.changeNodeTaskId = null
-
-        utils.initLayoutRef(this)
-    }
-
-    componentDidMount() {
-        this.recoverShowTaskWay()
     }
 
     recoverShowTaskWay() { // for recover show task way
@@ -58,7 +42,9 @@ export default class TaskFollowUpLayout extends React.Component {
     }
 
     switchShowTaskWayHandle({ showTaskWay, groupId }) {
-        utils.storageShowTaskWay({ showTaskWay, groupId, self: this })
+        this.showTaskWay = showTaskWay
+        this.mindTargetGroupTaskRootId = groupId
+        uiStorage.setShowTaskWay({ showTaskWay, groupId })
         this.recoverShowTaskWay()
     }
 
@@ -86,7 +72,7 @@ export default class TaskFollowUpLayout extends React.Component {
         const task = reGetTask ? reGetTask : this.newTaskInstance.data
 
         if (!taskParentId) {
-            const groupTaskRootId = utils.isAddTaskToday(showTaskWay) ? todayGroupTaskRootId : mindTargetGroupTaskRootId
+            const groupTaskRootId = this.isAddTaskToday(showTaskWay) ? todayGroupTaskRootId : mindTargetGroupTaskRootId
             taskParentId = groupTaskRootId
         }
 
@@ -112,6 +98,60 @@ export default class TaskFollowUpLayout extends React.Component {
         this.recoverShowTaskWay()
         this.changeNodeTaskId = taskId
         return new Promise(resolve => self.changeNodeResolve = resolve)
+    }
+
+    initLayoutRef() {
+        this.taskListRef = React.createRef()
+        this.taskDetailModalRef = React.createRef()
+        this.targetMindListSelectModalRef = React.createRef()
+        this.targetMindDetailSelectModalRef = React.createRef()
+        this.tipModalRef = React.createRef()
+        this.statisticsModalRef = React.createRef()
+    }
+
+    getListSortStorage({ defaultValue }) {
+        const sort = uiStorage.getTaskListSort()
+        if (sort) return sort
+        return defaultValue
+    }
+
+    getPutOffStorage() { }
+
+    getShowTaskWayStorage({ defaultValue }) {
+        const showTaskWay = uiStorage.getShowTaskWay()
+        if (showTaskWay) return showTaskWay
+        return defaultValue
+    }
+
+    getMTGTRidStorage() {
+        const mindTargetGroupTaskRootId = uiStorage.getMTGTRid()
+        if (mindTargetGroupTaskRootId) return mindTargetGroupTaskRootId
+        return null
+    }
+
+    isAddTaskToday(showTaskWay) { }
+}
+
+// layout for summary code structure (meaning is no 2 Level depth. eg: Layout -> List -> Item -> otherComponent)
+export default class TaskFollowUpLayout extends Utils {
+    constructor(props) {
+        super(props)
+        this.state = {
+            listSort: this.getListSortStorage({ defaultValue: CONST.LIST_SORT.DEFAULT }), // for localStorage
+            isShowPutOff: this.getPutOffStorage({ defaultValue: false }), // for localStorage
+        }
+
+        this.showTaskWay = this.getShowTaskWayStorage({ defaultValue: CONST.SHOW_TASK_WAY.DEFAULT }) // for persistence show task
+        this.mindTargetGroupTaskRootId = this.getMTGTRidStorage() // for recover show list target group todo task
+
+        this.changeNodeResolve = null
+        this.changeNodeTaskId = null
+
+        this.initLayoutRef()
+    }
+
+    componentDidMount() {
+        this.recoverShowTaskWay()
     }
 
     render() {
