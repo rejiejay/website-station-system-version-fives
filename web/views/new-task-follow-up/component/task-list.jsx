@@ -6,6 +6,7 @@ import ListOperation from './list-operation.jsx';
 class Utils extends React.Component {
     constructor(props) {
         super(props)
+        this.clientHeight = document.body.offsetHeight || document.documentElement.clientHeight || window.innerHeight
     }
 
     switchItemSize() {
@@ -24,6 +25,21 @@ class Utils extends React.Component {
     }
 
     async showGroup(groupTaskRootId) { }
+
+    createListItemContainerStyle() {
+        const { isBigItem } = this.props
+        const { clientHeight } = this
+
+        if (isBigItem) return {
+            minHeight: `${clientHeight - 125}px`
+        }
+
+        return {
+            height: '45px',
+            borderBottom: 'none',
+            paddingBottom: '0px'
+        }
+    }
 }
 
 export default class TaskListLayout extends Utils {
@@ -92,19 +108,20 @@ export default class TaskListLayout extends Utils {
     }
 }
 
-export class TaskList extends React.Component {
+export class TaskList extends Utils {
     constructor(props) {
         super(props)
         this.state = {}
     }
 
     render() {
-        const { className, isShowStyle, listData, editHandle } = this.props
+        const { className, isShowStyle, listData, editHandle, isBigItem } = this.props
         const { ShowMore } = this.props.children
 
         return <div className={className} style={isShowStyle}>
             {listData.map((task, key) =>
                 <TaskListItem key={key}
+                    isBigItem={isBigItem}
                     edit={editHandle}
                     data={task}
                 />
@@ -114,21 +131,18 @@ export class TaskList extends React.Component {
     }
 }
 
-export class TaskListItem extends React.Component {
+export class TaskListItem extends Utils {
     constructor(props) {
         super(props)
-        this.state = {}
-
-        this.clientHeight = document.body.offsetHeight || document.documentElement.clientHeight || window.innerHeight
     }
 
     render() {
         const { data } = this.props
-        const { clientHeight } = this
-        const style = { minHeight: `${clientHeight - 125}px` }
+        const { isBigItem } = this.props
 
         return <ListItemContainer
-            style={style}
+            style={this.createListItemContainerStyle.call(this)}
+            isBigItem={isBigItem}
             title={data.title}
         >
             <ListItemContent key="content" text={data.content} />
@@ -142,10 +156,10 @@ export class TaskListItem extends React.Component {
     }
 }
 
-const ListItemContainer = ({ style, title, children }) => <div className="task-list-item list-item">
+const ListItemContainer = ({ style, isBigItem, title, children }) => <div className="task-list-item list-item">
     <div className="task-item-container" style={style}>
         <div className="list-item-title">{title}</div>
-        {children}
+        {isBigItem && children}
     </div>
 </div>
 
