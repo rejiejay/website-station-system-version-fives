@@ -1,5 +1,4 @@
 import Server from './../server.js';
-import CONST from './../const.js';
 import OperationBarFixedBottom from './../../../components/operation-bar/fixed-bottom.jsx';
 import ListOperation from './list-operation.jsx';
 
@@ -40,6 +39,27 @@ class Utils extends React.Component {
             paddingBottom: '0px'
         }
     }
+
+    createShowLllTaskListStyle() {
+        const { pageStatus } = this.state
+
+        if (pageStatus === 'all') return { display: 'block' }
+        return { display: 'none' }
+    }
+}
+
+const CONST = {
+    page_status: {
+        default: 'all',
+        all: 'all',
+        time: 'time',
+        group: 'group',
+        hiden: 'hiden'
+    },
+
+    task_list: {
+        default: []
+    }
 }
 
 export default class TaskListLayout extends Utils {
@@ -47,14 +67,12 @@ export default class TaskListLayout extends Utils {
         super(props)
         this.state = {
             isBigItem: true,
-            /**
-             * all time group
-             */
-            pageStatus: CONST.TASK_LIST_STATUS.DEFAULT,
 
-            allTaskList: CONST.TASK_LIST.DEFAULT, // for persistence all list, because have group list
+            pageStatus: CONST.page_status.default,
 
-            randomTaskList: CONST.TASK_LIST.DEFAULT
+            allTaskList: CONST.task_list.default, // for persistence all list, because have group list
+
+            randomTaskList: CONST.task_list.default
         }
 
         this.allTaskPageNo = 1
@@ -77,7 +95,7 @@ export default class TaskListLayout extends Utils {
 
             <TaskList className='task-list-all' key='list-all'
                 isBigItem={isBigItem}
-                isShowStyle={utils.isShowLllTaskList(pageStatus)}
+                isShowStyle={this.createShowLllTaskListStyle.call(this)}
                 listData={allTaskList}
             >{{
                 TaskListItem,
