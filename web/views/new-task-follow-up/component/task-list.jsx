@@ -46,6 +46,16 @@ class Utils extends React.Component {
         if (pageStatus === 'all') return { display: 'block' }
         return { display: 'none' }
     }
+
+    addHandle() {
+        const { pageStatus } = this.state
+        const { groupCategory, timeCategory } = this
+        const addCallBackHandle = this.props.addHandle
+
+        if (pageStatus === 'group') return addCallBackHandle({ groupCategory, timeCategory: 'today' })
+        if (pageStatus === 'time') return addCallBackHandle({ groupCategory: 'uncategorized', timeCategory })
+        addCallBackHandle({ groupCategory: 'uncategorized', timeCategory: 'today' })
+    }
 }
 
 const CONST = {
@@ -77,6 +87,8 @@ export default class TaskListLayout extends Utils {
 
         this.allTaskPageNo = 1
         this.allTaskCount = 0
+        this.timeCategory = 'today'
+        this.groupCategory = 'uncategorized'
     }
 
     render() {
@@ -84,7 +96,7 @@ export default class TaskListLayout extends Utils {
         const { allTaskList, isBigItem } = this.state
         const {
             timeCategoryTaskList, groupCategoryTaskList,
-            sort, switchSortHandle, editHandle, addHandle, switchShow
+            sort, switchSortHandle, switchShow
         } = this.props
 
         return <div className="task-list">
@@ -118,7 +130,7 @@ export default class TaskListLayout extends Utils {
                         fun: switchSortHandle
                     }, {
                         description: '新增',
-                        fun: addHandle
+                        fun: this.addHandle.bind(this)
                     }
                 ]}
             />

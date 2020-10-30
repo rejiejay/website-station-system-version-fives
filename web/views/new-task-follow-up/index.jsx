@@ -56,7 +56,7 @@ class Utils extends React.Component {
      * @param {object} reGetTask for server error handle reget
      * @param {number} taskParentId For add mind depth
      */
-    async addHandle({ reGetTask, taskParentId }) {
+    async addHandle({ groupCategory, timeCategory }) {
         const { showTaskWay, mindTargetGroupTaskRootId } = this
 
         /**

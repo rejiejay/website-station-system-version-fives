@@ -1,3 +1,5 @@
+import utils from './../utils.js';
+
 class Utils extends React.Component {
     constructor(props) {
         super(props)
@@ -110,15 +112,6 @@ class Utils extends React.Component {
         const { putOffDateSelect } = this.state
         if (!putOffDateSelect) return 'select put off filter'
         return putOffDateSelect
-    }
-
-    static putOffToTimestamp(putOff) {
-        if (putOff === 'today') return 1000 * 60 * 60 * 24
-        if (putOff === 'recently') return 1000 * 60 * 60 * 24 * 3
-        if (putOff === 'week') return 1000 * 60 * 60 * 24 * 7
-        if (putOff === 'month') return 1000 * 60 * 60 * 24 * 30
-        if (putOff === 'season') return 1000 * 60 * 60 * 24 * 30 * 3
-        return null
     }
 
     onItemClickHandle(node) {
@@ -350,14 +343,14 @@ export class GroupCategory extends MindCategoryModalLayout {
 const getTask = ({ isContainToday, putOff }) => { 
     const timestamp = {
         min: null,
-        max: Utils.putOffToTimestamp(putOff)
+        max: utils.timeCategoryToTimestamp(putOff)
     }
     if (isContainToday === false) timestamp.min = 1000 * 60 * 60 * 24
 }
 const getUncategorizedTaskCount = ({ putOff }) => {
     const timestamp = {
         min: null,
-        max: Utils.putOffToTimestamp(putOff)
+        max: utils.timeCategoryToTimestamp(putOff)
     }
 }
 
