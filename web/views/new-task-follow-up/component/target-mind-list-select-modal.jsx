@@ -14,9 +14,7 @@ export default class TargetMindListSelectModal extends React.Component {
         this.todayGroupTaskRootId
     }
 
-    async componentDidMount() {
-        this.todayGroupTaskRootId = await utils.getTodayGroupTaskRootId()
-    }
+    async componentDidMount() { }
 
     async show() {
         if (this.state.taskMindListData.length <= 0) await this.initTaskMindListData()

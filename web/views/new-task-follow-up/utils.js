@@ -1,5 +1,5 @@
 /**
- * @param putOff {string} 
+ * @param {string} putOff 
  */
 const timeCategoryToTimestamp = putOff => {
     if (putOff === 'today') return 1000 * 60 * 60 * 24
@@ -10,11 +10,8 @@ const timeCategoryToTimestamp = putOff => {
     return null
 }
 
-const getTodayGroupTaskRootId = async() => {}
-
 const utils = {
-    timeCategoryToTimestamp,
-    getTodayGroupTaskRootId
+    timeCategoryToTimestamp
 }
 
 export default utils

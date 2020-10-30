@@ -52,32 +52,19 @@ class Utils extends React.Component {
     switchShowPutOffHandle() { }
 
     /**
-     * For just add mind depth 1
-     * @param {object} reGetTask for server error handle reget
-     * @param {number} taskParentId For add mind depth
+     * @param {string} groupCategory parentId
+     * @param {string} timeCategory putoff
      */
     async addHandle({ groupCategory, timeCategory }) {
-        const { showTaskWay, mindTargetGroupTaskRootId } = this
+        const putoff = utils.timeCategoryToTimestamp(timeCategory)
+        const parentId = groupCategory === 'uncategorized' ? 2 : +groupCategory
 
-        /**
-         * not handle error, because it must need successs, otherwise need reget handle
-         * for persistence, because today just need get one time
-         */
-        const todayGroupTaskRootId = await utils.getTodayGroupTaskRootId()
+        const taskInstance = await this.taskDetailModalRef.current.showAdd({ putoff, parentId })
+        if (taskInstance.result !== 1) return taskInstance // cancel
+        const task = taskInstance.data
+        const fetchInstance = await Server.addTask({ task }) // must success, reGetTask
 
-        if (!reGetTask) {
-            this.newTaskInstance = await this.taskDetailModalRef.current.showAdd()
-            if (this.newTaskInstance.result !== 1) return
-        }
-        const task = reGetTask ? reGetTask : this.newTaskInstance.data
-
-        if (!taskParentId) {
-            const groupTaskRootId = this.isAddTaskToday(showTaskWay) ? todayGroupTaskRootId : mindTargetGroupTaskRootId
-            taskParentId = groupTaskRootId
-        }
-
-        const fetchInstance = await Server.addTask({ task, taskParentId })
-        // if (fetchInstance.result !== 1) return reGetConfirm(fetchtInstance.message, () => this.addHandle(task))
+        return fetchInstance
     }
 
     async editHandle({ task }) {

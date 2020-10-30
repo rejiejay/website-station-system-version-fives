@@ -47,14 +47,20 @@ class Utils extends React.Component {
         return { display: 'none' }
     }
 
-    addHandle() {
+    async addHandle() {
         const { pageStatus } = this.state
         const { groupCategory, timeCategory } = this
         const addCallBackHandle = this.props.addHandle
+        const parameter = { groupCategory: 'uncategorized', timeCategory: 'today' }
 
-        if (pageStatus === 'group') return addCallBackHandle({ groupCategory, timeCategory: 'today' })
-        if (pageStatus === 'time') return addCallBackHandle({ groupCategory: 'uncategorized', timeCategory })
-        addCallBackHandle({ groupCategory: 'uncategorized', timeCategory: 'today' })
+        if (pageStatus === 'group') parameter.groupCategory = groupCategory
+        if (pageStatus === 'time') parameter.timeCategory = timeCategory
+        
+        const fetchInstance = await addCallBackHandle(parameter)
+
+        /**
+         * Handle fetchInstance
+         */
     }
 }
 

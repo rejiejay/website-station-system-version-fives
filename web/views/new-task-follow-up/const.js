@@ -33,7 +33,17 @@ const CONST = {
 
     TASK: {
         DEFAULT: {}, // todo
-        DEMO: {}
+        FORMAT: {
+            id: 1,
+            nodeId: 1, // 节点标示, 因为数据库id会与mind标示冲突
+            parentId: 1, // parentid = 1 表示 isroot
+            title: '',
+            content: '',
+            /** S= specific 、M= measurable 、A= attainable 、R= relevant 、T= time-bound */
+            SMART: '',
+            timestamp: 1590495644334,
+            putoff: 1590495644334
+        }
     }
 }
 
