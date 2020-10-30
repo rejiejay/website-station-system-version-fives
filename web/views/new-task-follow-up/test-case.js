@@ -1,3 +1,15 @@
+target = '突然想到自己要做什么?因为手头上有事情,所以临时记忆'
+step = {
+    'open system': 'first step',
+    add_button
+}
+
+
+/**
+ * 下面的是遗弃，因为我还想留着用来参考
+ * ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+ */
+
 list = {
     all,
     sort_random,
@@ -68,13 +80,13 @@ const config = {
 const group1 = () => {
     target = '突然想到自己要做什么?因为手头上有事情,所以临时记忆'
     case1 = {
-        'open system': 'first step', // ok
-        'select today mind': { // todo
+        'open system': 'first step',
+        'select today mind': {
             target: 'for view',
             aciton: { click_导图, switchShowTaskWayHandle, targetMindListSelectModalRef, TargetMindListSelectModal },
             done: { ModalStyleOnly, Modal_ToComponents, isFullScreen, targetmindadd, reGetConfirm },
             todo: { AlertPopup, initTaskMindListData, TaskMindItem, },
-            DoLater: { touchmovePrevent } // will do later
+            DoLater: { touchmovePrevent }
         },
         'select item': 'for view',
         'operating': {

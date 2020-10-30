@@ -23,7 +23,7 @@ class Utils extends React.Component {
         if (!selectNodeId || selectNodeId === 1) return false /** 无法展开根目录 */
 
         const currentNode = this.mindData.data.find(element => +element.id === selectNodeId);
-
+        
         const depthList = []
         const findParent = node => {
             depthList.push(node.id)
@@ -109,7 +109,16 @@ class Utils extends React.Component {
     putOffButtonDes() {
         const { putOffDateSelect } = this.state
         if (!putOffDateSelect) return 'select put off filter'
-        return '3天? ...'
+        return putOffDateSelect
+    }
+
+    static putOffToTimestamp(putOff) {
+        if (putOff === 'today') return 1000 * 60 * 60 * 24
+        if (putOff === 'recently') return 1000 * 60 * 60 * 24 * 3
+        if (putOff === 'week') return 1000 * 60 * 60 * 24 * 7
+        if (putOff === 'month') return 1000 * 60 * 60 * 24 * 30
+        if (putOff === 'season') return 1000 * 60 * 60 * 24 * 30 * 3
+        return null
     }
 
     onItemClickHandle(node) {
@@ -117,7 +126,7 @@ class Utils extends React.Component {
         const id = +node.id
 
         if (isMoveNode) return this.moveNodeHandle(id)
-
+    
         this.colorRestoration()
         this.setNodeColor({ id, bgcolor: '#f1c40f' })
         if (selectNodeId === id) return this.setState({ selectNodeId: null })
@@ -161,7 +170,7 @@ class MindCategoryModalLayout extends Utils {
     async initMind() {
         const self = this
         const { jsmind_container } = this
-
+    
         this.data = await this.fetchGetData()
 
         document.getElementById(jsmind_container).innerHTML = ''
@@ -316,7 +325,7 @@ export class GroupCategory extends MindCategoryModalLayout {
                     description: 'edit',
                     fun: () => { }
                 }, {
-                    key: 'put-off-date-select',
+                    key:  'put-off-date-select',
                     description: this.putOffButtonDes.call(this),
                     fun: () => { }
                 }, {
@@ -338,14 +347,19 @@ export class GroupCategory extends MindCategoryModalLayout {
  * ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
  */
 
-const getTask = ({ isContainToday, putOff }) => {
+const getTask = ({ isContainToday, putOff }) => { 
     const timestamp = {
         min: null,
-        max: null
+        max: Utils.putOffToTimestamp(putOff)
     }
-    if (isContainToday === false) timestamp.min = tomorrowTimestamp()
+    if (isContainToday === false) timestamp.min = 1000 * 60 * 60 * 24
 }
-const getUncategorizedTaskCount = ({ putOff }) => { }
+const getUncategorizedTaskCount = ({ putOff }) => {
+    const timestamp = {
+        min: null,
+        max: Utils.putOffToTimestamp(putOff)
+    }
+}
 
 const fetch = {
     getTask,
