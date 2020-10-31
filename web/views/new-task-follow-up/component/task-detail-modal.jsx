@@ -21,6 +21,8 @@ class Utils extends React.Component {
     verifyEditDiff() {
         return true
     }
+
+    async getTaskDetail() { }
 }
 
 const CONST = {
@@ -37,7 +39,9 @@ export default class TaskDetailModal extends Utils {
         super(props)
         this.state = {
             pageStatus: CONST.page_status.default,
-            task: GlobalConst.TASK.DEFAULT,
+            title: '',
+            content: '',
+            SMART: '', /** S= specific 、M= measurable 、A= attainable 、R= relevant 、T= time-bound */
 
             putoff: null
         }
@@ -60,6 +64,7 @@ export default class TaskDetailModal extends Utils {
 
     render() {
         const { Modal } = this.props.children
+        const { pageStatus } = this.state
 
         return <Modal
             visible={pageStatus !== 'hiden'}

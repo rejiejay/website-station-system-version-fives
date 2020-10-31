@@ -1,4 +1,5 @@
 import utils from './../utils.js';
+import OperationBarFixedBottom from './../../../components/operation-bar/fixed-bottom.jsx';
 
 class Utils extends React.Component {
     constructor(props) {
@@ -94,7 +95,7 @@ class Utils extends React.Component {
 
     buttonFilter(button) {
         const { expandNodeList, selectNodeId } = this.state
-        const isNeed = false
+        let isNeed = false
 
         if (button.key === 'add') isNeed = true
         if (button.key === 'put-off-date-select') isNeed = true

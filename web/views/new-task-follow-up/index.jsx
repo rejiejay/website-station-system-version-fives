@@ -3,6 +3,7 @@ import consequencer from './../../utils/consequencer.js'
 import uiStorage from './../../components/ui-storage/index';
 
 import TaskList, { TaskListItem } from './component/task-list.jsx';
+import { TimeCategory, GroupCategory } from './component/mind-category-modal.jsx';
 import PutOffButton from './component/put-off-button.jsx';
 import TaskDetailModal from './component/task-detail-modal.jsx';
 import TargetMindListSelectModal from './component/target-mind-list-select-modal.jsx';
@@ -90,6 +91,7 @@ class Utils extends React.Component {
     initLayoutRef() {
         this.taskListRef = React.createRef()
         this.taskDetailModalRef = React.createRef()
+        this.timeCategoryModalRef = React.createRef()
         this.targetMindListSelectModalRef = React.createRef()
         this.targetMindDetailSelectModalRef = React.createRef()
         this.tipModalRef = React.createRef()
@@ -143,7 +145,7 @@ export default class TaskFollowUpLayout extends Utils {
 
     render() {
         const { listSort, isShowPutOff } = this.state
-        const { taskListRef, taskDetailModalRef, targetMindListSelectModalRef, targetMindDetailSelectModalRef, tipModalRef, statisticsModalRef } = this
+        const { taskListRef, taskDetailModalRef, timeCategoryModalRef, targetMindListSelectModalRef, targetMindDetailSelectModalRef, tipModalRef, statisticsModalRef } = this
 
         return [
             <TaskList ref={taskListRef}
@@ -164,6 +166,8 @@ export default class TaskFollowUpLayout extends Utils {
             <TaskDetailModal ref={taskDetailModalRef}
                 changeNodeHandle={this.changeNodeHandle.bind(this)}
             >{{ Modal, ListOperation }}</TaskDetailModal>,
+
+            <TimeCategory ref={timeCategoryModalRef}>{{ Modal }}</TimeCategory>,
 
             // for select target group task, 
             // Modal: not need prevent reload task list. but other funciton may need prevent reload. so need use Modal
