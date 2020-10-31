@@ -1,17 +1,56 @@
-import CONST from './../const.js';
-import utils from './../utils.js';
+import GlobalConst from './../const.js';
+import OperationBarFixedBottom from './../../../components/operation-bar/fixed-bottom.jsx';
 
-export default class TaskDetailModal extends React.Component {
+class Utils extends React.Component {
+    constructor(props) {
+        super(props)
+    }
+
+    buttonFilter(button) {
+        const { pageStatus } = this.state
+        let isNeed = false
+
+        if (button.key === 'cancel') isNeed = true
+        if (button.key === 'add' && pageStatus === 'add') isNeed = true
+        if (['delete', 'complete'].includes(button.key) && pageStatus === 'edit') isNeed = true
+        if (button.key === 'edit' && pageStatus === 'edit' && this.verifyEditDiff()) isNeed = true
+
+        return isNeed
+    }
+
+    verifyEditDiff() {
+        return true
+    }
+}
+
+const CONST = {
+    page_status: {
+        default: 'hiden',
+        add: 'add',
+        edit: 'edit',
+        hiden: 'hiden'
+    }
+}
+
+export default class TaskDetailModal extends Utils {
     constructor(props) {
         super(props)
         this.state = {
-            pageStatus: CONST.TASK_DETAIL_STATUS.DEFAULT,
-            task: CONST.TASK.DEFAULT
+            pageStatus: CONST.page_status.default,
+            task: GlobalConst.TASK.DEFAULT,
+
+            putoff: null
         }
+
+        this.originalTask = GlobalConst.TASK.DEFAULT // for Edit
+        this.taskResolvedHandle = () => { }
     }
 
-    showAdd() {
+    showAdd({ putoff, parentId }) {
+        const self = this
         this.setState({ pageStatus: 'add' })
+
+        return new Promise(resolve => self.taskResolvedHandle = resolve)
     }
 
     async showEdit(taskId) {
@@ -19,22 +58,8 @@ export default class TaskDetailModal extends React.Component {
         await this.getTaskDetail(taskId)
     }
 
-    // Not handle Error, It must success
-    async getTaskDetail(taskId) { }
-
-    async changeNodeHandle() {
-        const { changeNodeHandle } = this.props
-        const { task } = this.state
-        this.setState({ pageStatus: 'hiden' })
-        const changeInstance = await changeNodeHandle(task.id)
-        this.setState({ pageStatus: 'edit' })
-        if (changeInstance.result !== 1) return alert(changeInstance.message)
-        await this.getTaskDetail(taskId)
-    }
-
     render() {
-        const { pageStatus } = this.state
-        const { Modal, ListOperation } = this.props.children
+        const { Modal } = this.props.children
 
         return <Modal
             visible={pageStatus !== 'hiden'}
@@ -44,17 +69,34 @@ export default class TaskDetailModal extends React.Component {
                 <div className="task-detail-input">
                     <InputComponent></InputComponent>
                 </div>
-                <ListOperation
-                    rightOperation={[
-                        { scope: 'edit', name: '推迟', fun: () => { } },
-                        { scope: 'edit', name: '删除', fun: () => { } },
-                        { scope: 'edit', name: '置顶Top', fun: () => { } },
-                        { scope: 'add', name: '完成', fun: () => { } },
-                        { scope: 'edit', name: '移动', fun: this.changeNodeHandle.bind(this) },
-                        { scope: 'edit', name: '暂存', fun: () => { } },
-                        { scope: 'edit', name: '新增子节点', fun: () => { } },
-                        { scope: 'edit|add', name: '取消', fun: () => { } },
-                    ].filter(({ scope }) => scope.includes(pageStatus))}
+
+                <OperationBarFixedBottom
+                    leftButtonArray={[
+                        {
+                            key: 'cancel',
+                            description: 'cancel',
+                            fun: () => { }
+                        }
+                    ].filter(this.buttonFilter.bind(this))}
+                    rightButtonArray={[
+                        {
+                            key: 'add',
+                            description: 'add',
+                            fun: () => { }
+                        }, {
+                            key: 'delete',
+                            description: 'delete',
+                            fun: () => { }
+                        }, {
+                            key: 'edit',
+                            description: 'edit',
+                            fun: () => { }
+                        }, {
+                            key: 'complete',
+                            description: 'complete',
+                            fun: () => { }
+                        }
+                    ].filter(this.buttonFilter.bind(this))}
                 />
             </div>
         </Modal>
