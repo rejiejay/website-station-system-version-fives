@@ -1,10 +1,12 @@
-import GlobalConst from './../const.js';
 import OperationBarFixedBottom from './../../../components/operation-bar/fixed-bottom.jsx';
 import MobileInput from './../../../components/mobile-input/index.jsx';
 import { confirmPopUp } from './../../../components/confirm-popup/index.js';
 import TemporaryStorage from './../../../utils/temporary-storage.jsx';
 import jsonHandle from './../../../utils/json-handle.js';
 import consequencer from './../../../utils/consequencer.js';
+
+import GlobalConst from './../const.js';
+import Server from './../server.js';
 
 class Utils extends React.Component {
     constructor(props) {
@@ -121,7 +123,7 @@ class Utils extends React.Component {
         if (taskInstance.result !== 1) return await this.confirmHandle(taskInstance.message)
 
         const task = taskInstance.data
-        const fetchInstance = await server.addTask(task)
+        const fetchInstance = await Server.addTask(task)
         this.setState({ pageStatus: 'hiden' })
         this.taskResolvedHandle(fetchInstance)
     }
@@ -130,7 +132,7 @@ class Utils extends React.Component {
         const confirmInstance = await this.confirmHandle('delete confirm')
         if (confirmInstance.result !== 1) return this.taskResolvedHandle(confirmInstance)
 
-        const fetchInstance = await server.deleteTask(originalTask.id)
+        const fetchInstance = await Server.deleteTask(originalTask.id)
         this.setState({ pageStatus: 'hiden' })
         this.taskResolvedHandle(fetchInstance)
     }
@@ -143,7 +145,7 @@ class Utils extends React.Component {
         if (taskInstance.result !== 1) return await this.confirmHandle(taskInstance.message)
 
         const task = taskInstance.data
-        const fetchInstance = await server.editTask(originalTask.id, task)
+        const fetchInstance = await Server.editTask(originalTask.id, task)
         this.setState({ pageStatus: 'hiden' })
         this.taskResolvedHandle(fetchInstance)
     }
@@ -152,7 +154,7 @@ class Utils extends React.Component {
         const confirmInstance = await this.confirmHandle('complete confirm')
         if (confirmInstance.result !== 1) return this.taskResolvedHandle(confirmInstance)
 
-        const fetchInstance = await server.completeTask(originalTask.id)
+        const fetchInstance = await Server.completeTask(originalTask.id)
         this.setState({ pageStatus: 'hiden' })
         this.taskResolvedHandle(fetchInstance)
     }

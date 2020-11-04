@@ -51,6 +51,11 @@ const Server = {
     changeTaskNode: async({ task, taskParentId }) => {},
 
     changeTaskNode: getTaskMindList,
+
+    addTask: async(task) => {},
+    deleteTask: async(taskId) => {},
+    editTask: async(taskId, task) => {},
+    completeTask: async(taskId) => {},
 }
 
 export default Server

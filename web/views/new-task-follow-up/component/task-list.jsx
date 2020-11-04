@@ -1,6 +1,5 @@
 import Server from './../server.js';
 import OperationBarFixedBottom from './../../../components/operation-bar/fixed-bottom.jsx';
-import ListOperation from './list-operation.jsx';
 
 class Utils extends React.Component {
     constructor(props) {
@@ -55,7 +54,7 @@ class Utils extends React.Component {
 
         if (pageStatus === 'group') parameter.groupCategory = groupCategory
         if (pageStatus === 'time') parameter.timeCategory = timeCategory
-        
+
         const fetchInstance = await addCallBackHandle(parameter)
 
         /**
@@ -182,10 +181,13 @@ export class TaskListItem extends Utils {
             title={data.title}
         >
             <ListItemContent key="content" text={data.content} />
-            <ListOperation
+            <OperationBarFixedBottom
                 isAbsolute
-                rightOperation={[
-                    { name: '编辑', fun: () => { } }
+                rightButtonArray={[
+                    {
+                        description: '编辑',
+                        fun: () => { }
+                    }
                 ]}
             />
         </ListItemContainer>
