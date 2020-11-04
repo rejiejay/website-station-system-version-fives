@@ -1,6 +1,7 @@
 @import './base.less';
 @import './flex.less';
 @import './toast.less';
+@import './confirm-popup.less';
 
 @black1: #303133;
 @black2: #606266;
@@ -23,9 +24,9 @@ body {
     // 列表一个项 task-list-item.jsx
     .task-operation,
     // 公用底部按钮 list-operation.jsx
-    .target-mind-list-select-modal // 思维导图列表 target-mind-list-select-modal.jsx
-
-        {
+    .target-mind-list-select-modal,
+    // 思维导图列表 target-mind-list-select-modal.jsx
+    .task-detail-modal {
         color: @black2;
     }
 }
@@ -116,4 +117,8 @@ body {
         text-align      : center;
         background-color: #fff;
     }
+}
+
+.task-detail-modal {
+    padding-bottom: 240px;
 }

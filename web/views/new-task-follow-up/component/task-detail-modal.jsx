@@ -1,8 +1,10 @@
 import GlobalConst from './../const.js';
 import OperationBarFixedBottom from './../../../components/operation-bar/fixed-bottom.jsx';
 import MobileInput from './../../../components/mobile-input/index.jsx';
+import { confirmPopUp } from './../../../components/confirm-popup/index.js';
 import TemporaryStorage from './../../../utils/temporary-storage.jsx';
 import jsonHandle from './../../../utils/json-handle.js';
+import consequencer from './../../../utils/consequencer.js';
 
 class Utils extends React.Component {
     constructor(props) {
@@ -96,11 +98,6 @@ class Utils extends React.Component {
             .catch(reason => resolve(consequencer.error(reason)))
     })
 
-    async cancelHandle() {
-        const confirmInstance = await this.confirmHandle('cancel confirm')
-        if (confirmInstance.result === 1) this.taskResolvedHandle(confirmInstance)
-    }
-
     getSubmitTaskData() {
         if (!title) return consequencer.error('title can`t null')
         if (!content) return consequencer.error('content can`t null')
@@ -108,6 +105,12 @@ class Utils extends React.Component {
         const { title, content, SMART, putoff } = this.state
 
         return { title, content, SMART, putoff }
+    }
+
+    async cancelHandle() {
+        const confirmInstance = await this.confirmHandle('cancel confirm')
+        if (confirmInstance.result === 1) this.taskResolvedHandle(confirmInstance)
+        this.setState({ pageStatus: 'hiden' })
     }
 
     async addHandle() {
@@ -119,6 +122,7 @@ class Utils extends React.Component {
 
         const task = taskInstance.data
         const fetchInstance = await server.addTask(task)
+        this.setState({ pageStatus: 'hiden' })
         this.taskResolvedHandle(fetchInstance)
     }
 
@@ -127,6 +131,7 @@ class Utils extends React.Component {
         if (confirmInstance.result !== 1) return this.taskResolvedHandle(confirmInstance)
 
         const fetchInstance = await server.deleteTask(originalTask.id)
+        this.setState({ pageStatus: 'hiden' })
         this.taskResolvedHandle(fetchInstance)
     }
 
@@ -139,6 +144,7 @@ class Utils extends React.Component {
 
         const task = taskInstance.data
         const fetchInstance = await server.editTask(originalTask.id, task)
+        this.setState({ pageStatus: 'hiden' })
         this.taskResolvedHandle(fetchInstance)
     }
 
@@ -147,6 +153,7 @@ class Utils extends React.Component {
         if (confirmInstance.result !== 1) return this.taskResolvedHandle(confirmInstance)
 
         const fetchInstance = await server.completeTask(originalTask.id)
+        this.setState({ pageStatus: 'hiden' })
         this.taskResolvedHandle(fetchInstance)
     }
 }
