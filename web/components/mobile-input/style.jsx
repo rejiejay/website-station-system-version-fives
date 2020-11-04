@@ -1,7 +1,7 @@
 import basicFlex from './../../css/jsx-style/basic-flex.jsx';
 import client from './../../css/jsx-style/client.jsx';
 
-const isRequiredHighlight = () => {
+const inputTitleStyle = isRequiredHighlight => {
     const style = {
         fontSize: '16px',
         padding: '10px 15px 5px',

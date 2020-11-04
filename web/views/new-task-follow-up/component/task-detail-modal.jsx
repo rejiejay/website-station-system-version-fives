@@ -1,10 +1,14 @@
 import GlobalConst from './../const.js';
 import OperationBarFixedBottom from './../../../components/operation-bar/fixed-bottom.jsx';
 import MobileInput from './../../../components/mobile-input/index.jsx';
+import TemporaryStorage from './../../../utils/temporary-storage.jsx';
+import jsonHandle from './../../../utils/json-handle.js';
 
 class Utils extends React.Component {
     constructor(props) {
         super(props)
+
+        this.nowTimestamp = new TemporaryStorage(() => new Date().getTime())
     }
 
     buttonFilter(button) {
@@ -20,18 +24,130 @@ class Utils extends React.Component {
     }
 
     verifyEditDiff() {
-        return true
+        const { originalTask } = this
+
+        const { title, content, SMART, putoff } = this.state
+
+        let isDiff = false
+        if (originalTask && title !== originalTask.title) isDiff = true
+        if (originalTask && content !== originalTask.content) isDiff = true
+        if (originalTask && SMART !== originalTask.SMART) isDiff = true
+        if (originalTask && putoff !== originalTask.putoff) isDiff = true
+        return isDiff
     }
 
-    async getTaskDetail(taskId) { }
+    async initTaskDetail(taskId) { }
 
     getSMARTdata() {
-        const specific = ''
-        const measurable = ''
-        const attainable = ''
-        const relevant = ''
-        const timeBound = ''
+        const { SMART } = this.state
+        if (SMART === '') return { specific: '', measurable: '', attainable: '', relevant: '', timeBound: '' }
+
+        const verifyJSONresult = jsonHandle.verifyJSONString({ jsonString: SMART })
+        if (!verifyJSONresult.isCorrect) return { specific: '', measurable: '', attainable: '', relevant: '', timeBound: '' }
+
+        const { specific, measurable, attainable, relevant, timeBound } = verifyJSONresult.data
         return { specific, measurable, attainable, relevant, timeBound }
+    }
+
+    setSMARTdata(value, key) {
+        const SMART = this.getSMARTdata()
+        SMART[key] = value
+        this.setState({ SMART: JSON.stringify(SMART) })
+    }
+
+    dayTimestamp = 1000 * 60 * 60 * 24
+
+    putoffSelectHandle() {
+        const self = this
+        const nowTimestamp = this.nowTimestamp.get()
+        const handle = ({ value, label }) => self.setState({ putoff: value })
+
+        actionSheetPopUp({
+            title: '请选择推迟日期',
+            options: [
+                { label: 'year', value: nowTimestamp + (this.dayTimestamp * 361) },
+                { label: 'month', value: nowTimestamp + (this.dayTimestamp * 31) },
+                { label: 'week', value: nowTimestamp + (this.dayTimestamp * 7) },
+                { label: 'recently', value: nowTimestamp + (this.dayTimestamp * 3) },
+                { label: 'today', value: nowTimestamp },
+            ],
+            handle
+        })
+    }
+
+    putoffToDes() {
+        const { putoff } = this.state
+        const nowTimestamp = this.nowTimestamp.get()
+        if (putoff < (nowTimestamp + this.dayTimestamp)) return 'today'
+        if (putoff > (nowTimestamp + this.dayTimestamp) && putoff < (nowTimestamp + (this.dayTimestamp * 4))) return 'recently'
+        if (putoff > (nowTimestamp + (this.dayTimestamp * 4)) && putoff < (nowTimestamp + (this.dayTimestamp * 8))) return 'week'
+        if (putoff > (nowTimestamp + (this.dayTimestamp * 8)) && putoff < (nowTimestamp + (this.dayTimestamp * 31))) return 'month'
+        if (putoff > (nowTimestamp + (this.dayTimestamp * 31)) && putoff < (nowTimestamp + (this.dayTimestamp * 361))) return 'year'
+        if (putoff > (nowTimestamp + (this.dayTimestamp * 361))) return 'more that year'
+
+        return 'today'
+    }
+
+    confirmHandle = msg => new Promise(resolve => {
+        confirmPopUp({
+            title: msg
+        })
+            .then(() => resolve(consequencer.success()))
+            .catch(reason => resolve(consequencer.error(reason)))
+    })
+
+    async cancelHandle() {
+        const confirmInstance = await this.confirmHandle('cancel confirm')
+        if (confirmInstance.result === 1) this.taskResolvedHandle(confirmInstance)
+    }
+
+    getSubmitTaskData() {
+        if (!title) return consequencer.error('title can`t null')
+        if (!content) return consequencer.error('content can`t null')
+
+        const { title, content, SMART, putoff } = this.state
+
+        return { title, content, SMART, putoff }
+    }
+
+    async addHandle() {
+        const confirmInstance = await this.confirmHandle('add confirm')
+        if (confirmInstance.result !== 1) return this.taskResolvedHandle(confirmInstance)
+
+        const taskInstance = this.getSubmitTaskData()
+        if (taskInstance.result !== 1) return await this.confirmHandle(taskInstance.message)
+
+        const task = taskInstance.data
+        const fetchInstance = await server.addTask(task)
+        this.taskResolvedHandle(fetchInstance)
+    }
+
+    async deleteHandle() {
+        const confirmInstance = await this.confirmHandle('delete confirm')
+        if (confirmInstance.result !== 1) return this.taskResolvedHandle(confirmInstance)
+
+        const fetchInstance = await server.deleteTask(originalTask.id)
+        this.taskResolvedHandle(fetchInstance)
+    }
+
+    async editHandle() {
+        const confirmInstance = await this.confirmHandle('edit confirm')
+        if (confirmInstance.result !== 1) return this.taskResolvedHandle(confirmInstance)
+
+        const taskInstance = this.getSubmitTaskData()
+        if (taskInstance.result !== 1) return await this.confirmHandle(taskInstance.message)
+
+        const task = taskInstance.data
+        const fetchInstance = await server.editTask(originalTask.id, task)
+        this.taskResolvedHandle(fetchInstance)
+    }
+
+    async completeHandle() {
+        const confirmInstance = await this.confirmHandle('complete confirm')
+        if (confirmInstance.result !== 1) return this.taskResolvedHandle(confirmInstance)
+
+        const fetchInstance = await server.completeTask(originalTask.id)
+        this.taskResolvedHandle(fetchInstance)
     }
 }
 
@@ -73,7 +189,8 @@ export default class TaskDetailModal extends Utils {
 
     async showEdit(taskId) {
         this.setState({ pageStatus: 'edit' })
-        await this.getTaskDetail(taskId)
+        await this.initTaskDetail(taskId)
+        return new Promise(resolve => self.taskResolvedHandle = resolve)
     }
 
     render() {
@@ -88,16 +205,15 @@ export default class TaskDetailModal extends Utils {
             <div className="task-detail-modal">
                 <MobileInput key='title'
                     value={title}
-                    onChangeHandle={value => { }}
+                    onChangeHandle={value => this.setState({ title: value })}
+                    isTheme
                     isRequiredHighlight
-                    isAutoHeight={false}
-                    height={250}
                     title='简单描述/提问/归纳'
                     placeholder='what情景? + what动作/冲突/方案'
                 />
                 <MobileInput key='content'
                     value={content}
-                    onChangeHandle={value => { }}
+                    onChangeHandle={value => this.setState({ content: value })}
                     isAutoHeight
                     height={250}
                     title='得出什么做法?'
@@ -105,7 +221,7 @@ export default class TaskDetailModal extends Utils {
                 ></MobileInput>
                 <MobileInput key='specific'
                     value={specific}
-                    onChangeHandle={value => { }}
+                    onChangeHandle={value => this.setSMARTdata(value, 'specific')}
                     isAutoHeight
                     height={125}
                     title='任务具体内容?'
@@ -113,7 +229,7 @@ export default class TaskDetailModal extends Utils {
                 ></MobileInput>
                 <MobileInput key='measurable'
                     value={measurable}
-                    onChangeHandle={value => { }}
+                    onChangeHandle={value => this.setSMARTdata(value, 'measurable')}
                     isAutoHeight
                     height={125}
                     title='任务完成标识?'
@@ -121,7 +237,7 @@ export default class TaskDetailModal extends Utils {
                 ></MobileInput>
                 <MobileInput key='attainable'
                     value={attainable}
-                    onChangeHandle={value => { }}
+                    onChangeHandle={value => this.setSMARTdata(value, 'attainable')}
                     isAutoHeight
                     height={125}
                     title='任务是否可以实现?'
@@ -129,7 +245,7 @@ export default class TaskDetailModal extends Utils {
                 ></MobileInput>
                 <MobileInput key='relevant'
                     value={relevant}
-                    onChangeHandle={value => { }}
+                    onChangeHandle={value => this.setSMARTdata(value, 'relevant')}
                     isAutoHeight
                     height={125}
                     title='任务和哪些需求相关?'
@@ -137,15 +253,15 @@ export default class TaskDetailModal extends Utils {
                 ></MobileInput>
                 <MobileInput key='timeBound'
                     value={timeBound}
-                    onChangeHandle={value => { }}
+                    onChangeHandle={value => this.setSMARTdata(value, 'timeBound')}
                     isAutoHeight
                     height={125}
                     title='明确的截止期限?'
                     placeholder='期限1： 是什么?为什么设定这个时间?'
                 >{{
                     rightTopDiv: <div className='select-putoff'
-                        onClick={() => { }}
-                    >{putoff ? putoff : '选择期限'}</div>
+                        onClick={this.putoffSelectHandle.bind(this)}
+                    >{putoff ? this.putoffToDes.call(this) : '选择期限'}</div>
                 }}</MobileInput>
 
                 <OperationBarFixedBottom
@@ -153,26 +269,26 @@ export default class TaskDetailModal extends Utils {
                         {
                             key: 'cancel',
                             description: 'cancel',
-                            fun: () => { }
+                            fun: this.cancelHandle.bind(this)
                         }
                     ].filter(this.buttonFilter.bind(this))}
                     rightButtonArray={[
                         {
                             key: 'add',
                             description: 'add',
-                            fun: () => { }
+                            fun: this.addHandle.bind(this)
                         }, {
                             key: 'delete',
                             description: 'delete',
-                            fun: () => { }
+                            fun: this.deleteHandle.bind(this)
                         }, {
                             key: 'edit',
                             description: 'edit',
-                            fun: () => { }
+                            fun: this.editHandle.bind(this)
                         }, {
                             key: 'complete',
                             description: 'complete',
-                            fun: () => { }
+                            fun: this.completeHandle.bind(this)
                         }
                     ].filter(this.buttonFilter.bind(this))}
                 />
