@@ -21,7 +21,9 @@ const ConfirmPopup = message => new Promise(resolve => {
             cancelHandle={cancelHandle}
             confirmHandle={confirmHandle}
         >
-            <div style={popupStyle.container}>{message}</div>
+            <div className="flex-center" style={popupStyle.container}>
+                <div style={popupStyle.message}>{message}</div>
+            </div>
         </Modal>,
         div
     )

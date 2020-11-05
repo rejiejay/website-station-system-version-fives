@@ -1,6 +1,6 @@
 import OperationBarFixedBottom from './../../../components/operation-bar/fixed-bottom.jsx';
 import MobileInput from './../../../components/mobile-input/index.jsx';
-import { confirmPopUp } from './../../../components/confirm-popup/index.js';
+import ConfirmPopup from './../../../components/popup/confirm/index.jsx';
 import TemporaryStorage from './../../../utils/temporary-storage.jsx';
 import jsonHandle from './../../../utils/json-handle.js';
 import consequencer from './../../../utils/consequencer.js';
@@ -92,14 +92,6 @@ class Utils extends React.Component {
         return 'today'
     }
 
-    confirmHandle = msg => new Promise(resolve => {
-        confirmPopUp({
-            title: msg
-        })
-            .then(() => resolve(consequencer.success()))
-            .catch(reason => resolve(consequencer.error(reason)))
-    })
-
     getSubmitTaskData() {
         if (!title) return consequencer.error('title can`t null')
         if (!content) return consequencer.error('content can`t null')
@@ -110,17 +102,18 @@ class Utils extends React.Component {
     }
 
     async cancelHandle() {
-        const confirmInstance = await this.confirmHandle('cancel confirm')
-        if (confirmInstance.result === 1) this.taskResolvedHandle(confirmInstance)
+        const confirmInstance = await ConfirmPopup('cancel confirm')
+        if (confirmInstance.result !== 1) return
+        this.taskResolvedHandle(confirmInstance)
         this.setState({ pageStatus: 'hiden' })
     }
 
     async addHandle() {
-        const confirmInstance = await this.confirmHandle('add confirm')
+        const confirmInstance = await ConfirmPopup('add confirm')
         if (confirmInstance.result !== 1) return this.taskResolvedHandle(confirmInstance)
 
         const taskInstance = this.getSubmitTaskData()
-        if (taskInstance.result !== 1) return await this.confirmHandle(taskInstance.message)
+        if (taskInstance.result !== 1) return await ConfirmPopup(taskInstance.message)
 
         const task = taskInstance.data
         const fetchInstance = await Server.addTask(task)
@@ -129,7 +122,7 @@ class Utils extends React.Component {
     }
 
     async deleteHandle() {
-        const confirmInstance = await this.confirmHandle('delete confirm')
+        const confirmInstance = await ConfirmPopup('delete confirm')
         if (confirmInstance.result !== 1) return this.taskResolvedHandle(confirmInstance)
 
         const fetchInstance = await Server.deleteTask(originalTask.id)
@@ -138,11 +131,11 @@ class Utils extends React.Component {
     }
 
     async editHandle() {
-        const confirmInstance = await this.confirmHandle('edit confirm')
+        const confirmInstance = await ConfirmPopup('edit confirm')
         if (confirmInstance.result !== 1) return this.taskResolvedHandle(confirmInstance)
 
         const taskInstance = this.getSubmitTaskData()
-        if (taskInstance.result !== 1) return await this.confirmHandle(taskInstance.message)
+        if (taskInstance.result !== 1) return await ConfirmPopup(taskInstance.message)
 
         const task = taskInstance.data
         const fetchInstance = await Server.editTask(originalTask.id, task)
@@ -151,7 +144,7 @@ class Utils extends React.Component {
     }
 
     async completeHandle() {
-        const confirmInstance = await this.confirmHandle('complete confirm')
+        const confirmInstance = await ConfirmPopup('complete confirm')
         if (confirmInstance.result !== 1) return this.taskResolvedHandle(confirmInstance)
 
         const fetchInstance = await Server.completeTask(originalTask.id)

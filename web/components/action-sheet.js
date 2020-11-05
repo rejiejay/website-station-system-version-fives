@@ -1,3 +1,6 @@
+/**
+ * 这个将会删掉，因为components\popup\action-sheet\index.jsx能够替代这个
+ */
 import consequencer from './../utils/consequencer.js';
 
 export const actionSheetPopUpUpDestroy = () => {
