@@ -172,13 +172,13 @@ export class TaskListItem extends Utils {
     }
 
     render() {
-        const { data } = this.props
-        const { isBigItem } = this.props
+        const { data, isBigItem, edit } = this.props
 
         return <ListItemContainer
             style={this.createListItemContainerStyle.call(this)}
             isBigItem={isBigItem}
             title={data.title}
+            edit={edit}
         >
             <ListItemContent key="content" text={data.content} />
             <OperationBarFixedBottom
@@ -186,7 +186,7 @@ export class TaskListItem extends Utils {
                 rightButtonArray={[
                     {
                         description: '编辑',
-                        fun: () => { }
+                        fun: edit
                     }
                 ]}
             />
@@ -196,23 +196,9 @@ export class TaskListItem extends Utils {
 
 const ListItemContainer = ({ style, isBigItem, title, children }) => <div className="task-list-item list-item">
     <div className="task-item-container" style={style}>
-        <div className="list-item-title">{title}</div>
+        <div className="list-item-title" onClick={() => !isBigItem && edit()}>{title}</div>
         {isBigItem && children}
     </div>
 </div>
 
 const ListItemContent = ({ text }) => <div className="list-item-content" dangerouslySetInnerHTML={{ __html: !!text && typeof text === 'string' ? text.replace(/\n/g, "<br>") : '' }}></div>
-
-const utils = {
-    isShowLllTaskList: pageStatus => ({}),
-
-    getTaskRenderList: function getTaskRenderList({ pageStatus, allTaskList, groupTaskList, isShowPutOff }) {
-        if (pageStatus === 'showGroup') return groupTaskList
-        return allTaskList
-    },
-
-    getTaskListLeftOperation: function getTaskListLeftOperation(pageStatus, leftButtonFun) {
-        if (pageStatus === 'showGroup') return leftButtonFun
-        return false
-    }
-}
