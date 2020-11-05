@@ -23,6 +23,7 @@ const Modal = ({ visible, isFullScreen, modalName, maskClosable, closHandle, con
                 {haveConfirm && <ButtonFooter key="confirm" className="modal-footer-confirm flex-rest flex-center"
                     click={confirmHandle}
                 >确认</ButtonFooter>}
+                {(haveConfirm && haveCancel) && <div style={style.dividingLine}></div>}
                 {haveCancel && <ButtonFooter key="cancel" className="modal-footer-cancel flex-rest flex-center"
                     click={cancelHandle}
                 >取消</ButtonFooter>}

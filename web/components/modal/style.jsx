@@ -36,7 +36,7 @@ const container = isFullScreen => {
     return {
         ...base,
         height: client.heightPercentagePx(0.7),
-        width: client.widthPercentagePx(0.7),
+        width: client.widthPercentagePx(0.7)
     }
 }
 
@@ -53,7 +53,7 @@ const close = {
     width: '15px',
     height: '15px',
     top: '0px',
-    right: '0px',
+    right: '0px'
 }
 
 const footer = {
@@ -63,11 +63,17 @@ const footer = {
     left: '0px',
     bottom: '0px',
     borderTop: '1px solid #ddd',
-    backgroundColor: '#fff',
+    backgroundColor: '#fff'
 }
 
 const footerButton = {
-    lineHeight: '45px',
+    lineHeight: '45px'
+}
+
+const dividingLine = {
+    height: '45px',
+    width: '1px',
+    backgroundColor: '#ddd'
 }
 
 const style = {
@@ -77,7 +83,8 @@ const style = {
     children,
     close,
     footer,
-    footerButton
+    footerButton,
+    dividingLine
 }
 
 export default style
