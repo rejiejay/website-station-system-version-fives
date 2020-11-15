@@ -1,7 +1,7 @@
 import {
     requestHandle
 } from './request-handle.js'
-import AlertPopup from './../popup/alert/index';
+import AlertPopup from './../popup/alert/index.jsx';
 
 /**
  * 含义: 请求的堆栈

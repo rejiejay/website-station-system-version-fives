@@ -10,6 +10,7 @@ import CONST from './const.js';
 import server from './server.js';
 import BASE_CONST from './../const.js';
 import WindowsItemDetailComponent from './windows-item-detail.jsx';
+import openMultipleSelect from './tag-selection/index.jsx';
 
 export default class WindowsComponent extends React.Component {
     constructor(props) {
@@ -185,16 +186,18 @@ export default class WindowsComponent extends React.Component {
         const { clientHeight } = this
         const { list, search, selectedId, detail, tag, tags, type, sort, pageNo, count, pageSize } = this.state
         const minHeight = `${clientHeight - 185}px`
+        const newTagSelect = true // 记得删掉
 
         return [
             <div className="windows-header flex-start-center noselect">
                 <div className="left-operating flex-start-center">
-                    <DropDownSelect
+                    {newTagSelect === false && <DropDownSelect // 记得删掉
                         options={[{ label: '所有', value: '' }].concat(tags.map(tag => ({ label: tag, value: tag })))}
                         handle={this.tagSelectedHandle.bind(this)}
                     >
                         <div className="operat-item hover-item">标签分类: {tag ? tag : 'ALL'}</div>
-                    </DropDownSelect>
+                    </DropDownSelect>}
+                    {newTagSelect && <div className="operat-item hover-item" onClick={openMultipleSelect}>标签分类</div>}
                     <DropDownSelect
                         options={constHandle.toDownSelectFormat({ CONST: CONST.DATA_TYPE, labelName: 'label', valueName: 'value' })}
                         handle={this.dataTypeSelectedHandle.bind(this)}

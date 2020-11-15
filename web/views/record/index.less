@@ -22,6 +22,17 @@ body {
     font-size       : 14px;
     color           : @black2;
     background-color: #f1f1f1;
+
+    .windows-header,
+    .windows-content-container,
+    .random-pagination,
+    .copyright-component,
+    .mobile-header,
+    .mobile-list,
+    .mobile-load,
+    .multiple-select {
+        color: @black2;
+    }
 }
 
 .windows-header {
@@ -418,5 +429,74 @@ body {
         height          : 45px;
         border-top      : 1px solid #ddd;
         background-color: #fff;
+    }
+}
+
+.multiple-select {
+    .react-basic-checkbox {
+        .checkbox-container {
+            cursor: pointer;
+        }
+
+        .checkbox-name {
+            border     : 1px solid #ddd;
+            line-height: 32px;
+            padding    : 0px 15px;
+        }
+
+        .checkbox-name-select {
+            color     : #fff;
+            background: rgb(121, 182, 242);
+        }
+
+        .checkbox-disable {
+            line-height: 32px;
+            width      : 23px;
+            text-align : center;
+            border     : 1px solid #ddd;
+        }
+
+        .checkbox-disable-effect,
+        .checkbox-name-disable {
+            color     : #fff;
+            background: @black3;
+            border    : 1px solid @black3;
+        }
+
+        .checkbox-disable {
+            border-left: none;
+        }
+    }
+
+    .multiple-select-fast {
+        padding-bottom: 15px;
+    }
+
+    .multiple-select-list {
+        width         : 320px;
+        overflow      : hidden;
+        padding-bottom: 15px;
+
+        .react-basic-checkbox {
+            float  : left;
+            padding: 7.5px
+        }
+    }
+
+    .multiple-select-result {
+        border-top : 1px solid #ddd;
+        padding-top: 15px;
+        overflow   : hidden;
+
+        .multiple-result-container {
+            float  : left;
+            padding: 7.5px
+        }
+
+        .multiple-result-item {
+            border     : 1px solid #ddd;
+            line-height: 32px;
+            padding    : 0px 15px;
+        }
     }
 }
