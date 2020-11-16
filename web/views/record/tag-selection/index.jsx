@@ -17,25 +17,6 @@ class Utils extends React.Component {
     constructor(props) {
         super(props)
     }
-}
-
-class MultipleSelectLayout extends Utils {
-    constructor(props) {
-        super(props)
-        this.state = {
-            selectList: CONST.MULTIPLE_SELECT.DEFAULT
-        }
-    }
-
-    componentDidMount() {
-        const selectList = [
-            { isKill: false, isSelect: false, value: '1', lable: 'a' },
-            { isKill: false, isSelect: false, value: '2', lable: 'b' },
-            { isKill: false, isSelect: false, value: '3', lable: 'c' },
-            { isKill: false, isSelect: false, value: '4', lable: 'd' },
-        ]
-        this.setState({ selectList })
-    }
 
     getSelectedResult() {
         const { selectList } = this.state
@@ -74,6 +55,42 @@ class MultipleSelectLayout extends Utils {
         })
     }
 
+    checkboxHandle() {
+        const { callBackHandle } = this.props
+        const { isSelect, isDisable } = this.state
+
+        if (isDisable) return
+        this.setState({ isSelect: !isSelect })
+        callBackHandle({ isDisable, isSelect: !isSelect })
+    }
+
+    disableHandle() {
+        const { callBackHandle } = this.props
+        const { isSelect, isDisable } = this.state
+
+        this.setState({ isDisable: !isDisable })
+        callBackHandle({ isSelect, isDisable: !isDisable })
+    }
+}
+
+class MultipleSelectLayout extends Utils {
+    constructor(props) {
+        super(props)
+        this.state = {
+            selectList: CONST.MULTIPLE_SELECT.DEFAULT
+        }
+    }
+
+    componentDidMount() {
+        const selectList = [
+            { isKill: false, isSelect: false, value: '1', lable: 'a' },
+            { isKill: false, isSelect: false, value: '2', lable: 'b' },
+            { isKill: false, isSelect: false, value: '3', lable: 'c' },
+            { isKill: false, isSelect: false, value: '4', lable: 'd' },
+        ]
+        this.setState({ selectList })
+    }
+
     render() {
         const { selectList } = this.state
         const resultList = this.getSelectedResult()
@@ -90,6 +107,7 @@ class FastSelectCheckbox extends Utils {
     constructor(props) {
         super(props)
     }
+
     render() {
         const { fastSelectHandle } = this.props
         return <div className="multiple-select-fast">
@@ -116,6 +134,7 @@ class ResultList extends Utils {
     constructor(props) {
         super(props)
     }
+
     render() {
         const { data, unSelectResult } = this.props
         return <div className="multiple-select-result">
@@ -136,23 +155,6 @@ class Checkbox extends Utils {
             isSelect: false,
             isDisable: false
         }
-    }
-
-    checkboxHandle() {
-        const { callBackHandle } = this.props
-        const { isSelect, isDisable } = this.state
-
-        if (isDisable) return
-        this.setState({ isSelect: !isSelect })
-        callBackHandle({ isDisable, isSelect: !isSelect })
-    }
-
-    disableHandle() {
-        const { callBackHandle } = this.props
-        const { isSelect, isDisable } = this.state
-
-        this.setState({ isDisable: !isDisable })
-        callBackHandle({ isSelect, isDisable: !isDisable })
     }
 
     render() {
