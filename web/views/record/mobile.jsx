@@ -42,19 +42,14 @@ export default class MobileComponent extends React.Component {
 
     async componentDidMount() {
         await login()
-        await this.initTag({})
         await this.initData()
-    }
-
-    async initTag({ isForceRefresh }) {
-        const tags = await server.getTags({ isForceRefresh })
-        this.setState({ tags })
     }
 
     async initData() {
         const id = loadPageVar('id')
         const sort = initSort()
-        const tags = loadPageVar('tags')
+        let tags = loadPageVar('tags')
+        if (!tags && window.localStorage['website-station-system-record-tags']) tags = window.localStorage['website-station-system-record-tags']
         const type = loadPageVar('type')
         const search = loadPageVar('search')
         const minTimestamp = loadPageVar('minTimestamp')
@@ -197,6 +192,7 @@ export default class MobileComponent extends React.Component {
         const selectInstance = await openMultipleSelect(tags)
         if (selectInstance.result !== 1) return
         const tagSelected = selectInstance.data
+        window.localStorage['website-station-system-record-tags'] = tagSelected
         const query = { sort, tags: tagSelected.join('[]'), type, minTimestamp, maxTimestamp }
         window.location.replace(`./index.html${queryToUrl(query)}`)
     }

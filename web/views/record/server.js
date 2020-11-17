@@ -3,10 +3,18 @@ import jsonHandle from './../../utils/json-handle.js';
 
 import CONST from './const.js';
 
+const getTags = () => new Promise(resolve => fetch.get({
+    url: 'record/statistics/tag',
+    query: {}
+}).then(
+    ({ data: { tags, expiredTimestamp } }) => resolve(tags.filter(tag => !!tag && tag !== 'null')),
+    error => resolve([])
+))
+
 /**
- * 获取标签
+ * 旧版, 因为不做缓存
  */
-const getTags = async({ isForceRefresh }) => {
+const getTagsOld = async({ isForceRefresh }) => {
     const fetchStatisticsTag = async() => {
         let myTags = []
 
