@@ -16,11 +16,13 @@ export class RecordController {
 
     @Get('get/list')
     async getList(@Query() query: any): Promise<Consequencer> {
-        const { pageNo, pageSize, tag, type, minTimestamp, maxTimestamp } = query
+        const { pageNo, pageSize, tags, type, minTimestamp, maxTimestamp } = query
 
         if (!pageNo || !pageSize) return consequencer.error('参数有误');
 
-        return await this.service.getList({ pageNo, pageSize, tag, type, minTimestamp, maxTimestamp })
+        const tagArray = !!tags ? tags.split('[]') : []
+
+        return await this.service.getList({ pageNo, pageSize, tags: tagArray, type, minTimestamp, maxTimestamp })
     }
 
     @Get('statistics/list')

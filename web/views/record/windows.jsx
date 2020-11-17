@@ -53,7 +53,7 @@ export default class WindowsComponent extends React.Component {
 
     async initData() {
         const sort = loadPageVar('sort')
-        const tag = loadPageVar('tag')
+        const tags = loadPageVar('tags')
         const type = loadPageVar('type')
         const search = loadPageVar('search')
         const minTimestamp = loadPageVar('minTimestamp')
@@ -61,7 +61,7 @@ export default class WindowsComponent extends React.Component {
 
         this.setState({
             sort,
-            tag,
+            tags,
             type: (type === 0 || !!type) ? +type : null,
             search,
             minTimestamp,
@@ -75,12 +75,12 @@ export default class WindowsComponent extends React.Component {
     }
 
     async initDataByTime({ isForceRefresh }) {
-        const { pageNo, pageSize, tag, type, minTimestamp, maxTimestamp } = this.state
+        const { pageNo, pageSize, tags, type, minTimestamp, maxTimestamp } = this.state
         const self = this
 
         await fetch.get({
             url: 'record/get/list',
-            query: { pageNo, pageSize, tag, type, minTimestamp, maxTimestamp }
+            query: { pageNo, pageSize, tags, type, minTimestamp, maxTimestamp }
         }).then(
             ({ data }) => self.setState({ list: data }),
             error => { }
@@ -157,6 +157,15 @@ export default class WindowsComponent extends React.Component {
         toast.show()
     }
 
+    async tagMultipleSelectHandle() {
+        const { sort, tags, type, minTimestamp, maxTimestamp } = this.state
+        const selectInstance = await openMultipleSelect(tags)
+        if (selectInstance.result !== 1) return
+        const tagSelected = selectInstance.data
+        const query = { sort, tags: tagSelected.join('[]'), type, minTimestamp, maxTimestamp }
+        window.location.replace(`./index.html${queryToUrl(query)}`)
+    }
+
     dataTypeSelectedHandle({ value, label }) {
         const { sort, tag, minTimestamp, maxTimestamp } = this.state
         this.setState({ type: value })
@@ -197,7 +206,7 @@ export default class WindowsComponent extends React.Component {
                     >
                         <div className="operat-item hover-item">标签分类: {tag ? tag : 'ALL'}</div>
                     </DropDownSelect>}
-                    {newTagSelect && <div className="operat-item hover-item" onClick={openMultipleSelect}>标签分类</div>}
+                    {newTagSelect && <div className="operat-item hover-item" onClick={this.tagMultipleSelectHandle.bind(this)}>标签分类</div>}
                     <DropDownSelect
                         options={constHandle.toDownSelectFormat({ CONST: CONST.DATA_TYPE, labelName: 'label', valueName: 'value' })}
                         handle={this.dataTypeSelectedHandle.bind(this)}

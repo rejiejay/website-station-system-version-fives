@@ -1,5 +1,6 @@
 import Modal from './../../../components/modal/index.jsx'
 import consequencer from './../../../utils/consequencer';
+import server from './../server';
 
 const CONST = {
     MULTIPLE_SELECT: {
@@ -71,6 +72,16 @@ class Utils extends React.Component {
         this.setState({ isDisable: !isDisable })
         callBackHandle({ isSelect, isDisable: !isDisable })
     }
+
+    tagsMapper(tags) {
+        const { selected } = this.props
+        return tags.map(tag => ({
+            isKill: false,
+            isSelect: selected.includes(tag),
+            value: tag,
+            lable: tag
+        }))
+    }
 }
 
 class MultipleSelectLayout extends Utils {
@@ -81,13 +92,11 @@ class MultipleSelectLayout extends Utils {
         }
     }
 
-    componentDidMount() {
-        const selectList = [
-            { isKill: false, isSelect: false, value: '1', lable: 'a' },
-            { isKill: false, isSelect: false, value: '2', lable: 'b' },
-            { isKill: false, isSelect: false, value: '3', lable: 'c' },
-            { isKill: false, isSelect: false, value: '4', lable: 'd' },
-        ]
+    async componentDidMount() {
+        const tags = await server.getTags({ isForceRefresh: true })
+        const selectList = this.tagsMapper(tags)
+        console.log('selectList', selectList)
+        console.log('tags', tags)
         this.setState({ selectList })
     }
 
@@ -184,7 +193,8 @@ class Checkbox extends Utils {
     }
 }
 
-const openMultipleSelect = () => new Promise(resolve => {
+const openMultipleSelect = tagSelected => new Promise(resolve => {
+    const myMultipleSelectRef = React.createRef();
     const div = document.createElement('div')
     document.body.appendChild(div)
 
@@ -194,8 +204,9 @@ const openMultipleSelect = () => new Promise(resolve => {
     }
 
     const confirmHandle = () => {
+        const selected = myMultipleSelectRef.current.getSelectedResult().map(({ value }) => value)
         document.body.removeChild(div)
-        resolve(consequencer.success())
+        resolve(consequencer.success(selected))
     }
 
     ReactDOM.render(
@@ -204,7 +215,9 @@ const openMultipleSelect = () => new Promise(resolve => {
             cancelHandle={cancelHandle}
             confirmHandle={confirmHandle}
         >
-            <MultipleSelectLayout />
+            <MultipleSelectLayout ref={myMultipleSelectRef}
+                selected={tagSelected}
+            />
         </Modal>,
         div
     )

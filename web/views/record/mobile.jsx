@@ -12,6 +12,7 @@ import CONST from './const.js';
 import BASE_CONST from './../const.js';
 import server from './server.js';
 import { initSort, updateSort } from './utils.js';
+import openMultipleSelect from './tag-selection/index.jsx';
 
 export default class MobileComponent extends React.Component {
     constructor(props) {
@@ -53,7 +54,7 @@ export default class MobileComponent extends React.Component {
     async initData() {
         const id = loadPageVar('id')
         const sort = initSort()
-        const tag = loadPageVar('tag')
+        const tags = loadPageVar('tags')
         const type = loadPageVar('type')
         const search = loadPageVar('search')
         const minTimestamp = loadPageVar('minTimestamp')
@@ -61,7 +62,7 @@ export default class MobileComponent extends React.Component {
 
         this.setState({
             sort,
-            tag,
+            tags,
             type: (type === 0 || !!type) ? +type : null,
             search,
             minTimestamp,
@@ -92,12 +93,12 @@ export default class MobileComponent extends React.Component {
     }
 
     async initDataByTime({ isForceRefresh }) {
-        const { pageNo, pageSize, count, tag, type, list, minTimestamp, maxTimestamp } = this.state
+        const { pageNo, pageSize, count, tags, type, list, minTimestamp, maxTimestamp } = this.state
         const self = this
 
         await fetch.get({
             url: 'record/get/list',
-            query: { pageNo, pageSize, tag, type, minTimestamp, maxTimestamp }
+            query: { pageNo, pageSize, tags, type, minTimestamp, maxTimestamp }
         }).then(
             ({ data }) => {
                 if (data.length === 0) return toast.show('已加载完成所有数据!')
@@ -169,6 +170,9 @@ export default class MobileComponent extends React.Component {
         this.initData()
     }
 
+    /**
+     * 单选标签选择, 记得删除
+     */
     showTagsSelected() {
         const self = this
         const { tags } = this.state
@@ -186,6 +190,15 @@ export default class MobileComponent extends React.Component {
             options: [{ label: '所有', value: '' }].concat(tags.map(tag => ({ label: tag, value: tag }))),
             handle
         })
+    }
+
+    async tagMultipleSelectHandle() {
+        const { sort, tags, type, minTimestamp, maxTimestamp } = this.state
+        const selectInstance = await openMultipleSelect(tags)
+        if (selectInstance.result !== 1) return
+        const tagSelected = selectInstance.data
+        const query = { sort, tags: tagSelected.join('[]'), type, minTimestamp, maxTimestamp }
+        window.location.replace(`./index.html${queryToUrl(query)}`)
     }
 
     showDataTypeSelected() {
@@ -311,9 +324,9 @@ export default class MobileComponent extends React.Component {
 
                 {!minTimestamp && !maxTimestamp && <div className="header-filter flex-start">
                     <div className="header-filter-des flex-rest flex-start-center"
-                        onClick={this.showTagsSelected.bind(this)}
+                        onClick={this.tagMultipleSelectHandle.bind(this)}
                     >
-                        <div className="header-filter-des flex-rest flex-center">标签:{tag ? tag : 'ALL'}</div>
+                        <div className="header-filter-des flex-rest flex-center">标签</div>
                     </div>
                     <div className="header-filter-separation"></div>
                     <div className="header-filter-des flex-rest flex-start-center"
@@ -413,4 +426,3 @@ export default class MobileComponent extends React.Component {
         ]
     }
 }
-
