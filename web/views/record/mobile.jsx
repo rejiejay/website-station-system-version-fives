@@ -120,11 +120,11 @@ export default class MobileComponent extends React.Component {
 
     async initDataByRandom() {
         const self = this
-        const { pageNo, pageSize, count, list, tag, type } = this.state
+        const { pageNo, pageSize, list, tags, type } = this.state
 
         await fetch.get({
             url: 'record/get/random',
-            query: { size: pageSize, tag, type }
+            query: { size: pageSize, tags, type }
         }).then(
             ({ data }) => {
                 /** 是否新增, 通过 pageNo 判断 */
@@ -192,7 +192,7 @@ export default class MobileComponent extends React.Component {
         const selectInstance = await openMultipleSelect(tags)
         if (selectInstance.result !== 1) return
         const tagSelected = selectInstance.data
-        window.localStorage['website-station-system-record-tags'] = tagSelected
+        window.localStorage['website-station-system-record-tags'] = tagSelected.join('[]')
         const query = { sort, tags: tagSelected.join('[]'), type, minTimestamp, maxTimestamp }
         window.location.replace(`./index.html${queryToUrl(query)}`)
     }

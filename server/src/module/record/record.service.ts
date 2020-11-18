@@ -86,11 +86,14 @@ export class RecordService {
         return consequencer.success(titleResult.concat(contenResult));
     }
 
-    async getRandom(size, { tag, type }): Promise<Consequencer> {
+    async getRandom(size, { tags, type }): Promise<Consequencer> {
         let condition = ''
 
         /** 标签 */
-        if (!!tag) condition = this.conditionHandle({ initial: condition, sql: `tag="${tag}"` });
+        if (!!tags && tags instanceof Array && tags.length > 0) {
+            const tagsSQL = tags.map(tag => `tag="${tag}"`).join(' OR ')
+            condition = this.conditionHandle({ initial: condition, sql: `(${tagsSQL})` });
+        }
         /** 标签 */
         if (!!type) condition = this.conditionHandle({ initial: condition, sql: `type="${type}"` });
 
