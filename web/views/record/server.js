@@ -3,9 +3,18 @@ import jsonHandle from './../../utils/json-handle.js';
 
 import CONST from './const.js';
 
-let server = {}
+const getTags = () => new Promise(resolve => fetch.get({
+    url: 'record/statistics/tag',
+    query: {}
+}).then(
+    ({ data: { tags, expiredTimestamp } }) => resolve(tags.filter(tag => !!tag && tag !== 'null')),
+    error => resolve([])
+))
 
-server.getTags = async({ isForceRefresh }) => {
+/**
+ * 旧版, 因为不做缓存
+ */
+const getTagsOld = async({ isForceRefresh }) => {
     const fetchStatisticsTag = async() => {
         let myTags = []
 
@@ -14,7 +23,7 @@ server.getTags = async({ isForceRefresh }) => {
             query: {}
         }).then(
             ({ data: { tags, expiredTimestamp } }) => {
-                myTags = tags
+                myTags = tags.filter(tag => !!tag && tag !== 'null')
                 const statistic = JSON.stringify({ tags: tags, expiredTimestamp })
                 window.localStorage['website-station-system-record-tags'] = statistic
             },
@@ -39,10 +48,11 @@ server.getTags = async({ isForceRefresh }) => {
     const nowTimestamp = new Date().getTime()
     if (nowTimestamp > statistic.expiredTimestamp) return await fetchStatisticsTag()
 
+    // ['love', 'task', ...]
     return statistic.tags
 }
 
-server.getStatistics = async({ tag, type, minTimestamp, maxTimestamp, isForceRefresh }) => {
+const getStatistics = async({ tag, type, minTimestamp, maxTimestamp, isForceRefresh }) => {
     const query = { tag, type, minTimestamp, maxTimestamp }
 
     const fetchStatisticsList = async() => {
@@ -81,7 +91,7 @@ server.getStatistics = async({ tag, type, minTimestamp, maxTimestamp, isForceRef
     return +statistic.count
 }
 
-server.getJsonByDataType = ({ type, content }) => {
+const getJsonByDataType = ({ type, content }) => {
     if (type === CONST.DATA_TYPE.DIARY.value) {
         const verifyJSONresult = jsonHandle.verifyJSONString({ jsonString: content })
         if (verifyJSONresult.isCorrect) {
@@ -97,10 +107,17 @@ server.getJsonByDataType = ({ type, content }) => {
     return content
 }
 
-server.getImageArray = ({ imageArrayString }) => {
+const getImageArray = ({ imageArrayString }) => {
     const verifyJSONresult = jsonHandle.verifyJSONString({ jsonString: imageArrayString, isArray: true })
     if (!verifyJSONresult.isCorrect) return [];
     return verifyJSONresult.data
+}
+
+const server = {
+    getTags,
+    getStatistics,
+    getJsonByDataType,
+    getImageArray
 }
 
 export default server

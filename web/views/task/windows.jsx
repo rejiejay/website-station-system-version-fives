@@ -2,7 +2,7 @@ import fetch from './../../components/async-fetch/fetch.js';
 import login from './../../components/login.js';
 import toast from './../../components/toast.js';
 import { inputPopUp, inputPopUpDestroy } from './../../components/input-popup.js';
-import { confirmPopUp } from './../../components/confirm-popup.js';
+import { confirmPopUp } from './../../components/confirm-popup/index.js';
 import timeTransformers from './../../utils/time-transformers.js';
 
 import CONST from './const.js';

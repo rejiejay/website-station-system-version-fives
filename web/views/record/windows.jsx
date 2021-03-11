@@ -10,6 +10,7 @@ import CONST from './const.js';
 import server from './server.js';
 import BASE_CONST from './../const.js';
 import WindowsItemDetailComponent from './windows-item-detail.jsx';
+import openMultipleSelect from './tag-selection/index.jsx';
 
 export default class WindowsComponent extends React.Component {
     constructor(props) {
@@ -52,7 +53,7 @@ export default class WindowsComponent extends React.Component {
 
     async initData() {
         const sort = loadPageVar('sort')
-        const tag = loadPageVar('tag')
+        const tags = loadPageVar('tags')
         const type = loadPageVar('type')
         const search = loadPageVar('search')
         const minTimestamp = loadPageVar('minTimestamp')
@@ -60,7 +61,7 @@ export default class WindowsComponent extends React.Component {
 
         this.setState({
             sort,
-            tag,
+            tags,
             type: (type === 0 || !!type) ? +type : null,
             search,
             minTimestamp,
@@ -74,12 +75,12 @@ export default class WindowsComponent extends React.Component {
     }
 
     async initDataByTime({ isForceRefresh }) {
-        const { pageNo, pageSize, tag, type, minTimestamp, maxTimestamp } = this.state
+        const { pageNo, pageSize, tags, type, minTimestamp, maxTimestamp } = this.state
         const self = this
 
         await fetch.get({
             url: 'record/get/list',
-            query: { pageNo, pageSize, tag, type, minTimestamp, maxTimestamp }
+            query: { pageNo, pageSize, tags, type, minTimestamp, maxTimestamp }
         }).then(
             ({ data }) => self.setState({ list: data }),
             error => { }
@@ -97,11 +98,11 @@ export default class WindowsComponent extends React.Component {
 
     async initDataByRandom() {
         const self = this
-        const { pageSize, tag, type } = this.state
+        const { pageSize, tags, type } = this.state
 
         await fetch.get({
             url: 'record/get/random',
-            query: { size: pageSize, tag, type }
+            query: { size: pageSize, tags, type }
         }).then(
             ({ data }) => self.setState({ list: data }),
             error => { }
@@ -156,6 +157,15 @@ export default class WindowsComponent extends React.Component {
         toast.show()
     }
 
+    async tagMultipleSelectHandle() {
+        const { sort, tags, type, minTimestamp, maxTimestamp } = this.state
+        const selectInstance = await openMultipleSelect(tags)
+        if (selectInstance.result !== 1) return
+        const tagSelected = selectInstance.data
+        const query = { sort, tags: tagSelected.join('[]'), type, minTimestamp, maxTimestamp }
+        window.location.replace(`./index.html${queryToUrl(query)}`)
+    }
+
     dataTypeSelectedHandle({ value, label }) {
         const { sort, tag, minTimestamp, maxTimestamp } = this.state
         this.setState({ type: value })
@@ -185,16 +195,18 @@ export default class WindowsComponent extends React.Component {
         const { clientHeight } = this
         const { list, search, selectedId, detail, tag, tags, type, sort, pageNo, count, pageSize } = this.state
         const minHeight = `${clientHeight - 185}px`
+        const newTagSelect = true // 记得删掉
 
         return [
             <div className="windows-header flex-start-center noselect">
                 <div className="left-operating flex-start-center">
-                    <DropDownSelect
+                    {newTagSelect === false && <DropDownSelect // 记得删掉
                         options={[{ label: '所有', value: '' }].concat(tags.map(tag => ({ label: tag, value: tag })))}
                         handle={this.tagSelectedHandle.bind(this)}
                     >
                         <div className="operat-item hover-item">标签分类: {tag ? tag : 'ALL'}</div>
-                    </DropDownSelect>
+                    </DropDownSelect>}
+                    {newTagSelect && <div className="operat-item hover-item" onClick={this.tagMultipleSelectHandle.bind(this)}>标签分类</div>}
                     <DropDownSelect
                         options={constHandle.toDownSelectFormat({ CONST: CONST.DATA_TYPE, labelName: 'label', valueName: 'value' })}
                         handle={this.dataTypeSelectedHandle.bind(this)}

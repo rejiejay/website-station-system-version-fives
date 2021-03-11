@@ -1,6 +1,7 @@
 import {
     requestHandle
 } from './request-handle.js'
+import AlertPopup from './../popup/alert/index.jsx';
 
 /**
  * 含义: 请求的堆栈
@@ -59,6 +60,27 @@ const asyncRequestHandle = async() => {
     }
 }
 
+/**
+ * must get scuccess, otherwise it will popout confirm forever and always
+ * @param {object} parameter it same as fetch.get, because it just add confirm
+ * @return {object} fetchInstance.data; brcause it is must scuccess
+ */
+function reGetConfirm(parameter) {
+    const self = this
+    const getDataHandle = async resolve => {
+        const fetchInstance = await self.get(parameter)
+
+        if (fetchInstance.result !== 1) {
+            await AlertPopup(fetchInstance.message)
+            return getDataHandle(resolve)
+        }
+
+        resolve(fetchInstance.data)
+    }
+
+    return new Promise(resolve => getDataHandle(resolve))
+}
+
 const fetch = {
     get: ({
         url,
@@ -81,7 +103,8 @@ const fetch = {
         body,
         hiddenError,
         notHandleResult
-    })
+    }),
+    reGetConfirm,
 }
 
 export default fetch

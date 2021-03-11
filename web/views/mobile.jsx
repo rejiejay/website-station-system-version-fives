@@ -12,12 +12,12 @@ export default class MobileComponent extends React.Component {
     }
 
     async componentDidMount() {
-        mindSelectPopup({
-            title: '1',
-            handle: () => {
-                console.log('1', 1)
-            }
-        })
+        // mindSelectPopup({
+        //     title: '1',
+        //     handle: () => {
+        //         console.log('1', 1)
+        //     }
+        // })
         await login()
     }
 

@@ -1,5 +1,5 @@
 import fetch from './../../components/async-fetch/fetch.js';
-import { confirmPopUp } from './../../components/confirm-popup.js';
+import { confirmPopUp } from './../../components/confirm-popup/index.js';
 import jsonHandle from './../../utils/json-handle.js';
 import { queryToUrl } from './../../utils/url-handle.js';
 

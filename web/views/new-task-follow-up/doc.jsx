@@ -28,3 +28,26 @@ TaskList_requirement = () => {
         item: 'for view item'
     }
 }
+
+TaskDetailModal = () => {
+    config = {
+        aa: 'bb',
+    }
+}
+
+add_scene = () => {
+    scene_one = '突然想到自己要做什么?因为手头上有事情,所以临时记忆'
+    scene_two = '将来要做什么?因为十分有意义,记忆下来,以后认真完成'
+    scene_three = '今天要做什么?因为害怕忘记,临时记忆'
+}
+
+view_scene = () => {
+    scene_one = '想看看今天要做些什么?因为突然间闲下来了.'
+    scene_two = '想看看刚刚在做什么?因为突然被打断了.'
+    scene_three = '想看看以后有什么计划?因为想计划今天的任务'
+}
+
+modify_scene = () => {
+    scene_one = '想整理一下今天的任务, 因为刚刚完成了很多'
+    scene_two = '想整理一下以后的任务, 因为今天完成了很多任务,而很多任务是临时规划的'
+}

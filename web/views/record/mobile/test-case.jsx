@@ -1,0 +1,21 @@
+layout = '------------------------------------------------------------------------------------------------------------------------------------------------------'
+view = { api } // ok
+showMore = {} // ok
+add = { type } // ok
+edit = {} // ok
+sort = { Persistence } // ok
+tag = { Persistence } // ok
+type = {} // ok
+search = {} // ok
+time = {} // ok
+
+detail = '------------------------------------------------------------------------------------------------------------------------------------------------------'
+view = { componentDidMount, getSortFilter, operateBarRef, initListData, List, RrcordItem, DiaryItem } // done
+showMore = {} // done
+add = { type } // todo
+edit = {} // todo
+sort = { Persistence } // todo
+tag = { Persistence } // todo
+type = {} // todo
+search = {} // todo
+time = {} // todo
