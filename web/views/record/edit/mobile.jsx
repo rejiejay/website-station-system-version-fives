@@ -1,6 +1,6 @@
 import fetch from './../../../components/async-fetch/fetch.js';
 import toast from './../../../components/toast.js'
-import { confirmPopUp } from './../../../components/confirm-popup.js';
+import { confirmPopUp } from './../../../components/confirm-popup/index.js';
 import constHandle from './../../../utils/const-handle.js';
 import { queryToUrl, loadPageVar, parseQueryString } from './../../../utils/url-handle.js';
 import { arrayRemoveItemByValue } from './../../../utils/array-handle.js';
@@ -21,7 +21,7 @@ export default class MobileComponent extends React.Component {
         this.state = {
             title: '',
             content: '',
-            tag: null,
+            tag: localStorage['website-station-system-record-previous-tag-selection'] || null,
             tags: [],
             type: CONST.DATA_TYPE.RECORD.value,
             timestamp: 0,
@@ -222,6 +222,7 @@ export default class MobileComponent extends React.Component {
         if (!title) return toast.show('标题不能为空');
         if (!content) return toast.show('内容不能为空');
 
+        localStorage['website-station-system-record-previous-tag-selection'] = tag
         let body = { title, content, tag, type, images }
         if (timestamp) body.timestamp = timestamp
 
@@ -241,6 +242,7 @@ export default class MobileComponent extends React.Component {
         if (!title) return toast.show('标题不能为空');
         if (!content) return toast.show('内容不能为空');
 
+        localStorage['website-station-system-record-previous-tag-selection'] = tag
         fetch.post({
             url: 'record/edit',
             body: { id, title, content, tag, type, images, timestamp }

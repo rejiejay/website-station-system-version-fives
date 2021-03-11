@@ -1,0 +1,124 @@
+@import './base.less';
+@import './flex.less';
+@import './toast.less';
+@import './confirm-popup.less';
+
+@black1: #303133;
+@black2: #606266;
+@black3: #909399;
+@black4: #C0C4CC;
+
+body {
+    position        : relative;
+    width           : 100%;
+    height          : 100%;
+    padding         : 0px;
+    margin          : 0px;
+    font-size       : 14px;
+    color           : @black2;
+    background-color: #f1f1f1;
+
+    .task-list,
+    // 列表 task-list.jsx
+    .list-item,
+    // 列表一个项 task-list-item.jsx
+    .task-operation,
+    // 公用底部按钮 list-operation.jsx
+    .target-mind-list-select-modal,
+    // 思维导图列表 target-mind-list-select-modal.jsx
+    .task-detail-modal {
+        color: @black2;
+    }
+}
+
+.task-list {
+    position      : relative;
+    padding-top   : 25px;
+    padding-bottom: 75px;
+
+    .task-top-operation {
+        position        : fixed;
+        top             : 15px;
+        right           : 15px;
+        height          : 32px;
+        padding         : 0px 15px;
+        border-radius   : 5px;
+        background-color: #1890ff8c;
+        color           : #fff;
+        z-index         : 2;
+    }
+}
+
+// For Common components
+.list-item {
+    padding-bottom: 15px;
+
+    .task-item-container {
+        position      : relative;
+        height        : 100%;
+        padding-bottom: 45px;
+        background    : #fff;
+        border-top    : 1px solid #ddd;
+        border-bottom : 1px solid #ddd;
+    }
+
+    .list-item-title {
+        padding      : 0px 15px;
+        line-height  : 45px;
+        border-bottom: 1px solid #ddd;
+        font-size    : 16px;
+        font-weight  : bold;
+        white-space  : nowrap;
+        text-overflow: ellipsis;
+        overflow     : hidden;
+        color        : @black1;
+    }
+
+    .list-item-content {
+        padding   : 15px 15px 15px 15px;
+        word-break: break-all;
+    }
+}
+
+.task-operation {
+    left      : 0px;
+    bottom    : 0px;
+    height    : 45px;
+    width     : 100%;
+    border-top: 1px solid #ddd;
+    background: #fff;
+
+    .list-operation-left,
+    .operation-right-button {
+        height     : 45px;
+        min-width  : 60px;
+        font-size  : 12px;
+        line-height: 45px;
+        text-align : center;
+    }
+
+    .list-operation-left {
+        border-right: 1px solid #ddd;
+    }
+
+    .operation-right-button {
+        border-left: 1px solid #ddd;
+    }
+}
+
+.target-mind-list-select-modal {
+    .basic-modal-container {
+        background-color: #f1f1f1;
+    }
+
+    .target-mind-add {
+        border-bottom   : 1px solid #ddd;
+        line-height     : 45px;
+        text-align      : center;
+        background-color: #fff;
+    }
+}
+
+.task-detail-modal {
+    padding-bottom: 240px;
+}
