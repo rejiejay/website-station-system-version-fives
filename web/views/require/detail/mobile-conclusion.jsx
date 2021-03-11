@@ -1,7 +1,7 @@
 import jsonHandle from './../../../utils/json-handle.js';
 import { inputPopUp, inputPopUpDestroy } from './../../../components/input-popup.js';
 import { dropDownSelectPopup, dropDownSelectPopupDestroy } from './../../../components/drop-down-select-popup.js';
-import { confirmPopUp } from './../../../components/confirm-popup.js';
+import { confirmPopUp } from './../../../components/confirm-popup/index.js';
 
 import CONST from './const.js';
 

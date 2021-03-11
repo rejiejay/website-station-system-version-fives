@@ -110,4 +110,3 @@ const SearchBar = ({ searchHandle, cancelHandle }) => {
 
     return <></>
 }
-
